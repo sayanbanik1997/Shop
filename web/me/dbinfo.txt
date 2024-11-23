@@ -1,0 +1,4 @@
+ 
+ create table prod_tbl;
+ create table prod_entry_tbl;
+ create table prod_list_tbl(id int primary key auto_increment not null, prodEntryTblId int not null, prodId int  not null, boxPrice float , boxQuantity float , prodQuan float, prodQuanPerBox float, unit varchar(10) );
