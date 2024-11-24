@@ -6,22 +6,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    >
-    <androidx.appcompat.widget.Toolbar
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        app:title="@string/toolBarTitle"
-        android:background="@color/toolBarBackground"
-        android:padding="10dp"
-        android:id="@+id/toolBar"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
         >
+        <androidx.appcompat.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            app:title="@string/toolBarTitle"
+            android:background="@color/toolBarBackground"
+            android:padding="10dp"
+            android:id="@+id/toolBar"
+            />
 
-    </androidx.appcompat.widget.Toolbar>
-</LinearLayout>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/frameLayout"
+            />
+    </LinearLayout>
     <com.google.android.material.navigation.NavigationView
         android:layout_width="wrap_content"
         android:layout_height="match_parent"

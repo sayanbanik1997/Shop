@@ -3,4 +3,10 @@
     <string name="toolBarTitle">MyShop</string>
     <string name="buyProduct">Buy Product</string>
     <string name="sellProduct">Sell Product</string>
+
+    <string name="navDrOpen">open</string>
+    <string name="navDrClose">close</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="buyerNameBuyFrag">Tap to set buyer name</string>
+    <string name="byingDate">Bying date</string>
 </resources>
