@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">Shop</string>
+    <string name="toolBarTitle">MyShop</string>
+    <string name="buyProduct">Buy Product</string>
+    <string name="sellProduct">Sell Product</string>
 </resources>
