@@ -12,8 +12,10 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,13 +29,16 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class BuyFrag extends Fragment {
     View view;
     TextView txt;
+    ListView supplierList;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -48,26 +53,21 @@ public class BuyFrag extends Fragment {
                 addSupDialog.show();
                 EditText supNameEt=(EditText) addSupDialog.findViewById(R.id.supNameEt);
                 Button addSupBtn=(Button) addSupDialog.findViewById(R.id.addSupBtn);
+                supplierList=(ListView)addSupDialog.findViewById(R.id.supList);
+
                 supNameEt.addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                        
-                    }
-
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                    }
-
-                    @Override
+                    @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {} @Override public void onTextChanged(CharSequence s, int start, int before, int count) { }
+                     @Override
                     public void afterTextChanged(Editable s) {
                         getData("name", supNameEt.getText().toString());
                     }
                 });
+                getData("name", "");
             }
         });
         return view;
     }
+    String s[]={"a", "b"};
     private void getData(String tag, String data){
         RequestQueue requestQueue= Volley.newRequestQueue(getContext());
         StringRequest stringRequest=new StringRequest(
@@ -76,7 +76,21 @@ public class BuyFrag extends Fragment {
             new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
-                    Toast.makeText(getContext(), response, Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getContext(), response, Toast.LENGTH_SHORT).show();
+                    ArrayList<String> rslt=new ArrayList<>();
+                    try {
+                        JSONArray jsonArray = new JSONArray(response);
+                        JSONObject explrObject;
+
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            explrObject = jsonArray.getJSONObject(i);
+                            rslt.add(explrObject.getString("name"));
+                        }
+                    }catch (Exception e){
+                        Toast.makeText(getContext(), "error while parsing json", Toast.LENGTH_SHORT).show();
+                    }
+                    ArrayAdapter<String> arrayAdapter=new ArrayAdapter<>(getContext(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, rslt);
+                    supplierList.setAdapter(arrayAdapter);
                 }
             },
             new Response.ErrorListener(){
