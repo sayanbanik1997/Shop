@@ -1,7 +1,7 @@
 <?php
     include('connection.php');
     if(isset($_POST['name'])){
-        $qry= 'select * from suplier_tbl where name like "%'. $_POST['name'] .'%"';
+        $qry= 'select * from supplier_tbl where name like "%'. $_POST['name'] .'%"';
         $rsltOfQry = mysqli_query($conn, $qry);
         $rslt='[';
         $count=0;
