@@ -1,6 +1,8 @@
 package com.google.sayanbanik1997.shop;
 
+import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -15,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -32,15 +35,22 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+//im
+import java.util.Date;
+import java.time.Month;
+import java.time.LocalDate;
 
 public class BuyFrag extends Fragment {
     View view;
     TextView txt;
     ListView supplierList;
-    TextView supNameTxt;
+    TextView supNameTxt, byingDtTxt;
     Dialog addSupDialog;
     EditText supNameEt;
     Button addCrSupBtn;
@@ -50,6 +60,8 @@ public class BuyFrag extends Fragment {
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_buy, container, false);
         txt  = (TextView)view.findViewById(R.id.supNameTxt);
+        byingDtTxt=(TextView) view.findViewById(R.id.byingDtTxt);
+        supNameTxt=(TextView) view.findViewById(R.id.supNameTxt);
         txt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -64,7 +76,6 @@ public class BuyFrag extends Fragment {
                 //Button addSupBtn=(Button) addSupDialog.findViewById(R.id.addCrSupBtn);
                 supplierList=(ListView)addSupDialog.findViewById(R.id.supList);
                 addCrSupBtn=(Button) addSupDialog.findViewById(R.id.addCrSupBtn);
-                supNameTxt=(TextView) view.findViewById(R.id.supNameTxt);
 
                 supNameEt.addTextChangedListener(new TextWatcher() {
                     @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {} @Override public void onTextChanged(CharSequence s, int start, int before, int count) { }
@@ -104,6 +115,31 @@ public class BuyFrag extends Fragment {
                 });
             }
         });
+
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); //HH:mm:ss
+        Date date = new Date();
+        //Toast.makeText(getContext(), dateFormat.format(date), Toast.LENGTH_SHORT).show();
+        LocalDate currentDate = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            currentDate = LocalDate.parse(dateFormat.format(date));
+            final int day = currentDate.getDayOfMonth();
+            final int month = currentDate.getMonthValue();
+            final int year = currentDate.getYear();
+            //Toast.makeText(getContext(), Integer.toString(month), Toast.LENGTH_SHORT).show();
+            byingDtTxt.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
+                        @Override
+                        public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                            byingDtTxt.setText(Integer.toString(dayOfMonth)+"-"+
+                                    Integer.toString(month)+"-"+Integer.toString(year));
+                        }
+                    }, year, month-1, day).show();
+                    //Toast.makeText(getContext(), "clicked", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
         return view;
     }
     private void setData(String[] tag, String[] data){
@@ -122,7 +158,7 @@ public class BuyFrag extends Fragment {
                     for (int i = 0; i < jsonArray.length(); i++) {
                         explrObject = jsonArray.getJSONObject(i);
                         rslt.add(explrObject.getString("name"));
-                        if(//(!addCrSupBtn.getText().equals("Add Supplier")) &&
+                        if(//   (!addCrSupBtn.getText().equals("Add Supplier")) &&
                             explrObject.getString("name").equals(supNameEt.getText().toString())){
                             addCrSupBtn.setText("Add Supplier");
                         }
@@ -135,8 +171,6 @@ public class BuyFrag extends Fragment {
                 supplierList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                        supNameTxt.setText(rslt.get( position));
-//                        addSupDialog.dismiss();
                         supNameEt.setText(rslt.get( position));
                     }
                 });
