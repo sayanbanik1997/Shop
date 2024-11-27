@@ -53,11 +53,9 @@ import java.time.LocalDate;
 public class BuyFrag extends Fragment {
     View view;
     TextView txt;
-    ListView supplierList;
     TextView supNameTxt, byingDtTxt;
     Dialog addSupDialog;
-    EditText supNameEt;
-    Button addCrSupBtn;
+    Button  addProdIntoListBtn;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -66,6 +64,9 @@ public class BuyFrag extends Fragment {
         txt  = (TextView)view.findViewById(R.id.supNameTxt);
         byingDtTxt=(TextView) view.findViewById(R.id.byingDtTxt);
         supNameTxt=(TextView) view.findViewById(R.id.supNameTxt);
+
+        addProdIntoListBtn=(Button) view.findViewById(R.id.addProdIntoListBtn);
+
         txt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,50 +74,9 @@ public class BuyFrag extends Fragment {
                 addSupDialog=new Dialog(getContext());
                 addSupDialog.setContentView(R.layout.add_supplier);
                 addSupDialog.show();
-                String[] tag={"name"};
-                String[] data={""};
-                setData(tag, data);
-                supNameEt=(EditText) addSupDialog.findViewById(R.id.supNameEt);
-                //Button addSupBtn=(Button) addSupDialog.findViewById(R.id.addCrSupBtn);
-                supplierList=(ListView)addSupDialog.findViewById(R.id.supList);
-                addCrSupBtn=(Button) addSupDialog.findViewById(R.id.addCrSupBtn);
 
-                supNameEt.addTextChangedListener(new TextWatcher() {
-                    @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {} @Override public void onTextChanged(CharSequence s, int start, int before, int count) { }
-                     @Override
-                    public void afterTextChanged(Editable s) {
-                        String[] tag={"name"};
-                         String[] data={supNameEt.getText().toString()};
-                         setData(tag, data);
-                    }
-                });
-                addCrSupBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if(supNameEt.getText().toString().isEmpty()){
-                            Toast.makeText(getContext(), "Supplier name can't be empty", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                        if(addCrSupBtn.getText().toString().equalsIgnoreCase("Add Supplier")){
-                            supNameTxt.setText(supNameEt.getText().toString());
-                            addSupDialog.dismiss();
-                            return;
-                        }
-                        String[] tag={"name"};
-                        String[] data={supNameEt.getText().toString()};
-                        new VolleyTakeData(getContext(), "http://192.168.111.212/me/createSup.php", tag, data, new AfterTakingData() {
-                            @Override
-                            public void doAfterTakingData(String response) {
-                                if(response.equals("1")){
-                                    supNameTxt.setText( supNameEt.getText().toString());
-                                    addSupDialog.dismiss();;
-                                }else {
-                                    Toast.makeText(getContext(),"Error occurred "+ response, Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
-                    }
-                });
+                cusSupProdDialogueFunc(addSupDialog, supNameTxt, "Supplier", "http://192.168.111.212/me/createSup.php");
+
             }
         });
 
@@ -140,19 +100,107 @@ public class BuyFrag extends Fragment {
                                     Integer.toString(month)+"-"+Integer.toString(year));
                         }
                     }, year, month-1, day).show();
-                    //Toast.makeText(getContext(), "clicked", Toast.LENGTH_SHORT).show();
                 }
             });
         }
+        addProdIntoListBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Dialog buyInfoDialogue=new Dialog(getContext());
+                buyInfoDialogue.setContentView(R.layout.prod_list_entry);
+                buyInfoDialogue.show();
 
-        View v= getLayoutInflater().inflate(R.layout.buy_list_each, null);
-        LinearLayout frameLayout=(LinearLayout) view.findViewById(R.id.buyFragFrLayout);
-        frameLayout.addView(v);
+                TextView chooseProdTxt = (TextView) buyInfoDialogue.findViewById(R.id.chooseProdTxt);
+
+                chooseProdTxt.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Dialog chooseProdDialogue= new Dialog(getContext());
+                        chooseProdDialogue.setContentView(R.layout.add_supplier);
+                        chooseProdDialogue.show();
+
+                        cusSupProdDialogueFunc(chooseProdDialogue, chooseProdTxt, "Product", "http://192.168.111.212/me/createProd.php");
+                    }
+                });
+
+                EditText[] chooseProdDiEt= new EditText[5];
+                //prodCountEt
+                chooseProdDiEt[0]=(EditText) buyInfoDialogue.findViewById(R.id.prodCountEt);
+                //pricePerProdEt
+                chooseProdDiEt[1]=(EditText) buyInfoDialogue.findViewById(R.id.pricePerProdEt);
+                //boxQuanEt
+                chooseProdDiEt[2]=(EditText) buyInfoDialogue.findViewById(R.id.boxQuanEt);
+                //boxPriceEt 
+                chooseProdDiEt[3]=(EditText) buyInfoDialogue.findViewById(R.id.boxPriceEt);
+                //itemPerBoxEt
+                chooseProdDiEt[4]=(EditText) buyInfoDialogue.findViewById(R.id.itemPerBoxEt);
+                EditText unitEt=(EditText) buyInfoDialogue.findViewById(R.id.unitEt);
+                for (int i=0; i<chooseProdDiEt.length; i++){
+                    chooseProdDiEt[i].addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {                        }@Override public void onTextChanged(CharSequence s, int start, int before, int count) {                        }
+                        @Override
+                        public void afterTextChanged(Editable s) {
+                            Toast.makeText(getContext(), "text changed", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        });
+//        View v= getLayoutInflater().inflate(R.layout.buy_list_each, null);
+//        LinearLayout frameLayout=(LinearLayout) view.findViewById(R.id.buyFragFrLayout);
+//        frameLayout.addView(v);
 
         return view;
     }
-    private void setData(String[] tag, String[] data){
-        new VolleyTakeData(getContext(),"http://192.168.111.212/me/getSupplier.php", tag, data, new AfterTakingData() {
+
+    protected void cusSupProdDialogueFunc(Dialog dialog, TextView ultimateTextSetTextview, String subUrl, String fullUrl){
+        EditText supNameEt=(EditText) dialog.findViewById(R.id.supNameEt);
+        ListView supplierList=(ListView)dialog.findViewById(R.id.supList);
+        Button addCrSupBtn=(Button) dialog.findViewById(R.id.addCrSupBtn);
+        String[] tag={"name"};
+        String[] data={""};
+        setData(tag, data, dialog, supNameEt, supplierList, addCrSupBtn, subUrl);
+
+        supNameEt.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {} @Override public void onTextChanged(CharSequence s, int start, int before, int count) { }
+            @Override
+            public void afterTextChanged(Editable s) {
+                String[] tag={"name"};
+                String[] data={supNameEt.getText().toString()};
+                setData(tag, data,  dialog, supNameEt, supplierList, addCrSupBtn, subUrl);
+            }
+        });
+        addCrSupBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(supNameEt.getText().toString().isEmpty()){
+                    Toast.makeText(getContext(), subUrl+ " name can't be empty", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if(addCrSupBtn.getText().toString().equalsIgnoreCase("Add "+subUrl)){
+                    ultimateTextSetTextview.setText(supNameEt.getText().toString());
+                    dialog.dismiss();
+                    return;
+                }
+                String[] tag={"name"};
+                String[] data={supNameEt.getText().toString()};
+                new VolleyTakeData(getContext(), fullUrl, tag, data, new AfterTakingData() {
+                    @Override
+                    public void doAfterTakingData(String response) {
+                        if(response.equals("1")){
+                            ultimateTextSetTextview.setText(supNameEt.getText().toString());
+                            dialog.dismiss();;
+                        }else {
+                            Toast.makeText(getContext(),"Error occurred "+ response, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        });
+    }
+    protected void setData(String[] tag, String[] data, Dialog addSupDialog, EditText supNameEt, ListView supplierList, Button addCrSupBtn, String subUrl){
+        new VolleyTakeData(getContext(),"http://192.168.111.212/me/get"+ subUrl +".php", tag, data, new AfterTakingData() {
             @Override
             public void doAfterTakingData(String response) {
                 ArrayList<String> rslt=new ArrayList<>();
@@ -160,27 +208,28 @@ public class BuyFrag extends Fragment {
                     JSONArray jsonArray = new JSONArray(response);
                     JSONObject explrObject;
                     if(supNameEt.getText().toString().isEmpty()){
-                        addCrSupBtn.setText("Suplier name can't be empty");
+                        addCrSupBtn.setText(subUrl+ " name can't be empty");
                     }else{
-                        addCrSupBtn.setText("Create supplier and then add");
+                        addCrSupBtn.setText("Create "+ subUrl +" and then add");
                     }
                     for (int i = 0; i < jsonArray.length(); i++) {
                         explrObject = jsonArray.getJSONObject(i);
                         rslt.add(explrObject.getString("name"));
                         if(//   (!addCrSupBtn.getText().equals("Add Supplier")) &&
                             explrObject.getString("name").equals(supNameEt.getText().toString())){
-                            addCrSupBtn.setText("Add Supplier");
+                            addCrSupBtn.setText("Add "+ subUrl);
                         }
                     }
                 }catch (Exception e){
                     Toast.makeText(getContext(), "error while parsing json", Toast.LENGTH_SHORT).show();
                 }
-                ArrayAdapter<String> arrayAdapter=new ArrayAdapter<>(getContext(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, rslt);
+                //ArrayAdapter<String > arrayAdapter= new ArrayAdapter<>(getContext(), an)
+                ArrayAdapter<String> arrayAdapter=new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, rslt);
                 supplierList.setAdapter(arrayAdapter);
                 supplierList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        supNameEt.setText(rslt.get( position));
+                        supNameEt.setText(rslt.get(position));
                     }
                 });
             }

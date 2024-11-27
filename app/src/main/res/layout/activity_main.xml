@@ -16,6 +16,7 @@
             android:layout_height="73dp"
             app:title="@string/toolBarTitle"
             android:background="@color/toolBarBackground"
+            app:titleTextColor="@color/headerFont"
             android:padding="10dp"
             android:id="@+id/toolBar"
             />
@@ -33,5 +34,7 @@
         app:headerLayout="@layout/nav_header"
         app:menu="@menu/nav_menu"
         android:layout_gravity="start"
+
+        app:itemTextColor="@color/headerFont"
         />
 </androidx.drawerlayout.widget.DrawerLayout>

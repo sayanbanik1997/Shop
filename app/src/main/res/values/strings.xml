@@ -10,4 +10,12 @@
     <string name="buyerNameBuyFrag">Tap to set buyer\'s name</string>
     <string name="byingDate">Bying date</string>
     <string name="name">name</string>
+    <string name="chooseProdTxt">Choose product</string>
+    <string name="boxQuanDumyTxt">Box count</string>
+    <string name="unitDumyTxt">Unit</string>
+    <string name="submit">Submit</string>
+    <string name="itemPerBoxDumyTxt">Item per box</string>
+    <string name="boxPriceDumyTxt">Box price</string>
+    <string name="pricePerProdDumyTxt">Product price</string>
+    <string name="prodCountDumyTxt">Product count</string>
 </resources>

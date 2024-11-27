@@ -49,5 +49,6 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+        getSupportFragmentManager().beginTransaction().add(R.id.frameLayout, new BuyFrag()).commit();
     }
 }

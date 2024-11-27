@@ -26,16 +26,15 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="10dp"
-                android:paddingTop="10dp"
                 android:layout_marginBottom="10dp"
-                android:background="@color/buyHeaderCl"
+                android:background="@color/backgroundLight"
                 >
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/buyerNameBuyFrag"
                     android:id="@+id/supNameTxt"
+                    android:textColor="@color/fontDark"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     />
@@ -44,6 +43,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/byingDate"
                     android:id="@+id/byingDtTxt"
+                    android:textColor="@color/fontDark"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     />
@@ -56,21 +56,21 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:background="@color/white"
+            android:background="@color/backgroundLight"
             android:id="@+id/addSubBtnLLayout"
             >
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Submit"
-
+                android:id="@+id/submitProdPurchaseBtn"
                 />
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Add Product"
+                android:id="@+id/addProdIntoListBtn"
                 android:layout_weight="1"
-
                 />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
