@@ -7,7 +7,7 @@
     <string name="navDrOpen">open</string>
     <string name="navDrClose">close</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="buyerNameBuyFrag">Tap to set buyer name</string>
+    <string name="buyerNameBuyFrag">Tap to set buyer\'s name</string>
     <string name="byingDate">Bying date</string>
     <string name="name">name</string>
 </resources>

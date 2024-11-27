@@ -1,5 +1,6 @@
 package com.google.sayanbanik1997.shop;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.os.Build;
@@ -14,11 +15,14 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -140,6 +144,11 @@ public class BuyFrag extends Fragment {
                 }
             });
         }
+
+        View v= getLayoutInflater().inflate(R.layout.buy_list_each, null);
+        LinearLayout frameLayout=(LinearLayout) view.findViewById(R.id.buyFragFrLayout);
+        frameLayout.addView(v);
+
         return view;
     }
     private void setData(String[] tag, String[] data){

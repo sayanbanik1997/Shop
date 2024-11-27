@@ -5,4 +5,5 @@
     <color name="btn">#2CDC3E</color>
     <color name="toolBarBackground">#022104</color>
     <color name="headerFontColor">#FFFFFFFF</color>
+    <color name="buyHeaderCl">#4B2B2B</color>
 </resources>
