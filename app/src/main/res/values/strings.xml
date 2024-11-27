@@ -18,4 +18,5 @@
     <string name="boxPriceDumyTxt">Box price</string>
     <string name="pricePerProdDumyTxt">Product price</string>
     <string name="prodCountDumyTxt">Product count</string>
+    <string name="totalAmountDumyTxt">Total amount</string>
 </resources>

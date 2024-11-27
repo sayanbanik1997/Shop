@@ -123,7 +123,7 @@ public class BuyFrag extends Fragment {
                     }
                 });
 
-                EditText[] chooseProdDiEt= new EditText[5];
+                EditText[] chooseProdDiEt= new EditText[6];
                 //prodCountEt
                 chooseProdDiEt[0]=(EditText) buyInfoDialogue.findViewById(R.id.prodCountEt);
                 //pricePerProdEt
@@ -134,14 +134,25 @@ public class BuyFrag extends Fragment {
                 chooseProdDiEt[3]=(EditText) buyInfoDialogue.findViewById(R.id.boxPriceEt);
                 //itemPerBoxEt
                 chooseProdDiEt[4]=(EditText) buyInfoDialogue.findViewById(R.id.itemPerBoxEt);
+                //totalAmountEt
+                chooseProdDiEt[5]=(EditText) buyInfoDialogue.findViewById(R.id.totalAmountEt);
                 EditText unitEt=(EditText) buyInfoDialogue.findViewById(R.id.unitEt);
+
                 for (int i=0; i<chooseProdDiEt.length; i++){
+                    EditText e=chooseProdDiEt[i];
                     chooseProdDiEt[i].addTextChangedListener(new TextWatcher() {
                         @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {                        }@Override public void onTextChanged(CharSequence s, int start, int before, int count) {                        }
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}@Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
                         @Override
                         public void afterTextChanged(Editable s) {
-                            Toast.makeText(getContext(), "text changed", Toast.LENGTH_SHORT).show();
+                            //prodInfoDialogInfo(e, chooseProdDiEt);
+                        }
+                    });
+                    chooseProdDiEt[i].setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                        @Override
+                        public void onFocusChange(View v, boolean hasFocus) {
+                            //Toast.makeText(getContext(), Boolean.toString(v.hasFocus()), Toast.LENGTH_SHORT).show();
+                            prodInfoDialogInfo((EditText) v, chooseProdDiEt);
                         }
                     });
                 }
@@ -154,6 +165,42 @@ public class BuyFrag extends Fragment {
         return view;
     }
 
+    protected  void prodInfoDialogInfo(EditText thisEditText, EditText[] editTextArr){
+        float prodCountFloat=0,pricePerProdFloat=0,boxQuanFloat=0,boxPriceFloat=0,itemPerBoxFloat=0, totalAmountFloat=0;
+        if(!editTextArr[0].getText().toString().isEmpty()){
+            prodCountFloat=Float.parseFloat( editTextArr[0].getText().toString());
+        } if (!editTextArr[1].getText().toString().isEmpty()){
+            pricePerProdFloat=Float.parseFloat( editTextArr[1].getText().toString());
+        } if (!editTextArr[2].getText().toString().isEmpty()){
+            boxQuanFloat=Float.parseFloat( editTextArr[2].getText().toString());
+        } if (!editTextArr[3].getText().toString().isEmpty()){
+            boxPriceFloat=Float.parseFloat( editTextArr[3].getText().toString());
+        } if (!editTextArr[4].getText().toString().isEmpty()) {
+            itemPerBoxFloat = Float.parseFloat(editTextArr[4].getText().toString());
+        }if (!editTextArr[5].getText().toString().isEmpty()) {
+            totalAmountFloat = Float.parseFloat(editTextArr[5].getText().toString());
+        }
+        if(thisEditText == editTextArr[0] ){
+            if(!editTextArr[0].getText().toString().isEmpty()) {
+                if (pricePerProdFloat!=0) {
+                    editTextArr[5].setText(Float.toString(prodCountFloat * pricePerProdFloat));
+                }else if (!editTextArr[5].getText().toString().isEmpty()) {
+                    editTextArr[1].setText(Float.toString(totalAmountFloat / prodCountFloat));
+                }
+                if (!editTextArr[2].getText().toString().isEmpty()) {
+                    editTextArr[4].setText(Float.toString(prodCountFloat / boxQuanFloat));
+                }else if (!editTextArr[4].getText().toString().isEmpty()) {
+                    editTextArr[2].setText(Float.toString(prodCountFloat / pricePerProdFloat));
+                }
+            }else{
+//                editTextArr[5].setText("");
+//                editTextArr[4].setText("");
+//                editTextArr[2].setText("");
+//                editTextArr[1].setText("");
+            }
+        }
+        Toast.makeText(getContext(), thisEditText.getText().toString(), Toast.LENGTH_SHORT).show();
+    }
     protected void cusSupProdDialogueFunc(Dialog dialog, TextView ultimateTextSetTextview, String subUrl, String fullUrl){
         EditText supNameEt=(EditText) dialog.findViewById(R.id.supNameEt);
         ListView supplierList=(ListView)dialog.findViewById(R.id.supList);
