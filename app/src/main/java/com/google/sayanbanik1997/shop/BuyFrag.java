@@ -3,6 +3,7 @@ package com.google.sayanbanik1997.shop;
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -130,7 +131,7 @@ public class BuyFrag extends Fragment {
                 chooseProdDiEt[1]=(EditText) buyInfoDialogue.findViewById(R.id.pricePerProdEt);
                 //boxQuanEt
                 chooseProdDiEt[2]=(EditText) buyInfoDialogue.findViewById(R.id.boxQuanEt);
-                //boxPriceEt 
+                //boxPriceEt
                 chooseProdDiEt[3]=(EditText) buyInfoDialogue.findViewById(R.id.boxPriceEt);
                 //itemPerBoxEt
                 chooseProdDiEt[4]=(EditText) buyInfoDialogue.findViewById(R.id.itemPerBoxEt);
@@ -145,14 +146,29 @@ public class BuyFrag extends Fragment {
                         public void beforeTextChanged(CharSequence s, int start, int count, int after) {}@Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
                         @Override
                         public void afterTextChanged(Editable s) {
-                            //prodInfoDialogInfo(e, chooseProdDiEt);
+
                         }
                     });
                     chooseProdDiEt[i].setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                        String getStringToCompare;
                         @Override
                         public void onFocusChange(View v, boolean hasFocus) {
-                            //Toast.makeText(getContext(), Boolean.toString(v.hasFocus()), Toast.LENGTH_SHORT).show();
-                            prodInfoDialogInfo((EditText) v, chooseProdDiEt);
+                            if(v.hasFocus()) {
+                                new Thread(){
+                                    public void run(){
+                                        try {
+                                            Thread.sleep(100);
+                                            getStringToCompare = ((EditText) v).getText().toString();
+                                        } catch (Exception ex) {
+                                            throw new RuntimeException(ex);
+                                        }
+                                    }
+                                }.start();
+                            }else{
+                                if(!getStringToCompare.equals(((EditText)v).getText().toString())) {
+                                    prodInfoDialogInfo((EditText) v, chooseProdDiEt);
+                                }
+                            }
                         }
                     });
                 }
@@ -166,40 +182,211 @@ public class BuyFrag extends Fragment {
     }
 
     protected  void prodInfoDialogInfo(EditText thisEditText, EditText[] editTextArr){
-        float prodCountFloat=0,pricePerProdFloat=0,boxQuanFloat=0,boxPriceFloat=0,itemPerBoxFloat=0, totalAmountFloat=0;
-        if(!editTextArr[0].getText().toString().isEmpty()){
-            prodCountFloat=Float.parseFloat( editTextArr[0].getText().toString());
-        } if (!editTextArr[1].getText().toString().isEmpty()){
-            pricePerProdFloat=Float.parseFloat( editTextArr[1].getText().toString());
-        } if (!editTextArr[2].getText().toString().isEmpty()){
-            boxQuanFloat=Float.parseFloat( editTextArr[2].getText().toString());
-        } if (!editTextArr[3].getText().toString().isEmpty()){
-            boxPriceFloat=Float.parseFloat( editTextArr[3].getText().toString());
-        } if (!editTextArr[4].getText().toString().isEmpty()) {
-            itemPerBoxFloat = Float.parseFloat(editTextArr[4].getText().toString());
-        }if (!editTextArr[5].getText().toString().isEmpty()) {
-            totalAmountFloat = Float.parseFloat(editTextArr[5].getText().toString());
+        ArrayList<Integer> relation;
+        ArrayList<ArrayList<Integer>>[] relationArrList = new ArrayList[6];
+        for(int i=0; i<relationArrList.length; i++){
+            relationArrList[i]=new ArrayList<>(2);
         }
-        if(thisEditText == editTextArr[0] ){
-            if(!editTextArr[0].getText().toString().isEmpty()) {
-                if (pricePerProdFloat!=0) {
-                    editTextArr[5].setText(Float.toString(prodCountFloat * pricePerProdFloat));
-                }else if (!editTextArr[5].getText().toString().isEmpty()) {
-                    editTextArr[1].setText(Float.toString(totalAmountFloat / prodCountFloat));
+        
+        //0
+        relation = new ArrayList<>(3);
+        for(int i=0;i<3; i++) relation.add(-1);
+        relation.set(0, 5); relation.set(1, 0); relation.set(2, 1);
+        relationArrList[0].add(relation);
+
+        relation = new ArrayList<>(3);
+        for(int i=0;i<3; i++) relation.add(-1);
+        relation.set(0,0); relation.set(1,2); relation.set(2,4);
+        relationArrList[0].add(relation);
+
+
+        //1
+        relation = new ArrayList<>(3);
+        for(int i=0;i<3; i++) relation.add(-1);
+        relation.set(0,5); relation.set(1,0); relation.set(2,1);
+        relationArrList[1].add(relation);
+
+        relation = new ArrayList<>(3);
+        for(int i=0;i<3; i++) relation.add(-1);
+        relation.set(0,3); relation.set(1,1); relation.set(2,4);
+        relationArrList[1].add(relation);
+
+
+        //2
+        relation = new ArrayList<>(3);
+        for(int i=0;i<3; i++) relation.add(-1);
+        relation.set(0,0); relation.set(1,2); relation.set(2,4);
+        relationArrList[2].add(relation);
+
+        relation = new ArrayList<>(3);
+        for(int i=0;i<3; i++) relation.add(-1);
+        relation.set(0,5); relation.set(1,2); relation.set(2,3);
+        relationArrList[2].add(relation);
+
+
+        //3
+        relation = new ArrayList<>(3);
+        for(int i=0;i<3; i++) relation.add(-1);
+        relation.set(0,3); relation.set(1,1); relation.set(2,4);
+        relationArrList[3].add(relation);
+
+        relation = new ArrayList<>(3);
+        for(int i=0;i<3; i++) relation.add(-1);
+        relation.set(0,5); relation.set(1,2); relation.set(2,3);
+        relationArrList[3].add(relation);
+
+
+        //4
+        relation = new ArrayList<>(3);
+        for(int i=0;i<3; i++) relation.add(-1);
+        relation.set(0,0); relation.set(1,2); relation.set(2,4);
+        relationArrList[4].add(relation);
+
+        relation = new ArrayList<>(3);
+        for(int i=0;i<3; i++) relation.add(-1);
+        relation.set(0,3); relation.set(1,1); relation.set(2,4);
+        relationArrList[4].add(relation);
+
+
+        //5
+        relation = new ArrayList<>(3);
+        for(int i=0;i<3; i++) relation.add(-1);
+        relation.set(0,5); relation.set(1,0); relation.set(2,1);
+        relationArrList[5].add(relation);
+
+        relation = new ArrayList<>(3);
+        for(int i=0;i<3; i++) relation.add(-1);
+        relation.set(0,5); relation.set(1,2); relation.set(2,3);
+        relationArrList[5].add(relation);
+
+        int noOfThisEt=0;
+        while(thisEditText!=editTextArr[noOfThisEt]){
+            noOfThisEt++;
+        }
+
+        ArrayList<EditText> callThisFuncOnArrL= new ArrayList<>(2);
+        for(int i=0; i<relationArrList[noOfThisEt].size(); i++){
+            if(!editTextArr[noOfThisEt].getText().toString().isEmpty()){
+                //Toast.makeText(getContext(), Integer.toString( relationArrList[noOfThisEt].get(i).indexOf(noOfThisEt)), Toast.LENGTH_SHORT).show();
+                if(relationArrList[noOfThisEt].get(i).indexOf(noOfThisEt)==0){
+                    if(editTextArr[ relationArrList[noOfThisEt].get(i).get(1)].getText().toString().isEmpty() &&
+                            (!editTextArr[ relationArrList[noOfThisEt].get(i).get(2)].getText().toString().isEmpty())){
+                        editTextArr[ relationArrList[noOfThisEt].get(i).get(1)].setText(Float.toString(
+                                Float.parseFloat( editTextArr[ relationArrList[noOfThisEt].get(i).get(0)].getText().toString())/
+                                    Float.parseFloat( editTextArr[ relationArrList[noOfThisEt].get(i).get(2)].getText().toString())
+                                )
+                        );
+                        callThisFuncOnArrL.add(editTextArr[ relationArrList[noOfThisEt].get(i).get(1)]);
+                    } else if(editTextArr[ relationArrList[noOfThisEt].get(i).get(2)].getText().toString().isEmpty() &&
+                            (!editTextArr[ relationArrList[noOfThisEt].get(i).get(1)].getText().toString().isEmpty())){
+                        editTextArr[ relationArrList[noOfThisEt].get(i).get(2)].setText(Float.toString(
+                                        Float.parseFloat( editTextArr[ relationArrList[noOfThisEt].get(i).get(0)].getText().toString())/
+                                                Float.parseFloat( editTextArr[ relationArrList[noOfThisEt].get(i).get(1)].getText().toString())
+                                )
+                        );
+                        callThisFuncOnArrL.add(editTextArr[ relationArrList[noOfThisEt].get(i).get(2)]);
+                    }else if((!editTextArr[ relationArrList[noOfThisEt].get(i).get(2)].getText().toString().isEmpty()) &&
+                            (!editTextArr[ relationArrList[noOfThisEt].get(i).get(1)].getText().toString().isEmpty())) {
+
+                        if (Float.parseFloat(editTextArr[relationArrList[noOfThisEt].get(i).get(0)].getText().toString())!=
+                                Float.parseFloat(editTextArr[relationArrList[noOfThisEt].get(i).get(1)].getText().toString())*
+                                Float.parseFloat(editTextArr[relationArrList[noOfThisEt].get(i).get(2)].getText().toString())){
+
+//                            Log.d("kkkk", "1 "+
+//                                    Float.toString( Float.parseFloat(editTextArr[relationArrList[noOfThisEt].get(i).get(0)].getText().toString())) +" "+
+//                                    Float.toString(Float.parseFloat(editTextArr[relationArrList[noOfThisEt].get(i).get(1)].getText().toString())*
+//                                            Float.parseFloat(editTextArr[relationArrList[noOfThisEt].get(i).get(2)].getText().toString())));
+
+                            for (int j = 0; j < relationArrList[noOfThisEt].get(i).size(); j++) {
+                                if (editTextArr[relationArrList[noOfThisEt].get(i).get(j)] != thisEditText) {
+                                    editTextArr[relationArrList[noOfThisEt].get(i).get(j)].setText("");
+                                }
+                            }
+                        }
+                    }
+                }else if(relationArrList[noOfThisEt].get(i).indexOf(noOfThisEt)==1){
+                    if(editTextArr[ relationArrList[noOfThisEt].get(i).get(0)].getText().toString().isEmpty() &&
+                            (!editTextArr[ relationArrList[noOfThisEt].get(i).get(2)].getText().toString().isEmpty())){
+                        editTextArr[ relationArrList[noOfThisEt].get(i).get(0)].setText(Float.toString(
+                                        Float.parseFloat( editTextArr[ relationArrList[noOfThisEt].get(i).get(1)].getText().toString())*
+                                                Float.parseFloat( editTextArr[ relationArrList[noOfThisEt].get(i).get(2)].getText().toString())
+                                )
+                        );
+                        callThisFuncOnArrL.add(editTextArr[ relationArrList[noOfThisEt].get(i).get(0)]);
+                    } else if(editTextArr[ relationArrList[noOfThisEt].get(i).get(2)].getText().toString().isEmpty() &&
+                            (!editTextArr[ relationArrList[noOfThisEt].get(i).get(0)].getText().toString().isEmpty())){
+                        editTextArr[ relationArrList[noOfThisEt].get(i).get(2)].setText(Float.toString(
+                                        Float.parseFloat( editTextArr[ relationArrList[noOfThisEt].get(i).get(0)].getText().toString())/
+                                                Float.parseFloat( editTextArr[ relationArrList[noOfThisEt].get(i).get(1)].getText().toString())
+                                )
+                        );
+                        callThisFuncOnArrL.add(editTextArr[ relationArrList[noOfThisEt].get(i).get(2)]);
+                    }else if((!editTextArr[ relationArrList[noOfThisEt].get(i).get(2)].getText().toString().isEmpty()) &&
+                            (!editTextArr[ relationArrList[noOfThisEt].get(i).get(0)].getText().toString().isEmpty())){
+
+                      if (Float.parseFloat(editTextArr[relationArrList[noOfThisEt].get(i).get(0)].getText().toString())!=
+                                Float.parseFloat(editTextArr[relationArrList[noOfThisEt].get(i).get(1)].getText().toString())*
+                                        Float.parseFloat(editTextArr[relationArrList[noOfThisEt].get(i).get(2)].getText().toString())) {
+//                          Log.d("kkkk", "2 "+
+//                                  Float.toString( Float.parseFloat(editTextArr[relationArrList[noOfThisEt].get(i).get(0)].getText().toString())) +" "+
+//                                  Float.toString(Float.parseFloat(editTextArr[relationArrList[noOfThisEt].get(i).get(1)].getText().toString())*
+//                                          Float.parseFloat(editTextArr[relationArrList[noOfThisEt].get(i).get(2)].getText().toString())));
+                            for (int j = 0; j < relationArrList[noOfThisEt].get(i).size(); j++)
+                                if (editTextArr[relationArrList[noOfThisEt].get(i).get(j)] != thisEditText) {
+                                    editTextArr[relationArrList[noOfThisEt].get(i).get(j)].setText("");
+                                }
+                        }
+                    }
                 }
-                if (!editTextArr[2].getText().toString().isEmpty()) {
-                    editTextArr[4].setText(Float.toString(prodCountFloat / boxQuanFloat));
-                }else if (!editTextArr[4].getText().toString().isEmpty()) {
-                    editTextArr[2].setText(Float.toString(prodCountFloat / pricePerProdFloat));
+                else{
+                    if(editTextArr[ relationArrList[noOfThisEt].get(i).get(0)].getText().toString().isEmpty() &&
+                            (!editTextArr[ relationArrList[noOfThisEt].get(i).get(1)].getText().toString().isEmpty())){
+                        editTextArr[ relationArrList[noOfThisEt].get(i).get(0)].setText(Float.toString(
+                                        Float.parseFloat( editTextArr[ relationArrList[noOfThisEt].get(i).get(1)].getText().toString())*
+                                                Float.parseFloat( editTextArr[ relationArrList[noOfThisEt].get(i).get(2)].getText().toString())
+                                )
+                        );
+                        callThisFuncOnArrL.add(editTextArr[ relationArrList[noOfThisEt].get(i).get(0)]);
+                    } else if(editTextArr[ relationArrList[noOfThisEt].get(i).get(1)].getText().toString().isEmpty() &&
+                            (!editTextArr[ relationArrList[noOfThisEt].get(i).get(0)].getText().toString().isEmpty())){
+                        editTextArr[ relationArrList[noOfThisEt].get(i).get(1)].setText(Float.toString(
+                                        Float.parseFloat( editTextArr[ relationArrList[noOfThisEt].get(i).get(0)].getText().toString())/
+                                                Float.parseFloat( editTextArr[ relationArrList[noOfThisEt].get(i).get(2)].getText().toString())
+                                )
+                        );
+                        callThisFuncOnArrL.add(editTextArr[ relationArrList[noOfThisEt].get(i).get(1)]);
+                    }else if((!editTextArr[ relationArrList[noOfThisEt].get(i).get(0)].getText().toString().isEmpty()) &&
+                            (!editTextArr[ relationArrList[noOfThisEt].get(i).get(1)].getText().toString().isEmpty())){
+
+                       if (Float.parseFloat(editTextArr[relationArrList[noOfThisEt].get(i).get(0)].getText().toString())!=
+                                Float.parseFloat(editTextArr[relationArrList[noOfThisEt].get(i).get(1)].getText().toString())*
+                                Float.parseFloat(editTextArr[relationArrList[noOfThisEt].get(i).get(2)].getText().toString())) {
+//                           Log.d("kkkk", "3 "+
+//                                   Float.toString( Float.parseFloat(editTextArr[relationArrList[noOfThisEt].get(i).get(0)].getText().toString())) +" "+
+//                                   Float.toString(Float.parseFloat(editTextArr[relationArrList[noOfThisEt].get(i).get(1)].getText().toString())*
+//                                           Float.parseFloat(editTextArr[relationArrList[noOfThisEt].get(i).get(2)].getText().toString())));
+                            for (int j = 0; j < relationArrList[noOfThisEt].get(i).size(); j++)
+                                if (editTextArr[relationArrList[noOfThisEt].get(i).get(j)] != thisEditText) {
+                                    editTextArr[relationArrList[noOfThisEt].get(i).get(j)].setText("");
+                                }
+                        }
+                    }
                 }
             }else{
-//                editTextArr[5].setText("");
-//                editTextArr[4].setText("");
-//                editTextArr[2].setText("");
-//                editTextArr[1].setText("");
+                for (int j=0; j<relationArrList[noOfThisEt].get(i).size(); j++) {
+                    editTextArr[relationArrList[noOfThisEt].get(i).get(j)].setText("");
+                }
             }
         }
-        Toast.makeText(getContext(), thisEditText.getText().toString(), Toast.LENGTH_SHORT).show();
+        String s=noOfThisEt+" ";
+        for(int i=0; i<editTextArr.length; i++){
+            s+=editTextArr[i].getText().toString()+" ";
+        }
+        //Log.d("kkkk", s);
+
+        for(int i=0;i< callThisFuncOnArrL.size();i++){
+            prodInfoDialogInfo(callThisFuncOnArrL.get(i), editTextArr);
+        }
     }
     protected void cusSupProdDialogueFunc(Dialog dialog, TextView ultimateTextSetTextview, String subUrl, String fullUrl){
         EditText supNameEt=(EditText) dialog.findViewById(R.id.supNameEt);
@@ -263,7 +450,7 @@ public class BuyFrag extends Fragment {
                         explrObject = jsonArray.getJSONObject(i);
                         rslt.add(explrObject.getString("name"));
                         if(//   (!addCrSupBtn.getText().equals("Add Supplier")) &&
-                            explrObject.getString("name").equals(supNameEt.getText().toString())){
+                                explrObject.getString("name").equals(supNameEt.getText().toString())){
                             addCrSupBtn.setText("Add "+ subUrl);
                         }
                     }
