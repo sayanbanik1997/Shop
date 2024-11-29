@@ -16,7 +16,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:id="@+id/prodCountLinLayoutProdEntry">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -24,7 +25,7 @@
             android:id="@+id/prodCountDumyTxt"
             />
         <EditText
-            android:layout_width="match_parent"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:id="@+id/prodCountEt"
             android:inputType="numberDecimal"
@@ -34,7 +35,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:id="@+id/pricePerProdLinLayoutProdEntry"
+        >
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -42,7 +45,7 @@
             android:id="@+id/pricePerProdDumyTxt"
             />
         <EditText
-            android:layout_width="match_parent"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:id="@+id/pricePerProdEt"
             android:inputType="numberDecimal"
@@ -52,7 +55,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:id="@+id/boxQuanLayoutProdEntry">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -60,7 +64,7 @@
             android:id="@+id/boxQuanDumyTxt"
             />
         <EditText
-            android:layout_width="match_parent"
+            android:layout_width="180dp"
             android:layout_height="wrap_content"
             android:id="@+id/boxQuanEt"
             android:inputType="numberDecimal"
@@ -70,7 +74,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:id="@+id/boxPriceLinLayoutProdEntry">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -78,7 +83,7 @@
             android:id="@+id/boxPriceDumyTxt"
             />
     <EditText
-        android:layout_width="match_parent"
+        android:layout_width="180dp"
         android:layout_height="wrap_content"
         android:id="@+id/boxPriceEt"
         android:inputType="numberDecimal"
@@ -88,7 +93,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:id="@+id/itemPerBoxLinLayoutProdEntry">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -97,7 +103,7 @@
             />
 
     <EditText
-        android:layout_width="match_parent"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:id="@+id/itemPerBoxEt"
         android:inputType="numberDecimal"
@@ -106,7 +112,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:id="@+id/totalAmountDLinLayoutProdEntry">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -114,7 +121,7 @@
             android:id="@+id/totalAmountDumyTxt"
             />
     <EditText
-        android:layout_width="match_parent"
+        android:layout_width="170dp"
         android:layout_height="wrap_content"
         android:id="@+id/totalAmountEt"
         android:inputType="numberDecimal"
@@ -131,7 +138,7 @@
             android:id="@+id/unitDumyTxt"
             />
         <EditText
-            android:layout_width="match_parent"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:id="@+id/unitEt"
             />

@@ -105,11 +105,33 @@ public class BuyFrag extends Fragment {
             });
         }
         addProdIntoListBtn.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("ResourceAsColor")
             @Override
             public void onClick(View v) {
                 Dialog buyInfoDialogue=new Dialog(getContext());
                 buyInfoDialogue.setContentView(R.layout.prod_list_entry);
                 buyInfoDialogue.show();
+
+                LinearLayout[] llArr=new LinearLayout[6];
+                llArr[0]=(LinearLayout)buyInfoDialogue.findViewById(R.id.prodCountLinLayoutProdEntry);
+                llArr[1]=(LinearLayout)buyInfoDialogue.findViewById(R.id.pricePerProdLinLayoutProdEntry);
+                llArr[2]=(LinearLayout)buyInfoDialogue.findViewById(R.id.boxQuanLayoutProdEntry);
+                llArr[3]=(LinearLayout)buyInfoDialogue.findViewById(R.id.boxPriceLinLayoutProdEntry);
+                llArr[4]=(LinearLayout)buyInfoDialogue.findViewById(R.id.itemPerBoxLinLayoutProdEntry);
+                llArr[5]=(LinearLayout)buyInfoDialogue.findViewById(R.id.totalAmountDLinLayoutProdEntry);
+
+//                LinearLayout v1 = (LinearLayout)buyInfoDialogue.findViewById(R.id.prodCountLinLayoutProdEntry);
+//                Button b=new Button(getContext());
+//                //b.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);b.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
+//                b.setText("change");
+//                b.setBackgroundColor(R.color.red);
+//                b.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        Toast.makeText(getContext(), "clicked", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+//                v1.addView(b);
 
                 TextView chooseProdTxt = (TextView) buyInfoDialogue.findViewById(R.id.chooseProdTxt);
 
@@ -166,7 +188,7 @@ public class BuyFrag extends Fragment {
                                 }.start();
                             }else{
                                 if(!getStringToCompare.equals(((EditText)v).getText().toString())) {
-                                    prodInfoDialogInfo((EditText) v, chooseProdDiEt);
+                                    prodInfoDialogInfoAutoAdj((EditText) v, chooseProdDiEt, llArr);
                                 }
                             }
                         }
@@ -181,7 +203,24 @@ public class BuyFrag extends Fragment {
         return view;
     }
 
-    protected  void prodInfoDialogInfo(EditText thisEditText, EditText[] editTextArr){
+    @SuppressLint("ResourceAsColor")
+    private Button createButton(int noOfThisBtn, int linkedNo, EditText[] etArr, LinearLayout[] linArr, Button[] btnArr){
+        Button b=new Button(getContext());
+        b.setText("change");
+        //b.setBackgroundColor(R.color.red);
+        b.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                etArr[noOfThisBtn].setText("");
+                linArr[noOfThisBtn].removeView(btnArr[noOfThisBtn]);linArr[linkedNo].removeView(btnArr[linkedNo]);
+                for(int i=0;i<etArr.length; i++){
+                    etArr[i].setFocusableInTouchMode(true);
+                }
+            }
+        });
+        return b;
+    }
+    protected  void prodInfoDialogInfoAutoAdj(EditText thisEditText, EditText[] editTextArr, LinearLayout[] llArr){
         ArrayList<Integer> relation;
         ArrayList<ArrayList<Integer>>[] relationArrList = new ArrayList[6];
         for(int i=0; i<relationArrList.length; i++){
@@ -264,6 +303,8 @@ public class BuyFrag extends Fragment {
             noOfThisEt++;
         }
 
+        Button[] clearBtnArr=new Button[editTextArr.length];
+
         ArrayList<EditText> callThisFuncOnArrL= new ArrayList<>(2);
         for(int i=0; i<relationArrList[noOfThisEt].size(); i++){
             if(!editTextArr[noOfThisEt].getText().toString().isEmpty()){
@@ -299,7 +340,16 @@ public class BuyFrag extends Fragment {
 
                             for (int j = 0; j < relationArrList[noOfThisEt].get(i).size(); j++) {
                                 if (editTextArr[relationArrList[noOfThisEt].get(i).get(j)] != thisEditText) {
-                                    editTextArr[relationArrList[noOfThisEt].get(i).get(j)].setText("");
+                                    //editTextArr[relationArrList[noOfThisEt].get(i).get(j)].setText("");
+                                    int k;
+                                    for (k = 0; k == j || editTextArr[relationArrList[noOfThisEt].get(i).get(k)] == thisEditText; k++){}
+                                    clearBtnArr[relationArrList[noOfThisEt].get(i).get(j)]=createButton(relationArrList[noOfThisEt].get(i).get(j), relationArrList[noOfThisEt].get(i).get(k), editTextArr, llArr, clearBtnArr);
+                                    llArr[relationArrList[noOfThisEt].get(i).get(j)].addView(
+                                            clearBtnArr[relationArrList[noOfThisEt].get(i).get(j)]
+                                    );
+                                    for(int l=0;l<editTextArr.length; l++){
+                                        editTextArr[l].setFocusable(false);
+                                    }
                                 }
                             }
                         }
@@ -333,7 +383,16 @@ public class BuyFrag extends Fragment {
 //                                          Float.parseFloat(editTextArr[relationArrList[noOfThisEt].get(i).get(2)].getText().toString())));
                             for (int j = 0; j < relationArrList[noOfThisEt].get(i).size(); j++)
                                 if (editTextArr[relationArrList[noOfThisEt].get(i).get(j)] != thisEditText) {
-                                    editTextArr[relationArrList[noOfThisEt].get(i).get(j)].setText("");
+                                    //editTextArr[relationArrList[noOfThisEt].get(i).get(j)].setText("");
+                                    int k;
+                                    for (k = 0; k == j || editTextArr[relationArrList[noOfThisEt].get(i).get(k)] == thisEditText; k++){}
+                                    clearBtnArr[relationArrList[noOfThisEt].get(i).get(j)]=createButton(relationArrList[noOfThisEt].get(i).get(j), relationArrList[noOfThisEt].get(i).get(k), editTextArr, llArr, clearBtnArr);
+                                    llArr[relationArrList[noOfThisEt].get(i).get(j)].addView(
+                                            clearBtnArr[relationArrList[noOfThisEt].get(i).get(j)]
+                                    );
+                                    for(int l=0;l<editTextArr.length; l++){
+                                        editTextArr[l].setFocusable(false);
+                                    }
                                 }
                         }
                     }
@@ -367,25 +426,32 @@ public class BuyFrag extends Fragment {
 //                                           Float.parseFloat(editTextArr[relationArrList[noOfThisEt].get(i).get(2)].getText().toString())));
                             for (int j = 0; j < relationArrList[noOfThisEt].get(i).size(); j++)
                                 if (editTextArr[relationArrList[noOfThisEt].get(i).get(j)] != thisEditText) {
-                                    editTextArr[relationArrList[noOfThisEt].get(i).get(j)].setText("");
+                                    //editTextArr[relationArrList[noOfThisEt].get(i).get(j)].setText("");
+                                    int k;
+                                    for (k = 0; k == j || editTextArr[relationArrList[noOfThisEt].get(i).get(k)] == thisEditText; k++){}
+                                    clearBtnArr[relationArrList[noOfThisEt].get(i).get(j)]=createButton(relationArrList[noOfThisEt].get(i).get(j), relationArrList[noOfThisEt].get(i).get(k), editTextArr, llArr, clearBtnArr);
+                                    llArr[relationArrList[noOfThisEt].get(i).get(j)].addView(
+                                            clearBtnArr[relationArrList[noOfThisEt].get(i).get(j)]
+                                    );
+                                    for(int l=0;l<editTextArr.length; l++){
+                                        editTextArr[l].setFocusable(false);
+                                    }
                                 }
                         }
                     }
                 }
             }else{
-                for (int j=0; j<relationArrList[noOfThisEt].get(i).size(); j++) {
-                    editTextArr[relationArrList[noOfThisEt].get(i).get(j)].setText("");
-                }
+
             }
         }
-        String s=noOfThisEt+" ";
-        for(int i=0; i<editTextArr.length; i++){
-            s+=editTextArr[i].getText().toString()+" ";
-        }
+//        String s=noOfThisEt+" ";
+//        for(int i=0; i<editTextArr.length; i++){
+//            s+=editTextArr[i].getText().toString()+" ";
+//        }
         //Log.d("kkkk", s);
 
         for(int i=0;i< callThisFuncOnArrL.size();i++){
-            prodInfoDialogInfo(callThisFuncOnArrL.get(i), editTextArr);
+            prodInfoDialogInfoAutoAdj(callThisFuncOnArrL.get(i), editTextArr,  llArr);
         }
     }
     protected void cusSupProdDialogueFunc(Dialog dialog, TextView ultimateTextSetTextview, String subUrl, String fullUrl){

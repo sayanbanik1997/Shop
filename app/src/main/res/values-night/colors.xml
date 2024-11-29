@@ -3,9 +3,11 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="btn">#2CDC3E</color>
+    <color name="red">#FF0000</color>
 
     <color name="toolBarBackground">#022104</color>
     <color name="headerFont">#817F7F</color>
     <color name="fontDark">#000000</color>
     <color name="backgroundLight">#817F7F</color>
+
 </resources>
