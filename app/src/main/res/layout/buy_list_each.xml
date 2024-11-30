@@ -1,26 +1,184 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/buy_list_each"
+    android:padding="10dp"
     >
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="product name"
-
-        />
-    <TextView
+        android:id="@+id/prodNameTxt"
+        android:text="3 nami kobja"/>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/prodCountLl"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/prodAmountLl"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Product count "
+                android:id="@+id/prodCountDumyTxt"
+                />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Product count"
+            android:id="@+id/prodCountTxt"
+            />
+        </LinearLayout>
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Box count"
+        android:orientation="horizontal"
+        android:id="@+id/prodAmountLl"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/prodCountLl"
+        app:layout_constraintEnd_toEndOf="parent"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Product Price "
+            android:id="@+id/prodAmountDumyTxt"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Product Amount"
+            android:id="@+id/prodAmountTxt"
+            />
+    </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/boxCountLl"
+            app:layout_constraintTop_toBottomOf="@+id/prodCountLl"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/boxPriceLl"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="box Count "
+                android:id="@+id/boxCountDumyTxt"
 
-        />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="total price"
+                />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="box Count"
+            android:id="@+id/boxCountTxt"
 
-        />
+            />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/boxPriceLl"
+            app:layout_constraintTop_toBottomOf="@+id/prodAmountLl"
+            app:layout_constraintStart_toEndOf="@+id/boxCountLl"
+            app:layout_constraintEnd_toEndOf="parent"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="box Price "
+                android:id="@+id/boxPriceDumyTxt"
+
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="box Count"
+                android:id="@+id/boxPriceTxt"
+
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/itemPerBoxLl"
+            app:layout_constraintTop_toBottomOf="@+id/boxCountLl"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/unitLl"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Item per box "
+                android:id="@+id/ItemPerBoxDumyTxt"
+
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Item per box"
+                android:id="@+id/itemPerBoxTxt"
+
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/unitLl"
+            app:layout_constraintTop_toBottomOf="@+id/boxCountLl"
+            app:layout_constraintStart_toEndOf="@id/itemPerBoxLl"
+            app:layout_constraintEnd_toStartOf="@+id/totalAmountLl"
+            >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Unit "
+            android:id="@+id/unitDumyTxt"
+
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="unit"
+            android:id="@+id/unitTxt"
+
+            />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/totalAmountLl"
+            app:layout_constraintTop_toBottomOf="@+id/boxPriceLl"
+            app:layout_constraintStart_toEndOf="@id/unitLl"
+            app:layout_constraintEnd_toEndOf="parent"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Amount "
+                android:id="@+id/totalAmountDumyTxt"
+
+                />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="amount"
+            android:id="@+id/totalAmountTxt"
+
+            />
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>
