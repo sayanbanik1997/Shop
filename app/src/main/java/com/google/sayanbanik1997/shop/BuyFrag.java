@@ -64,7 +64,6 @@ public class BuyFrag extends Fragment {
         if (decimalFormatToComp.format(d1).equals(decimalFormatToComp.format(d2))) {
             return true;
         }
-        //Log.d("kkkk", d1 + " "+  d2 + "--------------------");
         return false;
     }
 
@@ -74,24 +73,23 @@ public class BuyFrag extends Fragment {
     Dialog addSupDialog;
     Button addProdIntoListBtn;
     BuyInfoDialog buyInfoDialog;
+    static Context context;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        context=getContext();
         view = inflater.inflate(R.layout.fragment_buy, container, false);
-        txt = (TextView) view.findViewById(R.id.supNameTxt);
-        byingDtTxt = (TextView) view.findViewById(R.id.byingDtTxt);
         supNameTxt = (TextView) view.findViewById(R.id.supNameTxt);
+        byingDtTxt = (TextView) view.findViewById(R.id.byingDtTxt);
 
         addProdIntoListBtn = (Button) view.findViewById(R.id.addProdIntoListBtn);
 
-        txt.setOnClickListener(new View.OnClickListener() {
+        supNameTxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 addSupDialog = new Dialog(getContext());
                 addSupDialog.setContentView(R.layout.add_supplier);
                 addSupDialog.show();
-
-                buyInfoDialog.cusSupProdDialogueFunc(addSupDialog, supNameTxt, "Supplier", "http://192.168.111.212/me/createSup.php");
-
+                cusSupProdDialogueFunc(addSupDialog, supNameTxt, "Supplier", "http://192.168.111.212/me/createSup.php");
             }
         });
 
@@ -103,170 +101,129 @@ public class BuyFrag extends Fragment {
             final int day = currentDate.getDayOfMonth();
             final int month = currentDate.getMonthValue();
             final int year = currentDate.getYear();
+            byingDtTxt.setText(year+"-"+month+"-"+day);
             byingDtTxt.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
                         @Override
                         public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                            byingDtTxt.setText(Integer.toString(dayOfMonth) + "-" +
-                                    Integer.toString(month) + "-" + Integer.toString(year));
+                            byingDtTxt.setText(Integer.toString(year) + "-" +
+                                    Integer.toString(month) + "-" + Integer.toString(dayOfMonth));
                         }
                     }, year, month - 1, day).show();
                 }
             });
         }
+
+        HashMap<View, BuyInfoDialog> vgLlHm=new HashMap<>();
         addProdIntoListBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                buyInfoDialog = new BuyInfoDialog(getContext(), view, BuyFrag.this);
+                buyInfoDialog = new BuyInfoDialog(getContext(), view, BuyFrag.this){
+                    @Override
+                    void subBtnClicked() {
+                        submitBtnClicked( buyInfoDialog, vgLlHm);
+                    }
+                };
             }
         });
-        return view;
-    }
-}
-class BuyInfoDialog {
-    static DecimalFormat decimalFormat = new DecimalFormat("#.0000000");
-    static DecimalFormat decimalFormatToComp = new DecimalFormat("#.00");
-    Context context;View view;Fragment fragment;
-    //LayoutInflater inflater;ViewGroup container;Bundle savedInstanceStat;
-
-    BuyInfoDialog(Context context, View view, Fragment fragment) {
-        this.context=context;
-        this.view=view;
-        this.fragment=fragment;
-        Dialog buyInfoDialogue = new Dialog(context);
-        buyInfoDialogue.setContentView(R.layout.prod_list_entry);
-        buyInfoDialogue.show();
-
-        LinearLayout[] llArr = new LinearLayout[6];
-        llArr[0] = (LinearLayout) buyInfoDialogue.findViewById(R.id.prodCountLinLayoutProdEntry);
-        llArr[1] = (LinearLayout) buyInfoDialogue.findViewById(R.id.pricePerProdLinLayoutProdEntry);
-        llArr[2] = (LinearLayout) buyInfoDialogue.findViewById(R.id.boxQuanLayoutProdEntry);
-        llArr[3] = (LinearLayout) buyInfoDialogue.findViewById(R.id.boxPriceLinLayoutProdEntry);
-        llArr[4] = (LinearLayout) buyInfoDialogue.findViewById(R.id.itemPerBoxLinLayoutProdEntry);
-        llArr[5] = (LinearLayout) buyInfoDialogue.findViewById(R.id.totalAmountDLinLayoutProdEntry);
-
-        TextView chooseProdTxt = (TextView) buyInfoDialogue.findViewById(R.id.chooseProdTxt);
-
-        chooseProdTxt.setOnClickListener(new View.OnClickListener() {
+        ((Button) view.findViewById(R.id.submitProdPurchaseBtn)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Dialog chooseProdDialogue = new Dialog(context);
-                chooseProdDialogue.setContentView(R.layout.add_supplier);
-                chooseProdDialogue.show();
-
-                cusSupProdDialogueFunc(chooseProdDialogue, chooseProdTxt, "Product", "http://192.168.111.212/me/createProd.php");
-            }
-        });
-
-        EditText[] chooseProdDiEtArr = new EditText[6];
-        //prodCountEt
-        chooseProdDiEtArr[0] = (EditText) buyInfoDialogue.findViewById(R.id.prodCountEt);
-        //pricePerProdEt
-        chooseProdDiEtArr[1] = (EditText) buyInfoDialogue.findViewById(R.id.pricePerProdEt);
-        //boxQuanEt
-        chooseProdDiEtArr[2] = (EditText) buyInfoDialogue.findViewById(R.id.boxQuanEt);
-        //boxPriceEt
-        chooseProdDiEtArr[3] = (EditText) buyInfoDialogue.findViewById(R.id.boxPriceEt);
-        //itemPerBoxEt
-        chooseProdDiEtArr[4] = (EditText) buyInfoDialogue.findViewById(R.id.itemPerBoxEt);
-        //totalAmountEt
-        chooseProdDiEtArr[5] = (EditText) buyInfoDialogue.findViewById(R.id.totalAmountEt);
-        EditText unitEt = (EditText) buyInfoDialogue.findViewById(R.id.unitEt);
-
-        Button[] clearBtnArr = new Button[chooseProdDiEtArr.length];
-
-        for (int i = 0; i < chooseProdDiEtArr.length; i++) {
-            EditText e = chooseProdDiEtArr[i];
-            chooseProdDiEtArr[i].addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-                }
-            });
-            chooseProdDiEtArr[i].setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                String getStringToCompare;
-                @Override
-                public void onFocusChange(View v, boolean hasFocus) {
-                    if (v.hasFocus()) {
-                        new Thread() {
-                            public void run() {
-                                try {
-                                    Thread.sleep(10);
-                                    getStringToCompare = ((EditText) v).getText().toString();
-                                } catch (Exception ex) {
-                                    throw new RuntimeException(ex);
-                                }
-                            }
-                        }.start();
-                    } else {
-                        if (!((EditText) v).isFocusableInTouchMode()) {
-                            ((EditText) v).setText(getStringToCompare);
-                            return;
-                        }
-                        if (!((EditText) v).getText().toString().isEmpty()) {
-                            if (getStringToCompare.isEmpty()) {
-                                prodInfoDialogInfoAutoAdj((EditText) v, chooseProdDiEtArr, llArr, clearBtnArr);
-                            } else {
-                                if (!BuyFrag.compDeci(Double.parseDouble(getStringToCompare), Double.parseDouble(((EditText) v).getText().toString()))) {
-                                    prodInfoDialogInfoAutoAdj((EditText) v, chooseProdDiEtArr, llArr, clearBtnArr);
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-        buyInfoDialogue.findViewById(R.id.submitBtn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v ) {
-                unitEt.requestFocus();
-                for (int i = 0; i < clearBtnArr.length; i++) {
-                    if (clearBtnArr[i] != null) {
-                        Toast.makeText(context, "Numbers are incorrect", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                }
-                View buyListEach = fragment.getLayoutInflater().inflate(R.layout.buy_list_each, null);
-                LinearLayout buyFragLlforDealInfoInsert = (LinearLayout) view.findViewById(R.id.buyFragLlforDealInfoInsert);
-                buyFragLlforDealInfoInsert.addView(buyListEach);
-                //buyListEach.setBackgroundColor(R.color.white);
-                TextView prodNameTxt = (TextView) buyListEach.findViewById(R.id.prodNameTxt);
-                TextView prodCountTxt = (TextView) buyListEach.findViewById(R.id.prodCountTxt);
-                TextView prodAmountTxt = (TextView) buyListEach.findViewById(R.id.prodAmountTxt);
-                TextView boxCountTxt = (TextView) buyListEach.findViewById(R.id.boxCountTxt);
-                TextView boxPriceTxt = (TextView) buyListEach.findViewById(R.id.boxPriceTxt);
-                TextView itemPerBoxTxt = (TextView) buyListEach.findViewById(R.id.itemPerBoxTxt);
-                TextView totalAmountTxt = (TextView) buyListEach.findViewById(R.id.totalAmountTxt);
-                TextView unitTxt = (TextView) buyListEach.findViewById(R.id.unitTxt);
-                prodNameTxt.setText(chooseProdTxt.getText());
-                prodCountTxt.setText(chooseProdDiEtArr[0].getText());
-                prodAmountTxt.setText(chooseProdDiEtArr[1].getText());
-                boxCountTxt.setText(chooseProdDiEtArr[2].getText());
-                boxPriceTxt.setText(chooseProdDiEtArr[3].getText());
-                itemPerBoxTxt.setText(chooseProdDiEtArr[4].getText());
-                totalAmountTxt.setText(chooseProdDiEtArr[5].getText());
-                unitTxt.setText(unitEt.getText());
-
-                buyListEach.setOnClickListener(new View.OnClickListener() {
+                String[] tags={"name", "dateOfPurchase"}, data={
+                    supNameTxt.getText().toString(), byingDtTxt.getText().toString()
+                };
+                new VolleyTakeData(getContext(), baseUrl + "insertProdEntry.php", tags, data, new AfterTakingData() {
                     @Override
-                    public void onClick(View v) {
-                        buyInfoDialogue.show();
+                    public void doAfterTakingData(String response) {
+                        if(Integer.parseInt(response)>0){
+                            JSONArray jsonArray= new JSONArray();
+                            JSONObject jsonObject=new JSONObject();
+
+                            for(Map.Entry me : vgLlHm.entrySet()){
+                                View eachListItem =(View) me.getKey();
+                                try {
+                                    jsonObject.put("prodEntryTblId", Integer.parseInt(response));
+                                    jsonObject.put("prodName", ((TextView)eachListItem.findViewById(R.id.prodNameTxt)).getText());
+                                    jsonObject.put("prodQuan", ((TextView)eachListItem.findViewById(R.id.prodCountTxt)).getText());
+                                    jsonObject.put("boxQuan", ((TextView)eachListItem.findViewById(R.id.boxCountTxt)).getText());
+                                    jsonObject.put("totalAmount", ((TextView)eachListItem.findViewById(R.id.totalAmountTxt)).getText());
+                                    jsonObject.put("unit", ((TextView)eachListItem.findViewById(R.id.unitTxt)).getText());
+                                    jsonArray.put(jsonObject);
+                                }catch (Exception e){
+                                    Toast.makeText(getContext(), "error putting json", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                            String[] tags={"data"};
+                            String[] data={jsonArray.toString()};
+                            new VolleyTakeData(getContext(), baseUrl + "insertProdList.php", tags, data, new AfterTakingData() {
+                                @Override
+                                public void doAfterTakingData(String response) {
+                                    if(Integer.parseInt(response)>0){
+                                        Toast.makeText(getContext(), "success", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                            Toast.makeText(getContext(), jsonArray.toString(), Toast.LENGTH_LONG).show();
+                        }else{
+                            Toast.makeText(getContext(), "error getting 1st response", Toast.LENGTH_SHORT).show();
+                            //Log.d("kkkk", response);
+                        }
                     }
                 });
             }
         });
+        return view;
     }
+    private  void submitBtnClicked( BuyInfoDialog buyInfoDialog, HashMap<View, BuyInfoDialog> vgLlHm){
+        View buyListEach= getLayoutInflater().inflate(R.layout.buy_list_each, null);
+        if(!vgLlHm.containsValue(buyInfoDialog)) {
+            LinearLayout buyFragLlforDealInfoInsert = (LinearLayout) view.findViewById(R.id.buyFragLlforDealInfoInsert);
+            buyFragLlforDealInfoInsert.addView(buyListEach);
+            vgLlHm.put(buyListEach, buyInfoDialog);
+        }else{
+            for ( View key : vgLlHm.keySet() ) {
+                if(vgLlHm.get(key)==buyInfoDialog) {
+                    buyListEach=key;
+                    break;
+                }
+            }
+        }
 
-    protected void cusSupProdDialogueFunc(Dialog dialog, TextView ultimateTextSetTextview, String subUrl, String fullUrl) {
+        //buyListEach.setBackgroundColor(R.color.white);
+        TextView prodNameTxt = (TextView) buyListEach.findViewById(R.id.prodNameTxt);
+        TextView prodCountTxt = (TextView) buyListEach.findViewById(R.id.prodCountTxt);
+        TextView prodAmountTxt = (TextView) buyListEach.findViewById(R.id.prodAmountTxt);
+        TextView boxCountTxt = (TextView) buyListEach.findViewById(R.id.boxCountTxt);
+        TextView boxPriceTxt = (TextView) buyListEach.findViewById(R.id.boxPriceTxt);
+        TextView itemPerBoxTxt = (TextView) buyListEach.findViewById(R.id.itemPerBoxTxt);
+        TextView totalAmountTxt = (TextView) buyListEach.findViewById(R.id.totalAmountTxt);
+        TextView unitTxt = (TextView) buyListEach.findViewById(R.id.unitTxt);
+        prodNameTxt.setText(buyInfoDialog.chooseProdTxt.getText());
+        prodCountTxt.setText(buyInfoDialog.chooseProdDiEtArr[0].getText());
+        prodAmountTxt.setText(buyInfoDialog.chooseProdDiEtArr[1].getText());
+        boxCountTxt.setText(buyInfoDialog.chooseProdDiEtArr[2].getText());
+        boxPriceTxt.setText(buyInfoDialog.chooseProdDiEtArr[3].getText());
+        itemPerBoxTxt.setText(buyInfoDialog.chooseProdDiEtArr[4].getText());
+        totalAmountTxt.setText(buyInfoDialog.chooseProdDiEtArr[5].getText());
+        unitTxt.setText(buyInfoDialog.unitEt.getText());
+
+        buyInfoDialog.buyInfoDialogue.dismiss();
+        buyInfoDialog = new BuyInfoDialog(getContext(), view, BuyFrag.this){
+            @Override
+            void subBtnClicked() {
+                submitBtnClicked(this, vgLlHm);
+            }
+        };
+        buyListEach.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                vgLlHm.get(v).buyInfoDialogue.show();
+            }
+        });
+    }
+    protected static void cusSupProdDialogueFunc(Dialog dialog, TextView ultimateTextSetTextview, String subUrl, String fullUrl) {
         EditText supNameEt = (EditText) dialog.findViewById(R.id.supNameEt);
         ListView supplierList = (ListView) dialog.findViewById(R.id.supList);
         Button addCrSupBtn = (Button) dialog.findViewById(R.id.addCrSupBtn);
@@ -319,7 +276,163 @@ class BuyInfoDialog {
             }
         });
     }
+    protected static void setData(String[] tag, String[] data, Dialog addSupDialog, EditText supNameEt, ListView supplierList, Button addCrSupBtn, String subUrl) {
+        new VolleyTakeData(context, baseUrl + "get" + subUrl + ".php", tag, data, new AfterTakingData() {
+            @Override
+            public void doAfterTakingData(String response) {
+                ArrayList<String> rslt = new ArrayList<>();
+                try {
+                    JSONArray jsonArray = new JSONArray(response);
+                    JSONObject explrObject;
+                    if (supNameEt.getText().toString().isEmpty()) {
+                        addCrSupBtn.setText(subUrl + " name can't be empty");
+                    } else {
+                        addCrSupBtn.setText("Create " + subUrl + " and then add");
+                    }
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        explrObject = jsonArray.getJSONObject(i);
+                        rslt.add(explrObject.getString("name"));
+                        if (explrObject.getString("name").equals(supNameEt.getText().toString())) {
+                            addCrSupBtn.setText("Add " + subUrl);
+                        }
+                    }
+                } catch (Exception e) {
+                    Toast.makeText(context, "error while parsing json", Toast.LENGTH_SHORT).show();
+                }
+                //ArrayAdapter<String > arrayAdapter= new ArrayAdapter<>(getContext(), an)
+                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, rslt);
+                supplierList.setAdapter(arrayAdapter);
+                supplierList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        supNameEt.setText(rslt.get(position));
+                    }
+                });
+            }
+        });
+    }
+}
+abstract class BuyInfoDialog {
 
+    static DecimalFormat decimalFormat = new DecimalFormat("#.0000000");
+    static DecimalFormat decimalFormatToComp = new DecimalFormat("#.00");
+    Context context;View view;Fragment fragment;
+    //LayoutInflater inflater;ViewGroup container;Bundle savedInstanceStat;
+    EditText[] chooseProdDiEtArr;EditText unitEt;
+    TextView chooseProdTxt;
+    Dialog buyInfoDialogue;
+    BuyInfoDialog(Context context, View view, Fragment fragment) {
+        this.context=context;
+        this.view=view;
+        this.fragment=fragment;
+        chooseProdDiEtArr = new EditText[6];
+
+        buyInfoDialogue = new Dialog(context);
+        buyInfoDialogue.setContentView(R.layout.prod_list_entry);
+        buyInfoDialogue.show();
+
+        LinearLayout[] llArr = new LinearLayout[6];
+        llArr[0] = (LinearLayout) buyInfoDialogue.findViewById(R.id.prodCountLinLayoutProdEntry);
+        llArr[1] = (LinearLayout) buyInfoDialogue.findViewById(R.id.pricePerProdLinLayoutProdEntry);
+        llArr[2] = (LinearLayout) buyInfoDialogue.findViewById(R.id.boxQuanLayoutProdEntry);
+        llArr[3] = (LinearLayout) buyInfoDialogue.findViewById(R.id.boxPriceLinLayoutProdEntry);
+        llArr[4] = (LinearLayout) buyInfoDialogue.findViewById(R.id.itemPerBoxLinLayoutProdEntry);
+        llArr[5] = (LinearLayout) buyInfoDialogue.findViewById(R.id.totalAmountDLinLayoutProdEntry);
+
+        chooseProdTxt = (TextView) buyInfoDialogue.findViewById(R.id.chooseProdTxt);
+
+        chooseProdTxt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Dialog chooseProdDialogue = new Dialog(context);
+                chooseProdDialogue.setContentView(R.layout.add_supplier);
+                chooseProdDialogue.show();
+                BuyFrag.cusSupProdDialogueFunc(chooseProdDialogue, chooseProdTxt, "Product", "http://192.168.111.212/me/createProd.php");
+            }
+        });
+
+        //prodCountEt
+        chooseProdDiEtArr[0] = (EditText) buyInfoDialogue.findViewById(R.id.prodCountEt);
+        //pricePerProdEt
+        chooseProdDiEtArr[1] = (EditText) buyInfoDialogue.findViewById(R.id.pricePerProdEt);
+        //boxQuanEt
+        chooseProdDiEtArr[2] = (EditText) buyInfoDialogue.findViewById(R.id.boxQuanEt);
+        //boxPriceEt
+        chooseProdDiEtArr[3] = (EditText) buyInfoDialogue.findViewById(R.id.boxPriceEt);
+        //itemPerBoxEt
+        chooseProdDiEtArr[4] = (EditText) buyInfoDialogue.findViewById(R.id.itemPerBoxEt);
+        //totalAmountEt
+        chooseProdDiEtArr[5] = (EditText) buyInfoDialogue.findViewById(R.id.totalAmountEt);
+        unitEt = (EditText) buyInfoDialogue.findViewById(R.id.unitEt);
+
+        Button[] clearBtnArr = new Button[chooseProdDiEtArr.length];
+
+        for (int i = 0; i < chooseProdDiEtArr.length; i++) {
+            EditText e = chooseProdDiEtArr[i];
+            chooseProdDiEtArr[i].addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                }
+            });
+            chooseProdDiEtArr[i].setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                String getStringToCompare;
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (v.hasFocus()) {
+                        new Thread() {
+                            public void run() {
+                                try {
+                                    Thread.sleep(10);
+                                    getStringToCompare = ((EditText) v).getText().toString();
+                                } catch (Exception ex) {
+                                    throw new RuntimeException(ex);
+                                }
+                            }
+                        }.start();
+                    } else {
+                        if (!((EditText) v).isFocusableInTouchMode()) {
+                            ((EditText) v).setText(getStringToCompare);
+                            return;
+                        }
+                        if (!((EditText) v).getText().toString().isEmpty()) {
+                            if (getStringToCompare.isEmpty()) {
+                                prodInfoDialogInfoAutoAdj((EditText) v, chooseProdDiEtArr, llArr, clearBtnArr);
+                            } else {
+                                if (!BuyFrag.compDeci(Double.parseDouble(getStringToCompare), Double.parseDouble(((EditText) v).getText().toString()))) {
+                                    prodInfoDialogInfoAutoAdj((EditText) v, chooseProdDiEtArr, llArr, clearBtnArr);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        buyInfoDialogue.findViewById(R.id.submitBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v ) {
+                unitEt.requestFocus();
+
+                for (int i = 0; i < clearBtnArr.length; i++) {
+                    if (clearBtnArr[i] != null) {
+                        Toast.makeText(context, "Numbers are incorrect", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
+
+                subBtnClicked();
+            }
+        });
+    }
+    abstract void subBtnClicked();
     protected boolean prodInfoDialogInfoAutoAdj(EditText thisEditText, EditText[] editTextArr, LinearLayout[] llArr, Button[] clearBtnArr) {
         ArrayList<Integer> relation;
         ArrayList<ArrayList<Integer>>[] relationArrList = new ArrayList[6];
@@ -569,43 +682,6 @@ class BuyInfoDialog {
             if (callThisFuncOnArrL.size() == 0) ans = true;
         }
         return ans;
-    }
-
-    protected void setData(String[] tag, String[] data, Dialog addSupDialog, EditText supNameEt, ListView supplierList, Button addCrSupBtn, String subUrl) {
-        new VolleyTakeData(context, baseUrl + "get" + subUrl + ".php", tag, data, new AfterTakingData() {
-            @Override
-            public void doAfterTakingData(String response) {
-                ArrayList<String> rslt = new ArrayList<>();
-                try {
-                    JSONArray jsonArray = new JSONArray(response);
-                    JSONObject explrObject;
-                    if (supNameEt.getText().toString().isEmpty()) {
-                        addCrSupBtn.setText(subUrl + " name can't be empty");
-                    } else {
-                        addCrSupBtn.setText("Create " + subUrl + " and then add");
-                    }
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        explrObject = jsonArray.getJSONObject(i);
-                        rslt.add(explrObject.getString("name"));
-                        if (//   (!addCrSupBtn.getText().equals("Add Supplier")) &&
-                                explrObject.getString("name").equals(supNameEt.getText().toString())) {
-                            addCrSupBtn.setText("Add " + subUrl);
-                        }
-                    }
-                } catch (Exception e) {
-                    Toast.makeText(context, "error while parsing json", Toast.LENGTH_SHORT).show();
-                }
-                //ArrayAdapter<String > arrayAdapter= new ArrayAdapter<>(getContext(), an)
-                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, rslt);
-                supplierList.setAdapter(arrayAdapter);
-                supplierList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        supNameEt.setText(rslt.get(position));
-                    }
-                });
-            }
-        });
     }
 
     @SuppressLint("ResourceAsColor")
