@@ -89,7 +89,7 @@ public class BuyFrag extends Fragment {
                 addSupDialog = new Dialog(getContext());
                 addSupDialog.setContentView(R.layout.add_supplier);
                 addSupDialog.show();
-                cusSupProdDialogueFunc(addSupDialog, supNameTxt, "Supplier", "http://192.168.111.212/me/createSup.php");
+                cusSupProdDialogueFunc(addSupDialog, supNameTxt, "Supplier");
             }
         });
 
@@ -131,47 +131,50 @@ public class BuyFrag extends Fragment {
         ((Button) view.findViewById(R.id.submitProdPurchaseBtn)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String[] tags={"name", "dateOfPurchase"}, data={
-                    supNameTxt.getText().toString(), byingDtTxt.getText().toString()
-                };
-                new VolleyTakeData(getContext(), baseUrl + "insertProdEntry.php", tags, data, new AfterTakingData() {
-                    @Override
-                    public void doAfterTakingData(String response) {
-                        if(Integer.parseInt(response)>0){
-                            JSONArray jsonArray= new JSONArray();
-                            JSONObject jsonObject=new JSONObject();
+                if(!supNameTxt.getText().equals(getResources().getString(R.string.buyerNameBuyFrag))) {
+                    String[] tags = {"name", "dateOfPurchase"}, data = {
+                        supNameTxt.getText().toString(), byingDtTxt.getText().toString()
+                    };
+                    new VolleyTakeData(getContext(), baseUrl + "insertProdEntry.php", tags, data, new AfterTakingData() {
+                        @Override
+                        public void doAfterTakingData(String response) {
+                            if (Integer.parseInt(response) > 0) {
+                                JSONArray jsonArray = new JSONArray();
+                                JSONObject jsonObject = new JSONObject();
 
-                            for(Map.Entry me : vgLlHm.entrySet()){
-                                View eachListItem =(View) me.getKey();
-                                try {
-                                    jsonObject.put("prodEntryTblId", Integer.parseInt(response));
-                                    jsonObject.put("prodName", ((TextView)eachListItem.findViewById(R.id.prodNameTxt)).getText());
-                                    jsonObject.put("prodQuan", ((TextView)eachListItem.findViewById(R.id.prodCountTxt)).getText());
-                                    jsonObject.put("boxQuan", ((TextView)eachListItem.findViewById(R.id.boxCountTxt)).getText());
-                                    jsonObject.put("totalAmount", ((TextView)eachListItem.findViewById(R.id.totalAmountTxt)).getText());
-                                    jsonObject.put("unit", ((TextView)eachListItem.findViewById(R.id.unitTxt)).getText());
-                                    jsonArray.put(jsonObject);
-                                }catch (Exception e){
-                                    Toast.makeText(getContext(), "error putting json", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                            String[] tags={"data"};
-                            String[] data={jsonArray.toString()};
-                            new VolleyTakeData(getContext(), baseUrl + "insertProdList.php", tags, data, new AfterTakingData() {
-                                @Override
-                                public void doAfterTakingData(String response) {
-                                    if(Integer.parseInt(response)>0){
-                                        Toast.makeText(getContext(), "success", Toast.LENGTH_SHORT).show();
+                                for (Map.Entry me : vgLlHm.entrySet()) {
+                                    View eachListItem = (View) me.getKey();
+                                    try {
+                                        jsonObject.put("prodEntryTblId", Integer.parseInt(response));
+                                        jsonObject.put("prodName", ((TextView) eachListItem.findViewById(R.id.prodNameTxt)).getText());
+                                        jsonObject.put("prodQuan", ((TextView) eachListItem.findViewById(R.id.prodCountTxt)).getText());
+                                        jsonObject.put("boxQuan", ((TextView) eachListItem.findViewById(R.id.boxCountTxt)).getText());
+                                        jsonObject.put("totalAmount", ((TextView) eachListItem.findViewById(R.id.totalAmountTxt)).getText());
+                                        jsonObject.put("unit", ((TextView) eachListItem.findViewById(R.id.unitTxt)).getText());
+                                        jsonArray.put(jsonObject);
+                                    } catch (Exception e) {
+                                        Toast.makeText(getContext(), "error putting json", Toast.LENGTH_SHORT).show();
                                     }
                                 }
-                            });
-                            Toast.makeText(getContext(), jsonArray.toString(), Toast.LENGTH_LONG).show();
-                        }else{
-                            Toast.makeText(getContext(), "error getting 1st response", Toast.LENGTH_SHORT).show();
-                            //Log.d("kkkk", response);
+                                String[] tags = {"data"};
+                                String[] data = {jsonArray.toString()};
+                                new VolleyTakeData(getContext(), baseUrl + "insertProdList.php", tags, data, new AfterTakingData() {
+                                    @SuppressLint("ResourceType")
+                                    @Override
+                                    public void doAfterTakingData(String response) {
+                                        if (Integer.parseInt(response) > 0) {
+                                            Toast.makeText(getContext(), "Successfully inserted", Toast.LENGTH_SHORT).show();
+                                            getParentFragmentManager().beginTransaction().replace(R.layout.fragment_buy, new BuyFrag()).commit();
+                                        }
+                                    }
+                                });
+                            } else {
+                                Toast.makeText(getContext(), "error getting 1st response", Toast.LENGTH_SHORT).show();
+                                //Log.d("kkkk", response);
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
         });
         return view;
@@ -223,7 +226,7 @@ public class BuyFrag extends Fragment {
             }
         });
     }
-    protected static void cusSupProdDialogueFunc(Dialog dialog, TextView ultimateTextSetTextview, String subUrl, String fullUrl) {
+    protected static void cusSupProdDialogueFunc(Dialog dialog, TextView ultimateTextSetTextview, String subUrl) {
         EditText supNameEt = (EditText) dialog.findViewById(R.id.supNameEt);
         ListView supplierList = (ListView) dialog.findViewById(R.id.supList);
         Button addCrSupBtn = (Button) dialog.findViewById(R.id.addCrSupBtn);
@@ -261,7 +264,7 @@ public class BuyFrag extends Fragment {
                 }
                 String[] tag = {"name"};
                 String[] data = {supNameEt.getText().toString()};
-                new VolleyTakeData(context, fullUrl, tag, data, new AfterTakingData() {
+                new VolleyTakeData(context, baseUrl+"create"+subUrl+".php", tag, data, new AfterTakingData() {
                     @Override
                     public void doAfterTakingData(String response) {
                         if (response.equals("1")) {
@@ -347,7 +350,7 @@ abstract class BuyInfoDialog {
                 Dialog chooseProdDialogue = new Dialog(context);
                 chooseProdDialogue.setContentView(R.layout.add_supplier);
                 chooseProdDialogue.show();
-                BuyFrag.cusSupProdDialogueFunc(chooseProdDialogue, chooseProdTxt, "Product", "http://192.168.111.212/me/createProd.php");
+                BuyFrag.cusSupProdDialogueFunc(chooseProdDialogue, chooseProdTxt, "Product");
             }
         });
 
@@ -419,6 +422,15 @@ abstract class BuyInfoDialog {
         buyInfoDialogue.findViewById(R.id.submitBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v ) {
+                if(((TextView) buyInfoDialogue.findViewById(R.id.chooseProdTxt)).getText().equals(R.string.buyInfoDialogueProdName) ||
+                        ((EditText) buyInfoDialogue.findViewById(R.id.prodCountEt)).getText().toString().isEmpty() ||
+                        ((EditText) buyInfoDialogue.findViewById(R.id.pricePerProdEt)).getText().toString().isEmpty() ||
+                        ((EditText) buyInfoDialogue.findViewById(R.id.totalAmountEt)).getText().toString().isEmpty() ||
+                        ((EditText) buyInfoDialogue.findViewById(R.id.unitEt)).getText().toString().isEmpty() 
+                ){
+                    Toast.makeText(context, "Prduct name, Product count, Product price, Total amount, unit need to be set", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 unitEt.requestFocus();
 
                 for (int i = 0; i < clearBtnArr.length; i++) {
@@ -427,7 +439,6 @@ abstract class BuyInfoDialog {
                         return;
                     }
                 }
-
                 subBtnClicked();
             }
         });
