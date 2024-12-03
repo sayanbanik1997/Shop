@@ -148,11 +148,12 @@ public class BuyFrag extends Fragment {
                     public void doAfterTakingData(String response) {
                         if (Integer.parseInt(response) > 0) {
                             JSONArray jsonArray = new JSONArray();
-                            JSONObject jsonObject = new JSONObject();
 
                             for (Map.Entry me : vgLlHm.entrySet()) {
                                 View eachListItem = (View) me.getKey();
+                                JSONObject jsonObject = new JSONObject();
                                 try {
+                                    //Toast.makeText(getContext(), ((TextView) eachListItem.findViewById(R.id.prodCountTxt)).getText(), Toast.LENGTH_SHORT).show();
                                     jsonObject.put("prodEntryTblId", Integer.parseInt(response));
                                     jsonObject.put("prodName", ((TextView) eachListItem.findViewById(R.id.prodNameTxt)).getText());
                                     jsonObject.put("prodQuan", ((TextView) eachListItem.findViewById(R.id.prodCountTxt)).getText());
@@ -164,6 +165,7 @@ public class BuyFrag extends Fragment {
                                     Toast.makeText(getContext(), "error putting json", Toast.LENGTH_SHORT).show();
                                 }
                             }
+                            Log.d("kkkk", jsonArray.toString());
                             String[] tags = {"data"};
                             String[] data = {jsonArray.toString()};
                             new VolleyTakeData(getContext(), baseUrl + "insertProdList.php", tags, data, new AfterTakingData() {
