@@ -19,7 +19,7 @@
             android:orientation="vertical"
             android:id="@+id/buyFragLlforDealInfoInsert"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/addSubBtnLLayout"
+            app:layout_constraintBottom_toTopOf="@+id/amountPaidDueCl"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             >
@@ -49,6 +49,84 @@
                     />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/amountPaidDueCl"
+            app:layout_constraintBottom_toTopOf="@+id/addSubBtnLLayout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+
+            >
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:id="@+id/totalAmountLl"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/paidLl"
+                >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/totalAmountDumyTxt"
+                android:text="Total amount : "
+                android:paddingTop="13dp"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/totalAmountTxt"
+                android:paddingTop="13dp"
+                />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:id="@+id/paidLl"
+                app:layout_constraintStart_toEndOf="@+id/totalAmountLl"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/dueLl"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/paidDumyTxt"
+                    android:text="Paid : "
+                    android:paddingTop="13dp"
+                    />
+                <EditText
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/paidTxt"
+                    />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:id="@+id/dueLl"
+                app:layout_constraintStart_toEndOf="@+id/paidLl"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/dueDumyTxt"
+                    android:text="Due : "
+                    android:paddingTop="13dp"
+                    />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/dueTxt"
+                    android:paddingTop="13dp"
+                    />
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

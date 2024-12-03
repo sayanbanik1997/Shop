@@ -1,12 +1,25 @@
 <?php
     include('connection.php');
-    date_default_timezone_set("Asia/Calcutta");
+    if(isset($_POST['data'])){
+        $jsonArr = json_decode($_POST['data']);
+        $prodId=0;
+        $qry='insert into prod_list_tbl (prodEntryTblId, prodId, boxQuan, prodQuan, totalAmount, unit) values ';
+        for ($x = 0; $x < count($jsonArr); $x++) {
+            $prodEntryTblId =$jsonArr[$x]->prodEntryTblId;
+            $prodName =$jsonArr[$x]->prodName;
+            $prodId= mysqli_fetch_assoc(mysqli_query($conn, "select id from prod_tbl where name='". $prodName ."'"))['id'];
+            $prodQuan =$jsonArr[$x]->prodQuan;
+            $boxQuan =$jsonArr[$x]->boxQuan;
+            $totalAmount =$jsonArr[$x]->totalAmount;
+            $unit =$jsonArr[$x]->unit;
 
-    if(isset($_POST['name'])){
-        $qry = 'insert into prod_tbl (prodEntryTblId, prodId, boxPrice, boxQuantity, prodQuan,
-            prodQuanPerBox, unit) values ('. $_POST['prodEntryTblId'] .', '. $_POST['prodId'] .',
-            '. $_POST['boxPrice'] .',  '. $_POST['boxQuantity'] .',  '. $_POST['prodQuan'] .',  
-            '. $_POST['prodQuanPerBox'] .',  "'. $_POST['unit'] .'");';
+            $qry = $qry . '('. $prodEntryTblId .', '. $prodId .', '. $boxQuan .',
+                '. $prodQuan .', '. $totalAmount .', "'. $unit .'") ';
+            if($x < (count($jsonArr)-1)){
+                $qry = $qry . ', ';
+            }
+        }
+        //echo $qry;
         echo mysqli_query($conn, $qry);
     }
 ?>

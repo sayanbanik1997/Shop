@@ -9,20 +9,19 @@ show create table <table name>
   `name` varchar(100) DEFAULT NULL,
   `datetime` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci 
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ;
 
 
 CREATE TABLE `prod_list_tbl` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `prodEntryTblId` int(11) NOT NULL,
   `prodId` int(11) NOT NULL,
-  `boxPrice` float DEFAULT NULL,
-  `boxQuantity` float DEFAULT NULL,
-  `prodQuan` float DEFAULT NULL,
-  `prodQuanPerBox` float DEFAULT NULL,
+  `boxQuantity` Double(10, 3) DEFAULT NULL,
+  `prodQuan` Double(10, 3)  DEFAULT NULL,
+  `totalAmount` Double(10, 3)  DEFAULT NULL,
   `unit` varchar(10) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
  CREATE TABLE `prod_entry_tbl` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -30,11 +29,11 @@ CREATE TABLE `prod_list_tbl` (
   `dateOfPurchase` date DEFAULT NULL,
   `dateTimeOfEntry` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ;
 
 CREATE TABLE `supplier_tbl` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(100) DEFAULT NULL,
   `datetime` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci 
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ;

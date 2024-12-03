@@ -27,6 +27,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -72,7 +73,7 @@ public class BuyFrag extends Fragment {
     TextView supNameTxt, byingDtTxt;
     Dialog addSupDialog;
     Button addProdIntoListBtn;
-    BuyInfoDialog buyInfoDialog;
+    //BuyInfoDialog buyInfoDialog;
     static Context context;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -120,10 +121,10 @@ public class BuyFrag extends Fragment {
         addProdIntoListBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                buyInfoDialog = new BuyInfoDialog(getContext(), view, BuyFrag.this){
+                BuyInfoDialog buyInfoDialog = new BuyInfoDialog(getContext(), view, BuyFrag.this){
                     @Override
                     void subBtnClicked() {
-                        submitBtnClicked( buyInfoDialog, vgLlHm);
+                        submitBtnClicked( this, vgLlHm);
                     }
                 };
             }
@@ -131,50 +132,55 @@ public class BuyFrag extends Fragment {
         ((Button) view.findViewById(R.id.submitProdPurchaseBtn)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!supNameTxt.getText().equals(getResources().getString(R.string.buyerNameBuyFrag))) {
-                    String[] tags = {"name", "dateOfPurchase"}, data = {
-                        supNameTxt.getText().toString(), byingDtTxt.getText().toString()
-                    };
-                    new VolleyTakeData(getContext(), baseUrl + "insertProdEntry.php", tags, data, new AfterTakingData() {
-                        @Override
-                        public void doAfterTakingData(String response) {
-                            if (Integer.parseInt(response) > 0) {
-                                JSONArray jsonArray = new JSONArray();
-                                JSONObject jsonObject = new JSONObject();
+                if(supNameTxt.getText().equals(getResources().getString(R.string.buyerNameBuyFrag))) {
+                    Toast.makeText(getContext(), "Buyer's name can't be empty", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if(vgLlHm.size()==0) {
+                    Toast.makeText(getContext(), "1st add transaction then submit", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                String[] tags = {"name", "dateOfPurchase"}, data = {
+                    supNameTxt.getText().toString(), byingDtTxt.getText().toString()
+                };
+                new VolleyTakeData(getContext(), baseUrl + "insertProdEntry.php", tags, data, new AfterTakingData() {
+                    @Override
+                    public void doAfterTakingData(String response) {
+                        if (Integer.parseInt(response) > 0) {
+                            JSONArray jsonArray = new JSONArray();
+                            JSONObject jsonObject = new JSONObject();
 
-                                for (Map.Entry me : vgLlHm.entrySet()) {
-                                    View eachListItem = (View) me.getKey();
-                                    try {
-                                        jsonObject.put("prodEntryTblId", Integer.parseInt(response));
-                                        jsonObject.put("prodName", ((TextView) eachListItem.findViewById(R.id.prodNameTxt)).getText());
-                                        jsonObject.put("prodQuan", ((TextView) eachListItem.findViewById(R.id.prodCountTxt)).getText());
-                                        jsonObject.put("boxQuan", ((TextView) eachListItem.findViewById(R.id.boxCountTxt)).getText());
-                                        jsonObject.put("totalAmount", ((TextView) eachListItem.findViewById(R.id.totalAmountTxt)).getText());
-                                        jsonObject.put("unit", ((TextView) eachListItem.findViewById(R.id.unitTxt)).getText());
-                                        jsonArray.put(jsonObject);
-                                    } catch (Exception e) {
-                                        Toast.makeText(getContext(), "error putting json", Toast.LENGTH_SHORT).show();
+                            for (Map.Entry me : vgLlHm.entrySet()) {
+                                View eachListItem = (View) me.getKey();
+                                try {
+                                    jsonObject.put("prodEntryTblId", Integer.parseInt(response));
+                                    jsonObject.put("prodName", ((TextView) eachListItem.findViewById(R.id.prodNameTxt)).getText());
+                                    jsonObject.put("prodQuan", ((TextView) eachListItem.findViewById(R.id.prodCountTxt)).getText());
+                                    jsonObject.put("boxQuan", ((TextView) eachListItem.findViewById(R.id.boxCountTxt)).getText());
+                                    jsonObject.put("totalAmount", ((TextView) eachListItem.findViewById(R.id.totalAmountTxt)).getText());
+                                    jsonObject.put("unit", ((TextView) eachListItem.findViewById(R.id.unitTxt)).getText());
+                                    jsonArray.put(jsonObject);
+                                } catch (Exception e) {
+                                    Toast.makeText(getContext(), "error putting json", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                            String[] tags = {"data"};
+                            String[] data = {jsonArray.toString()};
+                            new VolleyTakeData(getContext(), baseUrl + "insertProdList.php", tags, data, new AfterTakingData() {
+                                @SuppressLint("ResourceType")
+                                @Override
+                                public void doAfterTakingData(String response) {
+                                    if (Integer.parseInt(response) > 0) {
+                                        Toast.makeText(getContext(), "Successfully inserted", Toast.LENGTH_SHORT).show();
+                                        getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, new BuyFrag()).commit();
                                     }
                                 }
-                                String[] tags = {"data"};
-                                String[] data = {jsonArray.toString()};
-                                new VolleyTakeData(getContext(), baseUrl + "insertProdList.php", tags, data, new AfterTakingData() {
-                                    @SuppressLint("ResourceType")
-                                    @Override
-                                    public void doAfterTakingData(String response) {
-                                        if (Integer.parseInt(response) > 0) {
-                                            Toast.makeText(getContext(), "Successfully inserted", Toast.LENGTH_SHORT).show();
-                                            getParentFragmentManager().beginTransaction().replace(R.layout.fragment_buy, new BuyFrag()).commit();
-                                        }
-                                    }
-                                });
-                            } else {
-                                Toast.makeText(getContext(), "error getting 1st response", Toast.LENGTH_SHORT).show();
-                                //Log.d("kkkk", response);
-                            }
+                            });
+                        } else {
+                            Toast.makeText(getContext(), "Error getting 1st response", Toast.LENGTH_SHORT).show();
                         }
-                    });
-                }
+                    }
+                });
             }
         });
         return view;
@@ -183,14 +189,28 @@ public class BuyFrag extends Fragment {
         View buyListEach= getLayoutInflater().inflate(R.layout.buy_list_each, null);
         if(!vgLlHm.containsValue(buyInfoDialog)) {
             LinearLayout buyFragLlforDealInfoInsert = (LinearLayout) view.findViewById(R.id.buyFragLlforDealInfoInsert);
+            ImageView delImg= (ImageView) buyListEach.findViewById(R.id.delImg);
+            final View buyListEachTemp= buyListEach;
+            delImg.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    buyFragLlforDealInfoInsert.removeView(buyListEachTemp);
+                    vgLlHm.remove(buyListEachTemp);
+                }
+            });
+
             buyFragLlforDealInfoInsert.addView(buyListEach);
             vgLlHm.put(buyListEach, buyInfoDialog);
         }else{
-            for ( View key : vgLlHm.keySet() ) {
-                if(vgLlHm.get(key)==buyInfoDialog) {
-                    buyListEach=key;
-                    break;
+            if(vgLlHm.containsValue(buyInfoDialog)) {
+                for (View key : vgLlHm.keySet()) {
+                    if (vgLlHm.get(key) == buyInfoDialog) {
+                        buyListEach = key;
+                        break;
+                    }
                 }
+            }else{
+                Toast.makeText(context, "buyInfoDialog not found in vgLlHm", Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -422,13 +442,16 @@ abstract class BuyInfoDialog {
         buyInfoDialogue.findViewById(R.id.submitBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v ) {
-                if(((TextView) buyInfoDialogue.findViewById(R.id.chooseProdTxt)).getText().equals(R.string.buyInfoDialogueProdName) ||
-                        ((EditText) buyInfoDialogue.findViewById(R.id.prodCountEt)).getText().toString().isEmpty() ||
+                if(((TextView) buyInfoDialogue.findViewById(R.id.chooseProdTxt)).getText().equals(fragment.getResources().getString(R.string.buyInfoDialogueProdName))){
+                    Toast.makeText(context, "Select product first", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if(((EditText) buyInfoDialogue.findViewById(R.id.prodCountEt)).getText().toString().isEmpty() ||
                         ((EditText) buyInfoDialogue.findViewById(R.id.pricePerProdEt)).getText().toString().isEmpty() ||
                         ((EditText) buyInfoDialogue.findViewById(R.id.totalAmountEt)).getText().toString().isEmpty() ||
                         ((EditText) buyInfoDialogue.findViewById(R.id.unitEt)).getText().toString().isEmpty() 
                 ){
-                    Toast.makeText(context, "Prduct name, Product count, Product price, Total amount, unit need to be set", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Product count, Product price, Total amount, unit need to be set", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 unitEt.requestFocus();

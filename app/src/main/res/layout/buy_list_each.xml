@@ -45,7 +45,7 @@
         android:id="@+id/prodAmountLl"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toEndOf="@+id/prodCountLl"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/delImg"
         >
         <TextView
             android:layout_width="wrap_content"
@@ -91,7 +91,7 @@
             android:id="@+id/boxPriceLl"
             app:layout_constraintTop_toBottomOf="@+id/prodAmountLl"
             app:layout_constraintStart_toEndOf="@+id/boxCountLl"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/delImg"
             >
             <TextView
                 android:layout_width="wrap_content"
@@ -163,7 +163,7 @@
             android:id="@+id/totalAmountLl"
             app:layout_constraintTop_toBottomOf="@+id/boxPriceLl"
             app:layout_constraintStart_toEndOf="@id/unitLl"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/delImg"
             >
             <TextView
                 android:layout_width="wrap_content"
@@ -180,5 +180,13 @@
 
             />
         </LinearLayout>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/delete"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:id="@+id/delImg"
+            />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

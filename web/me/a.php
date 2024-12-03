@@ -1,5 +1,5 @@
 
-<form action="http://192.168.111.212/me/createSup.php", method="POST">
-    Name: <input type="text" name="name"><br>
+<form action="http://192.168.114.212/me/insertProdList.php", method="POST">
+    Name: <input type="text" name="data"><br>
     <input type="submit">
 </form>
