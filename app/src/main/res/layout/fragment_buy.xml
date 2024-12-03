@@ -41,7 +41,16 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/byingDate"
+                    android:text="Sold"
+                    android:id="@+id/soldUnsoldTxt"
+                    android:textColor="@color/fontDark"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/supNameTxt"
+                    app:layout_constraintEnd_toStartOf="@+id/byingDtTxt"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:id="@+id/byingDtTxt"
                     android:textColor="@color/fontDark"
                     app:layout_constraintTop_toTopOf="parent"
@@ -65,7 +74,6 @@
                 android:id="@+id/totalAmountLl"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/paidLl"
                 >
             <TextView
                 android:layout_width="wrap_content"
@@ -100,7 +108,8 @@
                 <EditText
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/paidTxt"
+                    android:id="@+id/paidEt"
+                    android:inputType="numberDecimal"
                     />
             </LinearLayout>
             <LinearLayout
@@ -108,7 +117,6 @@
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
                 android:id="@+id/dueLl"
-                app:layout_constraintStart_toEndOf="@+id/paidLl"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 >

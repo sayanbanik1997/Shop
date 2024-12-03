@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 03, 2024 at 03:06 PM
+-- Generation Time: Dec 03, 2024 at 07:54 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -24,6 +24,18 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `customerr_tbl`
+--
+
+CREATE TABLE `customerr_tbl` (
+  `id` int(11) NOT NULL,
+  `name` varchar(100) DEFAULT NULL,
+  `datetime` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `prod_entry_tbl`
 --
 
@@ -31,8 +43,19 @@ CREATE TABLE `prod_entry_tbl` (
   `id` int(11) NOT NULL,
   `cusId` int(11) DEFAULT NULL,
   `dateOfPurchase` date DEFAULT NULL,
-  `dateTimeOfEntry` datetime DEFAULT NULL
+  `dateTimeOfEntry` datetime DEFAULT NULL,
+  `purOrSell` int(11) DEFAULT NULL,
+  `soldUnsold` int(11) DEFAULT NULL,
+  `paid` double DEFAULT NULL,
+  `due` double DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `prod_entry_tbl`
+--
+
+INSERT INTO `prod_entry_tbl` (`id`, `cusId`, `dateOfPurchase`, `dateTimeOfEntry`, `purOrSell`, `soldUnsold`, `paid`, `due`) VALUES
+(9, 10, '2024-12-03', '2024-12-03 23:05:59', NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -49,6 +72,14 @@ CREATE TABLE `prod_list_tbl` (
   `totalAmount` double DEFAULT NULL,
   `unit` varchar(10) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `prod_list_tbl`
+--
+
+INSERT INTO `prod_list_tbl` (`id`, `prodEntryTblId`, `prodId`, `boxQuan`, `prodQuan`, `totalAmount`, `unit`) VALUES
+(15, 9, 5, 4, 1000, 30000, 'pair'),
+(16, 9, 4, 3, 100, 2000, 'pc');
 
 -- --------------------------------------------------------
 
@@ -94,6 +125,12 @@ INSERT INTO `supplier_tbl` (`id`, `name`, `datetime`) VALUES
 --
 
 --
+-- Indexes for table `customerr_tbl`
+--
+ALTER TABLE `customerr_tbl`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `prod_entry_tbl`
 --
 ALTER TABLE `prod_entry_tbl`
@@ -122,16 +159,22 @@ ALTER TABLE `supplier_tbl`
 --
 
 --
+-- AUTO_INCREMENT for table `customerr_tbl`
+--
+ALTER TABLE `customerr_tbl`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `prod_entry_tbl`
 --
 ALTER TABLE `prod_entry_tbl`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `prod_list_tbl`
 --
 ALTER TABLE `prod_list_tbl`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `prod_tbl`
