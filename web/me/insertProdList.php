@@ -19,7 +19,6 @@
                 $qry = $qry . ', ';
             }
         }
-        //echo $qry;
         echo mysqli_query($conn, $qry);
     }
 ?>
