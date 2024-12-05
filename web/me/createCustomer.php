@@ -1,7 +1,7 @@
 <?php
     include("connection.php");
     if(isset($_POST['name'])){
-        $qry="select * from supplierr_tbl where name='". $_POST['name'] ."'";
+        $qry="select * from customerr_tbl where name='". $_POST['name'] ."'";
         $rslt=mysqli_query($conn, $qry);
         $count=0;
         while($row=mysqli_fetch_assoc($rslt)){

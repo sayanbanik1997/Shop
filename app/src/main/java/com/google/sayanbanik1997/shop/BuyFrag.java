@@ -58,6 +58,10 @@ import java.time.Month;
 import java.time.LocalDate;
 
 public class BuyFrag extends Fragment {
+    String subUrl="";
+    BuyFrag(String subUrl){
+        this.subUrl=subUrl;
+    }
     static DecimalFormat decimalFormat = new DecimalFormat("#.0000000");
     static DecimalFormat decimalFormatToComp = new DecimalFormat("#.00");
 
@@ -81,13 +85,22 @@ public class BuyFrag extends Fragment {
         view = inflater.inflate(R.layout.fragment_buy, container, false);
         supNameTxt = (TextView) view.findViewById(R.id.supNameTxt);
         byingDtTxt = (TextView) view.findViewById(R.id.byingDtTxt);
+        TextView soldUnsoldTxt = (TextView) view.findViewById(R.id.soldUnsoldTxt);
+
+        if(subUrl.equals("Supplier")) {
+            supNameTxt.setText(R.string.sellerNameBuyFrag);
+            soldUnsoldTxt.setText("Bought");
+        } else if (subUrl.equals("Customer")) {
+            supNameTxt.setText(R.string.buyerNameBuyFrag);
+            soldUnsoldTxt.setText("Sold");
+        }
 
         addProdIntoListBtn = (Button) view.findViewById(R.id.addProdIntoListBtn);
 
         supNameTxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new CusSupProdDialogue(context, "Supplier") {
+                new CusSupProdDialogue(context, subUrl) {
                     @Override
                     void doAfterBtnClicked() {
                         supNameTxt.setText(((EditText) dialog.findViewById(R.id.supNameEt)).getText().toString());
@@ -95,12 +108,14 @@ public class BuyFrag extends Fragment {
                 };
             }
         });
-        TextView soldUnsoldTxt = (TextView) view.findViewById(R.id.soldUnsoldTxt);
+
         soldUnsoldTxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(soldUnsoldTxt.getText().toString().equals("Sold")) soldUnsoldTxt.setText("Unsold");
-                else soldUnsoldTxt.setText("Sold");
+                else if(soldUnsoldTxt.getText().toString().equals("Unsold")) soldUnsoldTxt.setText("Sold");
+                else if(soldUnsoldTxt.getText().toString().equals("Bought")) soldUnsoldTxt.setText("Unbought");
+                else soldUnsoldTxt.setText("Bought");
             }
         });
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); //HH:mm:ss
@@ -138,22 +153,88 @@ public class BuyFrag extends Fragment {
                 };
             }
         });
+        TextView totalAmounttTxt = (TextView)view.findViewById(R.id.totalAmounttTxt);
+        EditText paidEt=(EditText) view.findViewById(R.id.paidEt);
+        TextView dueTxt=(TextView) view.findViewById(R.id.dueTxt);
+        totalAmounttTxt.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {  }@Override public void onTextChanged(CharSequence s, int start, int before, int count) {  }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                try {dueTxt.setText(
+                        Double.toString(Double.parseDouble(totalAmounttTxt.getText().toString()) - Double.parseDouble(paidEt.getText().toString()))
+                );
+                }catch (Exception e){
+                    dueTxt.setText("");
+                }
+            }
+        });
+        paidEt.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}@Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                try {dueTxt.setText(
+                        Double.toString(Double.parseDouble(totalAmounttTxt.getText().toString()) - Double.parseDouble(paidEt.getText().toString()))
+                );
+                }catch (Exception e){
+                    dueTxt.setText("");
+                }
+            }
+        });
+        dueTxt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(Double.parseDouble(dueTxt.getText().toString())== Double.parseDouble(totalAmounttTxt.getText().toString())-
+                        Double.parseDouble(paidEt.getText().toString())){
+                    dueTxt.setText("0");
+                }else{
+                    Dialog d=new Dialog(context);
+                    d.setContentView(R.layout.get_decimal);
+                    d.show();
+                    EditText deciEt = (EditText) d.findViewById(R.id.deciEt);
+                    deciEt.setHint("due");
+                    ((Button)d.findViewById(R.id.subBtn)).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            try {
+                                dueTxt.setText(Double.toString(Double.parseDouble(deciEt.getText().toString())));
+                            } catch (Exception e) {
+                                Toast.makeText(getContext(), "Due must be a decimal number", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            d.dismiss();
+                        }
+                    });
+                }
+            }
+        });
         ((Button) view.findViewById(R.id.submitProdPurchaseBtn)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(supNameTxt.getText().equals(getResources().getString(R.string.buyerNameBuyFrag))) {
-                    Toast.makeText(getContext(), "Buyer's name can't be empty", Toast.LENGTH_SHORT).show();
+                if(supNameTxt.getText().equals(getResources().getString(R.string.buyerNameBuyFrag))||
+                        supNameTxt.getText().equals(getResources().getString(R.string.sellerNameBuyFrag))) {
+                    Toast.makeText(getContext(), subUrl+" can't be empty", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if(vgLlHm.size()==0) {
                     Toast.makeText(getContext(), "1st add transaction then submit", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                int soldOrUnsold=2;
-                if(soldUnsoldTxt.getText().toString().equals("Sold")) soldOrUnsold=1;
-                String[] tags = {"name", "dateOfPurchase", "purOrSell", "soldOrUnsold", "paid", "due"}, data = {
-                    supNameTxt.getText().toString(), byingDtTxt.getText().toString(), "1",
-                    Integer.toString(soldOrUnsold), ((EditText) view.findViewById(R.id.paidEt)).getText().toString(),
+                String paid="";
+                try{
+                    paid  = Double.toString(Double.parseDouble(paidEt.getText().toString()));
+                }catch (Exception e){
+                    Toast.makeText(getContext(), "Paid need to be filled", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                int soldUnsold=2;
+                if(soldUnsoldTxt.getText().toString().equals("Sold") || (soldUnsoldTxt.getText().toString().equals("Bought"))) soldUnsold=1;
+                int purOrSell=2;
+                if(subUrl.equals("Supplier")) purOrSell=1;
+                String[] tags = {"name", "dateOfPurchase", "purOrSell", "soldUnsold", "paid", "due"}, data = {
+                    supNameTxt.getText().toString(), byingDtTxt.getText().toString(), Integer.toString(purOrSell),
+                    Integer.toString(soldUnsold), paid,
                     ((TextView) view.findViewById(R.id.dueTxt)).getText().toString()
                 };
                 new VolleyTakeData(getContext(), baseUrl + "insertProdEntry.php", tags, data, new AfterTakingData() {
@@ -178,7 +259,7 @@ public class BuyFrag extends Fragment {
                                     Toast.makeText(getContext(), "error putting json", Toast.LENGTH_SHORT).show();
                                 }
                             }
-                            Log.d("kkkk", jsonArray.toString());
+                            Log.d("kkkk", response);
                             String[] tags = {"data"};
                             String[] data = {jsonArray.toString()};
                             new VolleyTakeData(getContext(), baseUrl + "insertProdList.php", tags, data, new AfterTakingData() {
@@ -187,7 +268,7 @@ public class BuyFrag extends Fragment {
                                 public void doAfterTakingData(String response) {
                                     if (Integer.parseInt(response) > 0) {
                                         Toast.makeText(getContext(), "Successfully inserted", Toast.LENGTH_SHORT).show();
-                                        getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, new BuyFrag()).commit();
+                                        getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, new BuyFrag("Supplier")).commit();
                                     }
                                 }
                             });
@@ -209,6 +290,9 @@ public class BuyFrag extends Fragment {
             delImg.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    ((TextView)view.findViewById(R.id.totalAmounttTxt)).setText(Double.toString(
+                    Double.parseDouble(((TextView)view.findViewById(R.id.totalAmounttTxt)).getText().toString())-
+                    Double.parseDouble(((TextView)buyListEachTemp.findViewById(R.id.totalAmountTxt)).getText().toString())));
                     buyFragLlforDealInfoInsert.removeView(buyListEachTemp);
                     vgLlHm.remove(buyListEachTemp);
                 }
@@ -246,6 +330,13 @@ public class BuyFrag extends Fragment {
         itemPerBoxTxt.setText(buyInfoDialog.chooseProdDiEtArr[4].getText());
         totalAmountTxt.setText(buyInfoDialog.chooseProdDiEtArr[5].getText());
         unitTxt.setText(buyInfoDialog.unitEt.getText());
+
+
+        Double totalAmount= 0d;
+        for (View key : vgLlHm.keySet()) {
+            totalAmount+=Double.parseDouble(((TextView)key.findViewById(R.id.totalAmountTxt)).getText().toString());
+        }
+        ((TextView) view.findViewById(R.id.totalAmounttTxt)).setText(Double.toString(totalAmount));
 
         buyInfoDialog.buyInfoDialogue.dismiss();
         buyInfoDialog = new BuyInfoDialog(getContext(), view, BuyFrag.this){

@@ -32,11 +32,19 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:id="@+id/billIdTxt"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="@string/buyerNameBuyFrag"
                     android:id="@+id/supNameTxt"
                     android:textColor="@color/fontDark"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/billIdTxt"
+                    app:layout_constraintEnd_toStartOf="@+id/soldUnsoldTxt"
                     />
                 <TextView
                     android:layout_width="wrap_content"
@@ -85,7 +93,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/totalAmountTxt"
+                android:id="@+id/totalAmounttTxt"
+                android:text="amount"
                 android:paddingTop="13dp"
                 />
             </LinearLayout>

@@ -6,4 +6,7 @@
     <item
         android:title="@string/sellProduct"
         android:id="@+id/sellProdNavMenu" />
+    <item
+        android:title="@string/billPayment"
+        android:id="@+id/billPaymentNavMenu" />
 </menu>

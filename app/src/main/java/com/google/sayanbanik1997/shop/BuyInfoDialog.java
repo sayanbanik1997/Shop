@@ -115,6 +115,11 @@ abstract public class BuyInfoDialog {
                             ((EditText) v).setText(getStringToCompare);
                             return;
                         }
+                        try{
+                            Double.parseDouble(((EditText) v).getText().toString());
+                        }catch (Exception e){
+                            ((EditText)v).setText(getStringToCompare);
+                        }
                         if (!((EditText) v).getText().toString().isEmpty()) {
                             if (getStringToCompare.isEmpty()) {
                                 prodInfoDialogInfoAutoAdj((EditText) v, chooseProdDiEtArr, llArr, clearBtnArr);

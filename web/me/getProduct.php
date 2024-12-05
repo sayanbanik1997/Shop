@@ -1,7 +1,17 @@
 <?php
     include('connection.php');
     if(isset($_POST['name'])){
-        $qry= 'select * from prod_tbl where name like "%'. $_POST['name'] .'%"';
+        $nameArr = (explode(" ",$_POST['name']));
+        $qry= 'select * from prod_tbl ';
+        for ($x = 0; $x < count($nameArr); $x++) {
+            if($x==0){
+                $qry=$qry.'where ';
+            }else{
+                $qry=$qry.'and ';
+            }
+            $qry=$qry.'name like "%'. $nameArr[$x] .'%" ';
+        }
+         
         $rsltOfQry = mysqli_query($conn, $qry);
         $rslt='[';
         $count=0;
