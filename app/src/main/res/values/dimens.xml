@@ -2,4 +2,5 @@
 <resources>
     <dimen name="dialogWidth">350dp</dimen>
     <dimen name="dialogPadding">10dp</dimen>
+    <dimen name="txtPaddingRightLeft">3dp</dimen>
 </resources>

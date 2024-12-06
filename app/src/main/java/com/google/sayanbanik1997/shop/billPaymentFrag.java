@@ -12,32 +12,77 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 
 public class billPaymentFrag extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_bill_payment, container, false);
-        String[] arr={"12", "33", "55"};
-
-        RecyAdapter recyAdapter  = new RecyAdapter( R.layout.bill_payment_each, arr.length){
+        RecyclerView recyclerView=(RecyclerView) view.findViewById(R.id.billPaymentReView);
+        String[] tag={};
+        new VolleyTakeData(getContext(), Info.baseUrl + "getBillsAndPayments.php", tag, tag, new AfterTakingData() {
             @Override
-            void bind(Vh holder, int position) {
-                ((TextView)holder.arrView.get(0)).setText(arr[position]);
-            }
-            @Override
-            Vh onCreate(View view) {
-                return new Vh(view) {
-                    @Override
-                    void initiateInsideViewHolder(View itemView) {
-                        arrView.add(itemView.findViewById(R.id.demoTxt));
-                    }
-                };
-            }
-        };
+            public void doAfterTakingData(String response){
+                try {
+                    JSONArray jsonArray = new JSONArray(response);
+                    RecyAdapter recyAdapter  = new RecyAdapter( R.layout.bill_payment_each, jsonArray.length()){
+                        @Override
+                        void bind(Vh holder, int position) {
+                            try {
+                                JSONObject jsonObject = (JSONObject) jsonArray.get(position);
+                                String billId = "", paymentId="", cusSupNameTxt="",totalAmountTxt="", paidTxt="", dueTxt="";
+                                try {
+                                    billId = jsonObject.getString("billId");
+                                    paymentId = jsonObject.getString("paymentId");
+                                    cusSupNameTxt = jsonObject.getString("cusSupName");
+//                                    if (jsonObject.getString("cusId").isEmpty()){
+//                                        cusSupNameTxt = jsonObject.getString("supId");
+//                                    }else {
+//                                        cusSupNameTxt = jsonObject.getString("cusId");
+//                                    }
+                                    totalAmountTxt = jsonObject.getString("totalAmount");
+                                    paidTxt = jsonObject.getString("amount");
+                                    dueTxt = jsonObject.getString("due");
+                                } catch (Exception e) {}
+                                ((TextView) holder.arrView.get(0)).setText(billId.toString());
+                                ((TextView) holder.arrView.get(1)).setText(paymentId.toString());
+                                ((TextView) holder.arrView.get(2)).setText(cusSupNameTxt.toString());
+                                ((TextView) holder.arrView.get(3)).setText(totalAmountTxt.toString());
+                                ((TextView) holder.arrView.get(4)).setText(paidTxt.toString());
+                                ((TextView) holder.arrView.get(5)).setText(dueTxt.toString());
 
-        RecyclerView billPaymentReView=(RecyclerView) view.findViewById(R.id.billPaymentReView);
-        billPaymentReView.setLayoutManager(new LinearLayoutManager(getContext()));
-        billPaymentReView.setAdapter(recyAdapter);
+
+                            }catch (Exception e){
+
+                            }
+
+                        }
+                        @Override
+                        Vh onCreate(View view) {
+                            return new Vh(view) {
+                                @Override
+                                void initiateInsideViewHolder(View itemView) {
+                                    arrView.add(itemView.findViewById(R.id.billIdTxt));
+                                    arrView.add(itemView.findViewById(R.id.paymentIdTxt));
+                                    arrView.add(itemView.findViewById(R.id.cusSupNameTxt));
+
+                                    arrView.add(itemView.findViewById(R.id.totalAmountTxt));
+                                    arrView.add(itemView.findViewById(R.id.paidTxt));
+                                    arrView.add(itemView.findViewById(R.id.dueeTxt));
+                                }
+                            };
+                        }
+                    };
+                    recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                    recyclerView.setAdapter(recyAdapter);
+                }catch (Exception e){
+                    Toast.makeText(getContext(), "error while convertinfg json", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
         return view;
     }
 }

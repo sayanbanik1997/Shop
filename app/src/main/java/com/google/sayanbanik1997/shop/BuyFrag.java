@@ -30,6 +30,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -259,7 +260,6 @@ public class BuyFrag extends Fragment {
                                     Toast.makeText(getContext(), "error putting json", Toast.LENGTH_SHORT).show();
                                 }
                             }
-                            Log.d("kkkk", response);
                             String[] tags = {"data"};
                             String[] data = {jsonArray.toString()};
                             new VolleyTakeData(getContext(), baseUrl + "insertProdList.php", tags, data, new AfterTakingData() {
@@ -284,7 +284,7 @@ public class BuyFrag extends Fragment {
     private void submitBtnClicked(BuyInfoDialog buyInfoDialog, HashMap<View, BuyInfoDialog> vgLlHm){
         View buyListEach= getLayoutInflater().inflate(R.layout.buy_list_each, null);
         if(!vgLlHm.containsValue(buyInfoDialog)) {
-            LinearLayout buyFragLlforDealInfoInsert = (LinearLayout) view.findViewById(R.id.buyFragLlforDealInfoInsert);
+            ScrollView buyFragSvforDealInfoInsert = (ScrollView) view.findViewById(R.id.buyFragSvforDealInfoInsert);
             ImageView delImg= (ImageView) buyListEach.findViewById(R.id.delImg);
             final View buyListEachTemp= buyListEach;
             delImg.setOnClickListener(new View.OnClickListener() {
@@ -293,12 +293,12 @@ public class BuyFrag extends Fragment {
                     ((TextView)view.findViewById(R.id.totalAmounttTxt)).setText(Double.toString(
                     Double.parseDouble(((TextView)view.findViewById(R.id.totalAmounttTxt)).getText().toString())-
                     Double.parseDouble(((TextView)buyListEachTemp.findViewById(R.id.totalAmountTxt)).getText().toString())));
-                    buyFragLlforDealInfoInsert.removeView(buyListEachTemp);
+                    buyFragSvforDealInfoInsert.removeView(buyListEachTemp);
                     vgLlHm.remove(buyListEachTemp);
                 }
             });
 
-            buyFragLlforDealInfoInsert.addView(buyListEach);
+            buyFragSvforDealInfoInsert.addView(buyListEach);
             vgLlHm.put(buyListEach, buyInfoDialog);
         }else{
             if(vgLlHm.containsValue(buyInfoDialog)) {
