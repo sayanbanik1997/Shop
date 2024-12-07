@@ -1,6 +1,7 @@
 package com.google.sayanbanik1997.shop;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.view.View;
 import android.widget.AdapterView;
@@ -30,6 +31,11 @@ abstract class AfterTakingData{
 public class VolleyTakeData {
     protected  ArrayList<String> rslt;
     VolleyTakeData(Context c,String url, String[] tag, String[] data, AfterTakingData afterTakingData){
+        ProgressDialog progressDialog = new ProgressDialog(c);
+        progressDialog.setTitle("Wait ... ");
+        progressDialog.setMessage("Gettitng data");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
         RequestQueue requestQueue= Volley.newRequestQueue(c);
         StringRequest stringRequest=new StringRequest(
                 Request.Method.POST,
@@ -37,12 +43,14 @@ public class VolleyTakeData {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        progressDialog.dismiss();
                         afterTakingData.doAfterTakingData(response);
                     }
                 },
                 new Response.ErrorListener(){
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        progressDialog.dismiss();
                         Toast.makeText(c, error.toString(), Toast.LENGTH_LONG).show();
                     }
                 }

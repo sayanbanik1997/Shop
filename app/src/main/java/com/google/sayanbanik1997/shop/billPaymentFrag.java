@@ -38,11 +38,6 @@ public class billPaymentFrag extends Fragment {
                                     billId = jsonObject.getString("billId");
                                     paymentId = jsonObject.getString("paymentId");
                                     cusSupNameTxt = jsonObject.getString("cusSupName");
-//                                    if (jsonObject.getString("cusId").isEmpty()){
-//                                        cusSupNameTxt = jsonObject.getString("supId");
-//                                    }else {
-//                                        cusSupNameTxt = jsonObject.getString("cusId");
-//                                    }
                                     totalAmountTxt = jsonObject.getString("totalAmount");
                                     paidTxt = jsonObject.getString("amount");
                                     dueTxt = jsonObject.getString("due");
@@ -56,7 +51,7 @@ public class billPaymentFrag extends Fragment {
 
 
                             }catch (Exception e){
-
+                                Toast.makeText(getContext(), "Error converting json obj", Toast.LENGTH_SHORT).show();
                             }
 
                         }
@@ -79,7 +74,7 @@ public class billPaymentFrag extends Fragment {
                     recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                     recyclerView.setAdapter(recyAdapter);
                 }catch (Exception e){
-                    Toast.makeText(getContext(), "error while convertinfg json", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "error while converting json array", Toast.LENGTH_SHORT).show();
                 }
             }
         });

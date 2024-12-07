@@ -9,4 +9,10 @@
     <item
         android:title="@string/billPayment"
         android:id="@+id/billPaymentNavMenu" />
+    <item
+        android:title="Supplier"
+        android:id="@+id/supplierNavMenu" />
+    <item
+        android:title="Customer"
+        android:id="@+id/customerNavMenu" />
 </menu>

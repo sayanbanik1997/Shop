@@ -46,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
                 if(item.getItemId()==R.id.buyProdNavMenu) getSupportFragmentManager().beginTransaction().add(R.id.frameLayout, new BuyFrag("Supplier")).commit();
                 if(item.getItemId()==R.id.sellProdNavMenu) getSupportFragmentManager().beginTransaction().add(R.id.frameLayout, new BuyFrag("Customer")).commit();
                 if(item.getItemId()==R.id.billPaymentNavMenu) getSupportFragmentManager().beginTransaction().add(R.id.frameLayout, new billPaymentFrag()).commit();
+                if(item.getItemId()==R.id.supplierNavMenu) getSupportFragmentManager().beginTransaction().add(R.id.frameLayout, new supCusFrag("Supplier")).commit();
+                if(item.getItemId()==R.id.customerNavMenu) getSupportFragmentManager().beginTransaction().add(R.id.frameLayout, new supCusFrag("Customer")).commit();
                 drawerLayout.closeDrawer(GravityCompat.START);
                 return false;
             }

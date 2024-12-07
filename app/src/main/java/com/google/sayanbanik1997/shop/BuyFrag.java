@@ -74,11 +74,8 @@ public class BuyFrag extends Fragment {
     }
 
     View view;
-    TextView txt;
     TextView supNameTxt, byingDtTxt;
-    Dialog addSupDialog;
     Button addProdIntoListBtn;
-    //BuyInfoDialog buyInfoDialog;
     static Context context;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -157,13 +154,27 @@ public class BuyFrag extends Fragment {
         TextView totalAmounttTxt = (TextView)view.findViewById(R.id.totalAmounttTxt);
         EditText paidEt=(EditText) view.findViewById(R.id.paidEt);
         TextView dueTxt=(TextView) view.findViewById(R.id.dueTxt);
+        EditText haveToPayTxt=(EditText) view.findViewById(R.id.haveToPayEt);
         totalAmounttTxt.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {  }@Override public void onTextChanged(CharSequence s, int start, int before, int count) {  }
 
             @Override
             public void afterTextChanged(Editable s) {
+                try {haveToPayTxt.setText(
+                        Double.toString(Double.parseDouble(totalAmounttTxt.getText().toString()))
+                );
+                }catch (Exception e){
+                    haveToPayTxt.setText("");
+                }
+            }
+        });
+        haveToPayTxt.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}@Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
                 try {dueTxt.setText(
-                        Double.toString(Double.parseDouble(totalAmounttTxt.getText().toString()) - Double.parseDouble(paidEt.getText().toString()))
+                        Double.toString(Double.parseDouble(haveToPayTxt.getText().toString()) - Double.parseDouble(paidEt.getText().toString()))
                 );
                 }catch (Exception e){
                     dueTxt.setText("");
@@ -176,37 +187,48 @@ public class BuyFrag extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {
                 try {dueTxt.setText(
-                        Double.toString(Double.parseDouble(totalAmounttTxt.getText().toString()) - Double.parseDouble(paidEt.getText().toString()))
+                        Double.toString(Double.parseDouble(haveToPayTxt.getText().toString()) - Double.parseDouble(paidEt.getText().toString()))
                 );
                 }catch (Exception e){
                     dueTxt.setText("");
                 }
             }
         });
+//        haveToPayTxt.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if(Double.parseDouble(dueTxt.getText().toString())== Double.parseDouble(haveToPayTxt.getText().toString())-
+//                        Double.parseDouble(paidEt.getText().toString())){
+//                    dueTxt.setText("0");
+//                }else{
+//                    Dialog d=new Dialog(context);
+//                    d.setContentView(R.layout.get_decimal);
+//                    d.show();
+//                    EditText deciEt = (EditText) d.findViewById(R.id.deciEt);
+//                    deciEt.setHint("due");
+//                    ((Button)d.findViewById(R.id.subBtn)).setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
+//                            try {
+//                                dueTxt.setText(Double.toString(Double.parseDouble(deciEt.getText().toString())));
+//                            } catch (Exception e) {
+//                                Toast.makeText(getContext(), "Due must be a decimal number", Toast.LENGTH_SHORT).show();
+//                                return;
+//                            }
+//                            d.dismiss();
+//                        }
+//                    });
+//                }
+//            }
+//        });
+
         dueTxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(Double.parseDouble(dueTxt.getText().toString())== Double.parseDouble(totalAmounttTxt.getText().toString())-
+                if(Double.parseDouble(dueTxt.getText().toString())== Double.parseDouble(haveToPayTxt.getText().toString())-
                         Double.parseDouble(paidEt.getText().toString())){
                     dueTxt.setText("0");
-                }else{
-                    Dialog d=new Dialog(context);
-                    d.setContentView(R.layout.get_decimal);
-                    d.show();
-                    EditText deciEt = (EditText) d.findViewById(R.id.deciEt);
-                    deciEt.setHint("due");
-                    ((Button)d.findViewById(R.id.subBtn)).setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            try {
-                                dueTxt.setText(Double.toString(Double.parseDouble(deciEt.getText().toString())));
-                            } catch (Exception e) {
-                                Toast.makeText(getContext(), "Due must be a decimal number", Toast.LENGTH_SHORT).show();
-                                return;
-                            }
-                            d.dismiss();
-                        }
-                    });
+                    haveToPayTxt.setText(paidEt.getText().toString());
                 }
             }
         });
