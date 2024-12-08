@@ -42,6 +42,7 @@ android:padding="@dimen/dialogPadding"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/billIdEt"
+            android:inputType="number"
             />
     </LinearLayout>
     <LinearLayout
@@ -81,6 +82,7 @@ android:padding="@dimen/dialogPadding"
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
             android:id="@+id/amountEt"
             />
     </LinearLayout>
@@ -96,6 +98,7 @@ android:padding="@dimen/dialogPadding"
             android:text="Amount after this payment:"
             android:paddingRight="@dimen/txtPaddingRightLeft"
             android:paddingLeft="@dimen/txtPaddingRightLeft"
+            android:padding="@dimen/txtPadding"
             />
         <TextView
             android:layout_width="wrap_content"
@@ -103,8 +106,16 @@ android:padding="@dimen/dialogPadding"
             android:id="@+id/dueAfterPaymentTxt"
             android:paddingRight="@dimen/txtPaddingRightLeft"
             android:paddingLeft="@dimen/txtPaddingRightLeft"
+            android:padding="@dimen/txtPadding"
             />
     </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Payment date"
+        android:id="@+id/paymentDateTxt"
+        android:padding="@dimen/txtPadding"
+        />
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

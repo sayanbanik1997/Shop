@@ -111,7 +111,7 @@ public class BuyFrag extends Fragment {
                         @Override
                         public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                             byingDtTxt.setText(Integer.toString(year) + "-" +
-                                    Integer.toString(month) + "-" + Integer.toString(dayOfMonth));
+                                    Integer.toString(month+1) + "-" + Integer.toString(dayOfMonth));
                         }
                     }, year, month - 1, day).show();
                 }

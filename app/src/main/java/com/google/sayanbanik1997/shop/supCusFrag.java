@@ -70,7 +70,9 @@ public class supCusFrag extends Fragment {
                             ((Button) holder.arrView.get(3)).setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    PayDialog payDialog=new PayDialog(getContext(), idd, namee, ((TextView)holder.arrView.get(2)).getText().toString()){
+                                    String supOrCus="1";
+                                    if(subUrl.equals("customer")) supOrCus="2";
+                                    PayDialog payDialog=new PayDialog(getContext(), idd, namee, ((TextView)holder.arrView.get(2)).getText().toString(), supOrCus){
                                         @Override
                                         void submitBtnClicked(String due) {
                                             ((TextView)holder.arrView.get(2)).setText(due);
