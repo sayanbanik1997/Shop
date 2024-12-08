@@ -15,10 +15,25 @@
         $rsltOfQry = mysqli_query($conn, $qry);
         $rslt='[';
         $count=0;
+        $haveToPay=0;
+        $totalPaid=0;
         while($row= mysqli_fetch_assoc($rsltOfQry)){
             if($count!= 0)$rslt=$rslt . ',';
-            $rslt=$rslt . '{"id": "'. $row['id'] .'", "name": "'. $row['name'] .'"}';
+            $qry = 'select * from prod_entry_tbl where cusId='. $row['id'] .' and purOrSell=2';
+            $rsltOfprodEntryQry = mysqli_query($conn, $qry);
+            while($prodEntryRow=mysqli_fetch_assoc($rsltOfprodEntryQry)){
+                $haveToPay=$haveToPay+$prodEntryRow['haveToPay'];
+            }
+            $qry='select * from payment_tbl where cusId='. $row['id'];
+            $rsltOfProdListQry = mysqli_query($conn, $qry);
+            while($prodListRow=mysqli_fetch_assoc($rsltOfProdListQry)){
+                $totalPaid=$totalPaid+$prodListRow['amount'];
+            }
+            $rslt=$rslt . '{"id": "'. $row['id'] .'", "name": "'. $row['name'] .'",
+            "due": "'. ($haveToPay-$totalPaid) .'"}';
             $count=$count+1;
+            $haveToPay=0;
+            $totalPaid=0;
         }
         $rslt= $rslt . ']';
         echo $rslt;

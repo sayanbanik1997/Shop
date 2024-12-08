@@ -2,11 +2,8 @@ package com.google.sayanbanik1997.shop;
 
 import static com.google.sayanbanik1997.shop.Info.baseUrl;
 
-import static java.security.AccessController.getContext;
-
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,32 +13,16 @@ import androidx.fragment.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -49,13 +30,11 @@ import org.json.JSONObject;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 //im
 import java.util.Date;
-import java.time.Month;
 import java.time.LocalDate;
 
 public class BuyFrag extends Fragment {
@@ -173,9 +152,12 @@ public class BuyFrag extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                try {dueTxt.setText(
+                try {
+                    paidEt.setText(Double.toString(Double.parseDouble(haveToPayTxt.getText().toString())));
+                    dueTxt.setText(
                         Double.toString(Double.parseDouble(haveToPayTxt.getText().toString()) - Double.parseDouble(paidEt.getText().toString()))
                 );
+
                 }catch (Exception e){
                     dueTxt.setText("");
                 }
@@ -235,7 +217,7 @@ public class BuyFrag extends Fragment {
         ((Button) view.findViewById(R.id.submitProdPurchaseBtn)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(supNameTxt.getText().equals(getResources().getString(R.string.buyerNameBuyFrag))||
+                if(supNameTxt.getText().equals(getResources().getString(R.string.buyerNameBuyFrag)) ||
                         supNameTxt.getText().equals(getResources().getString(R.string.sellerNameBuyFrag))) {
                     Toast.makeText(getContext(), subUrl+" can't be empty", Toast.LENGTH_SHORT).show();
                     return;
@@ -255,14 +237,15 @@ public class BuyFrag extends Fragment {
                 if(soldUnsoldTxt.getText().toString().equals("Sold") || (soldUnsoldTxt.getText().toString().equals("Bought"))) soldUnsold=1;
                 int purOrSell=2;
                 if(subUrl.equals("Supplier")) purOrSell=1;
-                String[] tags = {"name", "dateOfPurchase", "purOrSell", "soldUnsold", "paid", "due"}, data = {
+                String[] tags = {"name", "dateOfPurchase", "purOrSell", "soldUnsold", "paid", "haveToPay"}, data = {
                     supNameTxt.getText().toString(), byingDtTxt.getText().toString(), Integer.toString(purOrSell),
                     Integer.toString(soldUnsold), paid,
-                    ((TextView) view.findViewById(R.id.dueTxt)).getText().toString()
+                    ((TextView) view.findViewById(R.id.haveToPayEt)).getText().toString()
                 };
                 new VolleyTakeData(getContext(), baseUrl + "insertProdEntry.php", tags, data, new AfterTakingData() {
                     @Override
                     public void doAfterTakingData(String response) {
+                        Log.d("kkkk", response);
                         if (Integer.parseInt(response) > 0) {
                             JSONArray jsonArray = new JSONArray();
 
@@ -291,6 +274,8 @@ public class BuyFrag extends Fragment {
                                     if (Integer.parseInt(response) > 0) {
                                         Toast.makeText(getContext(), "Successfully inserted", Toast.LENGTH_SHORT).show();
                                         getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, new BuyFrag("Supplier")).commit();
+                                    }else{
+                                        Toast.makeText(getContext(), "Error parsing 2nd response", Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });
@@ -304,9 +289,9 @@ public class BuyFrag extends Fragment {
         return view;
     }
     private void submitBtnClicked(BuyInfoDialog buyInfoDialog, HashMap<View, BuyInfoDialog> vgLlHm){
-        View buyListEach= getLayoutInflater().inflate(R.layout.buy_list_each, null);
+        View buyListEach= getLayoutInflater().inflate(R.layout.buy_list_each_sub_layout, null);
         if(!vgLlHm.containsValue(buyInfoDialog)) {
-            ScrollView buyFragSvforDealInfoInsert = (ScrollView) view.findViewById(R.id.buyFragSvforDealInfoInsert);
+            LinearLayout buyFragLlforDealInfoInsert = (LinearLayout) view.findViewById(R.id.buyFragLlforDealInfoInsert);
             ImageView delImg= (ImageView) buyListEach.findViewById(R.id.delImg);
             final View buyListEachTemp= buyListEach;
             delImg.setOnClickListener(new View.OnClickListener() {
@@ -315,12 +300,12 @@ public class BuyFrag extends Fragment {
                     ((TextView)view.findViewById(R.id.totalAmounttTxt)).setText(Double.toString(
                     Double.parseDouble(((TextView)view.findViewById(R.id.totalAmounttTxt)).getText().toString())-
                     Double.parseDouble(((TextView)buyListEachTemp.findViewById(R.id.totalAmountTxt)).getText().toString())));
-                    buyFragSvforDealInfoInsert.removeView(buyListEachTemp);
+                    buyFragLlforDealInfoInsert.removeView(buyListEachTemp);
                     vgLlHm.remove(buyListEachTemp);
                 }
             });
 
-            buyFragSvforDealInfoInsert.addView(buyListEach);
+            buyFragLlforDealInfoInsert.addView(buyListEach);
             vgLlHm.put(buyListEach, buyInfoDialog);
         }else{
             if(vgLlHm.containsValue(buyInfoDialog)) {

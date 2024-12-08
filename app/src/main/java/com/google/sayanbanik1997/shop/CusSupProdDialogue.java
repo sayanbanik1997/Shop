@@ -27,7 +27,7 @@ abstract public class CusSupProdDialogue {
         this.subUrl=subUrl;
         this.context=context;
         dialog= new Dialog(context);
-        dialog.setContentView(R.layout.add_supplier);
+        dialog.setContentView(R.layout.add_supplier_dilog);
         dialog.show();
 
         EditText supNameEt = (EditText) dialog.findViewById(R.id.supNameEt);

@@ -13,7 +13,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 
@@ -28,7 +27,7 @@ public class billPaymentFrag extends Fragment {
             public void doAfterTakingData(String response){
                 try {
                     JSONArray jsonArray = new JSONArray(response);
-                    RecyAdapter recyAdapter  = new RecyAdapter( R.layout.bill_payment_each, jsonArray.length()){
+                    RecyAdapter recyAdapter  = new RecyAdapter( R.layout.bill_and_payment_each_sub_layout, jsonArray.length()){
                         @Override
                         void bind(Vh holder, int position) {
                             try {

@@ -30,6 +30,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/name"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/id"
         app:layout_constraintEnd_toEndOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -55,7 +56,6 @@
             android:paddingLeft="@dimen/txtPaddingRightLeft"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toEndOf="@id/dueDumyTxt"
-            app:layout_constraintEnd_toStartOf="@+id/payBtn"
             />
         <Button
             android:layout_width="wrap_content"

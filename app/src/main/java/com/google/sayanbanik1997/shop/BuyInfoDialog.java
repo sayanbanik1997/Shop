@@ -35,7 +35,7 @@ abstract public class BuyInfoDialog {
         chooseProdDiEtArr = new EditText[6];
 
         buyInfoDialogue = new Dialog(context);
-        buyInfoDialogue.setContentView(R.layout.prod_list_entry);
+        buyInfoDialogue.setContentView(R.layout.prod_list_entry_dilog);
         buyInfoDialogue.show();
 
         LinearLayout[] llArr = new LinearLayout[6];

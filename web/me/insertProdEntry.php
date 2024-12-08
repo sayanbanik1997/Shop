@@ -2,7 +2,7 @@
     require('connection.php');
     
     if(isset($_POST['name']) && isset($_POST['dateOfPurchase']) && isset($_POST['purOrSell'])
-        && isset($_POST['soldUnsold']) && isset($_POST['paid']) && isset($_POST['due'])){
+        && isset($_POST['soldUnsold']) && isset($_POST['paid']) && isset($_POST['haveToPay'])){
         $qry='';
         if($_POST['purOrSell']==1){
             $qry='select id from supplier_tbl where name ="'. $_POST['name'] .'"';
@@ -31,30 +31,36 @@
                     echo "error while inserting payment";
                 }
             } else {
-                echo "Error: " . $qry . "<br>" . $conn->error;
+                //echo "Error: " . $qry . "<br>" . $conn->error;
+                echo "-1";
             }
         }else{
             $qry='insert into prod_entry_tbl(cusId, dateOfPurchase, dateTimeOfEntry, purOrSell
-                , soldUnsold, due)values(
+                , soldUnsold, haveToPay)values(
                 '. $cusId .', "'. $_POST['dateOfPurchase'] .'", "'. date('Y-m-d H:i:s') .'", '. $_POST['purOrSell'] .',
-                '. $_POST['soldUnsold'].', '. $_POST['due'] .')';
+                '. $_POST['soldUnsold'].', '. $_POST['haveToPay'] .')';
             if ($conn->query($qry) === TRUE) {
                 $last_id = $conn->insert_id;
                 if($_POST['purOrSell']==1){
-                    $qry='insert into payment_tbl(billId, datetime, dateOfPayment, supId)values
-                    ('. $last_id .',"'. date('Y-m-d H:i:s') .'", "'. $_POST['dateOfPurchase'] .'", '. $cusId .')'; 
+                    $qry='insert into payment_tbl(billId, datetime, dateOfPayment, supId, amount)values
+                    ('. $last_id .',"'. date('Y-m-d H:i:s') .'", "'. $_POST['dateOfPurchase'] .'", '. $cusId .',
+                    '. $_POST['paid'].')'; 
                 }else{
-                    $qry='insert into payment_tbl(billId, datetime, dateOfPayment, cusId)values
-                    ('. $last_id .', "'. date('Y-m-d H:i:s') .'", "'. $_POST['dateOfPurchase'] .'", '. $cusId .')'; 
+                    $qry='insert into payment_tbl(billId, datetime, dateOfPayment, cusId, amount)values
+                    ('. $last_id .', "'. date('Y-m-d H:i:s') .'", "'. $_POST['dateOfPurchase'] .'", '. $cusId .',
+                    '. $_POST['paid'].')'; 
                 }if(mysqli_query($conn, $qry)==1){
                     echo $last_id;
                 }else{
-                    echo "error while inserting payment";
+                    echo "-3";
                 }
                 
             } else {
-                echo "Error: " . $qry . "<br>" . $conn->error;
+                //echo "Error: " . $qry . "<br>" . $conn->error;
+                echo "-1";
             }
         }        
+    }else{
+        echo "-2";
     }
 ?>
