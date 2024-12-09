@@ -17,7 +17,7 @@ import androidx.fragment.app.Fragment;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-abstract public class BuyInfoDialog {
+abstract public class BuySellInfoDialog {
 
     static DecimalFormat decimalFormat = new DecimalFormat("#.0000000");
     static DecimalFormat decimalFormatToComp = new DecimalFormat("#.00");
@@ -28,7 +28,7 @@ abstract public class BuyInfoDialog {
     EditText[] chooseProdDiEtArr;EditText unitEt;
     TextView chooseProdTxt;
     Dialog buyInfoDialogue;
-    BuyInfoDialog(Context context, View view, Fragment fragment) {
+    BuySellInfoDialog(Context context, View view, Fragment fragment) {
         this.context=context;
         this.view=view;
         this.fragment=fragment;
@@ -124,7 +124,7 @@ abstract public class BuyInfoDialog {
                             if (getStringToCompare.isEmpty()) {
                                 prodInfoDialogInfoAutoAdj((EditText) v, chooseProdDiEtArr, llArr, clearBtnArr);
                             } else {
-                                if (!BuyFrag.compDeci(Double.parseDouble(getStringToCompare), Double.parseDouble(((EditText) v).getText().toString()))) {
+                                if (!BuyOrSellFrag.compDeci(Double.parseDouble(getStringToCompare), Double.parseDouble(((EditText) v).getText().toString()))) {
                                     prodInfoDialogInfoAutoAdj((EditText) v, chooseProdDiEtArr, llArr, clearBtnArr);
                                 }
                             }
@@ -291,7 +291,7 @@ abstract public class BuyInfoDialog {
                     } else if ((!editTextArr[relationArrList[noOfThisEt].get(i).get(2)].getText().toString().isEmpty()) &&
                             (!editTextArr[relationArrList[noOfThisEt].get(i).get(1)].getText().toString().isEmpty())) {
 
-                        if (!BuyFrag.compDeci(Double.parseDouble(editTextArr[relationArrList[noOfThisEt].get(i).get(0)].getText().toString()),
+                        if (!BuyOrSellFrag.compDeci(Double.parseDouble(editTextArr[relationArrList[noOfThisEt].get(i).get(0)].getText().toString()),
                                 Double.parseDouble(editTextArr[relationArrList[noOfThisEt].get(i).get(1)].getText().toString()) *
                                         Double.parseDouble(editTextArr[relationArrList[noOfThisEt].get(i).get(2)].getText().toString()))) {
 
@@ -332,7 +332,7 @@ abstract public class BuyInfoDialog {
                     } else if ((!editTextArr[relationArrList[noOfThisEt].get(i).get(2)].getText().toString().isEmpty()) &&
                             (!editTextArr[relationArrList[noOfThisEt].get(i).get(0)].getText().toString().isEmpty())) {
 
-                        if (!BuyFrag.compDeci(Double.parseDouble(editTextArr[relationArrList[noOfThisEt].get(i).get(0)].getText().toString()),
+                        if (!BuyOrSellFrag.compDeci(Double.parseDouble(editTextArr[relationArrList[noOfThisEt].get(i).get(0)].getText().toString()),
                                 Double.parseDouble(editTextArr[relationArrList[noOfThisEt].get(i).get(1)].getText().toString()) *
                                         Double.parseDouble(editTextArr[relationArrList[noOfThisEt].get(i).get(2)].getText().toString()))) {
 
@@ -370,7 +370,7 @@ abstract public class BuyInfoDialog {
                     } else if ((!editTextArr[relationArrList[noOfThisEt].get(i).get(0)].getText().toString().isEmpty()) &&
                             (!editTextArr[relationArrList[noOfThisEt].get(i).get(1)].getText().toString().isEmpty())) {
 
-                        if (!BuyFrag.compDeci(Double.parseDouble(editTextArr[relationArrList[noOfThisEt].get(i).get(0)].getText().toString()),
+                        if (!BuyOrSellFrag.compDeci(Double.parseDouble(editTextArr[relationArrList[noOfThisEt].get(i).get(0)].getText().toString()),
                                 Double.parseDouble(editTextArr[relationArrList[noOfThisEt].get(i).get(1)].getText().toString()) *
                                         Double.parseDouble(editTextArr[relationArrList[noOfThisEt].get(i).get(2)].getText().toString()))) {
 

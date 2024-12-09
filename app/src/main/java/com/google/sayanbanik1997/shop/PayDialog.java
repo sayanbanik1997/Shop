@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.text.DateFormat;
@@ -22,17 +23,19 @@ import java.time.LocalDate;
 import java.util.Date;
 
 public abstract class PayDialog {
-    PayDialog(Context context, String id, String name, String due, String supOrCus){
+    EditText billIdEt, amountEt;
+    TextView paymentDateTxt;
+    PayDialog(Context context, String id, String name, String due, String subUrl){
         Dialog dialog=new Dialog(context);
         dialog.setContentView(R.layout.pay_dilog);
         dialog.show();
         TextView cusSupIdTxt = (TextView) dialog.findViewById(R.id.cusSupIdTxt);
         TextView cusSupNameTxt = (TextView) dialog.findViewById(R.id.cusSupNameTxt);
-        EditText billIdEt=(EditText) dialog.findViewById(R.id.billIdEt);
+        billIdEt=(EditText) dialog.findViewById(R.id.billIdEt);
         TextView dueTxt = (TextView) dialog.findViewById(R.id.dueTxt);
-        EditText amountEt=(EditText) dialog.findViewById(R.id.amountEt);
+        amountEt=(EditText) dialog.findViewById(R.id.amountEt);
         TextView dueAfterPaymentTxt=(TextView) dialog.findViewById(R.id.dueAfterPaymentTxt);
-        TextView paymentDateTxt = (TextView ) dialog.findViewById(R.id.paymentDateTxt);
+        paymentDateTxt = (TextView ) dialog.findViewById(R.id.paymentDateTxt);
 
         cusSupIdTxt.setText(id);
         cusSupNameTxt.setText(name);
@@ -45,34 +48,44 @@ public abstract class PayDialog {
                     dueTxt.setText(due); return;
                 }
                 String[] tag={"billId"}, data = {billIdEt.getText().toString()};
-                new VolleyTakeData(context, Info.baseUrl + "getPayBillAgainstBillId.php", tag, data, new AfterTakingData() {
+                new VolleyTakeData(context, Info.baseUrl + "getBillsAndPayments.php", tag, data, new AfterTakingData() {
                     @Override
                     public void doAfterTakingData(String response) {
-                        try{
-                            Integer.parseInt(response);
-                            Toast.makeText(context, "Bill id not found", Toast.LENGTH_SHORT).show();
-                            return;
-                        } catch (Exception e) {}
+                        //Log.d("kkkk", response);
                         try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            //Log.d("kkkk", cusSupIdTxt);
-                            if(!(jsonObject.getString("id").equals(cusSupIdTxt.getText().toString()) && jsonObject.getString("purOrSell").equals(supOrCus))){
-                                if(supOrCus.equals("1")){
-                                    Toast.makeText(context, "Bill is not of this supplier", Toast.LENGTH_SHORT).show();
+                            JSONArray jsonArray=new JSONArray(response);
+                            JSONObject jsonObject = jsonArray.getJSONObject(0);
+                            int supOrCus=1;
+                            if(subUrl.equals("Customer")){
+                                supOrCus= 2;
+                            }
+                            if(jsonObject.getString("purOrSell").equals(Integer.toString(supOrCus))){
+                                if(supOrCus==1){
+                                    if(!jsonObject.getString("supId").equals(id)){
+                                        Toast.makeText(context, "Bill is not of this supplier", Toast.LENGTH_SHORT).show();
+                                        billIdEt.setText("");
+                                        dueTxt.setText(due);
+                                        return;
+                                    }
                                 }else {
-                                    Toast.makeText(context, "Bill is not of this customer", Toast.LENGTH_SHORT).show();
+                                    if(!jsonObject.getString("cusId").equals(id)){
+                                        Toast.makeText(context, "Bill is not of this customer", Toast.LENGTH_SHORT).show();
+                                        billIdEt.setText("");
+                                        dueTxt.setText(due);
+                                        return;
+                                    }
                                 }
+                            }else {
+                                Toast.makeText(context, "This bill id is not of any "+ subUrl, Toast.LENGTH_SHORT).show();
                                 billIdEt.setText("");
                                 dueTxt.setText(due);
-//                                dueAfterPaymentTxt.setText(Double.toString(Double.parseDouble(amountEt.getText().toString()) -
-//                                        Double.parseDouble(dueTxt.getText().toString())));
                                 return;
                             }
                             dueTxt.setText(jsonObject.getString("due"));
-//                            dueAfterPaymentTxt.setText(Double.toString(Double.parseDouble(amountEt.getText().toString()) -
-//                                Double.parseDouble(dueTxt.getText().toString())));
                         }catch (Exception e){
-                            Toast.makeText(context, "Json obj error", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "No bill found of this id", Toast.LENGTH_SHORT).show();
+                            billIdEt.setText("");
+                            dueTxt.setText(due);
                         }
                     }
                 });
@@ -131,6 +144,10 @@ public abstract class PayDialog {
         ((Button)dialog.findViewById(R.id.submitBtn)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(amountEt.getText().toString().isEmpty()){
+                    Toast.makeText(context, "Insert amount", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 dialog.dismiss();
                 submitBtnClicked(dueAfterPaymentTxt.getText().toString());
             }

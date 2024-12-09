@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,12 +71,25 @@ public class supCusFrag extends Fragment {
                             ((Button) holder.arrView.get(3)).setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    String supOrCus="1";
-                                    if(subUrl.equals("customer")) supOrCus="2";
-                                    PayDialog payDialog=new PayDialog(getContext(), idd, namee, ((TextView)holder.arrView.get(2)).getText().toString(), supOrCus){
+                                    PayDialog payDialog=new PayDialog(getContext(), idd, namee, ((TextView)holder.arrView.get(2)).getText().toString(), subUrl){
                                         @Override
                                         void submitBtnClicked(String due) {
-                                            ((TextView)holder.arrView.get(2)).setText(due);
+                                            String supCusTagName="supId";
+                                            if(subUrl.equals("customer")) supCusTagName="cusId";
+                                            String[] tag={supCusTagName, "billId", "amount", "dateOfPayment"};
+                                            String[] data={idd, this.billIdEt.getText().toString(), this.amountEt.getText().toString(), this.paymentDateTxt.getText().toString()};
+                                            new VolleyTakeData(getContext(), Info.baseUrl+"insertPayment.php", tag, data, new AfterTakingData() {
+                                                @Override
+                                                public void doAfterTakingData(String response) {
+                                                    if(response.equals("1")){
+                                                        Toast.makeText(getContext(), "Paid successfully", Toast.LENGTH_SHORT).show();
+                                                        ((TextView)holder.arrView.get(2)).setText(due);
+                                                    }else {
+                                                        Toast.makeText(getContext(), "Error occurred", Toast.LENGTH_SHORT).show();
+                                                        //Log.d("kkkk", response);
+                                                    }
+                                                }
+                                            });
                                         }
                                     };
                                 }

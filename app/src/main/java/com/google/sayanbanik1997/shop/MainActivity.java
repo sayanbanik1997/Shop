@@ -3,7 +3,6 @@ package com.google.sayanbanik1997.shop;
 import android.os.Bundle;
 import android.view.MenuItem;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,7 +10,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -43,15 +41,15 @@ public class MainActivity extends AppCompatActivity {
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                if(item.getItemId()==R.id.buyProdNavMenu) getSupportFragmentManager().beginTransaction().add(R.id.frameLayout, new BuyFrag("Supplier")).commit();
-                if(item.getItemId()==R.id.sellProdNavMenu) getSupportFragmentManager().beginTransaction().add(R.id.frameLayout, new BuyFrag("Customer")).commit();
-                if(item.getItemId()==R.id.billPaymentNavMenu) getSupportFragmentManager().beginTransaction().add(R.id.frameLayout, new billPaymentFrag()).commit();
+                if(item.getItemId()==R.id.buyProdNavMenu) getSupportFragmentManager().beginTransaction().add(R.id.frameLayout, new BuyOrSellFrag("Supplier")).commit();
+                if(item.getItemId()==R.id.sellProdNavMenu) getSupportFragmentManager().beginTransaction().add(R.id.frameLayout, new BuyOrSellFrag("Customer")).commit();
+                if(item.getItemId()==R.id.billPaymentNavMenu) getSupportFragmentManager().beginTransaction().add(R.id.frameLayout, new billAndPaymentFrag()).commit();
                 if(item.getItemId()==R.id.supplierNavMenu) getSupportFragmentManager().beginTransaction().add(R.id.frameLayout, new supCusFrag("Supplier")).commit();
                 if(item.getItemId()==R.id.customerNavMenu) getSupportFragmentManager().beginTransaction().add(R.id.frameLayout, new supCusFrag("Customer")).commit();
                 drawerLayout.closeDrawer(GravityCompat.START);
                 return false;
             }
         });
-        getSupportFragmentManager().beginTransaction().add(R.id.frameLayout, new billPaymentFrag()).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.frameLayout, new billAndPaymentFrag()).commit();
     }
 }
