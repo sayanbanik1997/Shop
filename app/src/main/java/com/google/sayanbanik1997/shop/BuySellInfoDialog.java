@@ -1,5 +1,6 @@
 package com.google.sayanbanik1997.shop;
 
+
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
@@ -35,7 +36,7 @@ abstract public class BuySellInfoDialog {
         chooseProdDiEtArr = new EditText[6];
 
         buyInfoDialogue = new Dialog(context);
-        buyInfoDialogue.setContentView(R.layout.prod_list_entry_dilog);
+        buyInfoDialogue.setContentView(R.layout.buy_sell_info_dialog);
         buyInfoDialogue.show();
 
         LinearLayout[] llArr = new LinearLayout[6];
@@ -51,10 +52,6 @@ abstract public class BuySellInfoDialog {
         chooseProdTxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Dialog chooseProdDialogue = new Dialog(context);
-//                chooseProdDialogue.setContentView(R.layout.add_supplier);
-//                chooseProdDialogue.show();
-//                BuyFrag.cusSupProdDialogueFunc(chooseProdDialogue, chooseProdTxt, "Product");
                 new CusSupProdDialogue(context, "Product") {
                     @Override
                     void doAfterBtnClicked() {
@@ -81,20 +78,6 @@ abstract public class BuySellInfoDialog {
         Button[] clearBtnArr = new Button[chooseProdDiEtArr.length];
 
         for (int i = 0; i < chooseProdDiEtArr.length; i++) {
-            EditText e = chooseProdDiEtArr[i];
-            chooseProdDiEtArr[i].addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-                }
-            });
             chooseProdDiEtArr[i].setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 String getStringToCompare;
                 @Override
@@ -115,11 +98,6 @@ abstract public class BuySellInfoDialog {
                             ((EditText) v).setText(getStringToCompare);
                             return;
                         }
-                        try{
-                            Double.parseDouble(((EditText) v).getText().toString());
-                        }catch (Exception e){
-                            ((EditText)v).setText(getStringToCompare);
-                        }
                         if (!((EditText) v).getText().toString().isEmpty()) {
                             if (getStringToCompare.isEmpty()) {
                                 prodInfoDialogInfoAutoAdj((EditText) v, chooseProdDiEtArr, llArr, clearBtnArr);
@@ -128,6 +106,7 @@ abstract public class BuySellInfoDialog {
                                     prodInfoDialogInfoAutoAdj((EditText) v, chooseProdDiEtArr, llArr, clearBtnArr);
                                 }
                             }
+                            ((EditText) v).setText(Double.toString(Double.parseDouble(((EditText) v).getText().toString())));
                         }
                     }
                 }
@@ -143,10 +122,9 @@ abstract public class BuySellInfoDialog {
                 }
                 if(((EditText) buyInfoDialogue.findViewById(R.id.prodCountEt)).getText().toString().isEmpty() ||
                         ((EditText) buyInfoDialogue.findViewById(R.id.pricePerProdEt)).getText().toString().isEmpty() ||
-                        ((EditText) buyInfoDialogue.findViewById(R.id.totalAmountEt)).getText().toString().isEmpty() ||
-                        ((EditText) buyInfoDialogue.findViewById(R.id.unitEt)).getText().toString().isEmpty()
+                        ((EditText) buyInfoDialogue.findViewById(R.id.totalAmountEt)).getText().toString().isEmpty()
                 ){
-                    Toast.makeText(context, "Product count, Product price, Total amount, unit need to be set", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Product count, Product price, Total amount need to be set", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 unitEt.requestFocus();
@@ -276,16 +254,20 @@ abstract public class BuySellInfoDialog {
                             (!editTextArr[relationArrList[noOfThisEt].get(i).get(2)].getText().toString().isEmpty())) {
 
                         editTextArr[relationArrList[noOfThisEt].get(i).get(1)].setText(//Double.toString(
-                                decimalFormat.format(Double.parseDouble(editTextArr[relationArrList[noOfThisEt].get(i).get(0)].getText().toString()) /
+                                Double.toString(Double.parseDouble(
+                                        decimalFormat.format(Double.parseDouble(editTextArr[relationArrList[noOfThisEt].get(i).get(0)].getText().toString()) /
                                         Double.parseDouble(editTextArr[relationArrList[noOfThisEt].get(i).get(2)].getText().toString()))
+                                ))
                         );
                         callThisFuncOnArrL.add(editTextArr[relationArrList[noOfThisEt].get(i).get(1)]);
                     } else if (editTextArr[relationArrList[noOfThisEt].get(i).get(2)].getText().toString().isEmpty() &&
                             (!editTextArr[relationArrList[noOfThisEt].get(i).get(1)].getText().toString().isEmpty())) {
 
                         editTextArr[relationArrList[noOfThisEt].get(i).get(2)].setText(//Double.toString(
+                                Double.toString(Double.parseDouble(
                                 decimalFormat.format(Double.parseDouble(editTextArr[relationArrList[noOfThisEt].get(i).get(0)].getText().toString()) /
                                         Double.parseDouble(editTextArr[relationArrList[noOfThisEt].get(i).get(1)].getText().toString()))
+                                ))
                         );
                         callThisFuncOnArrL.add(editTextArr[relationArrList[noOfThisEt].get(i).get(2)]);
                     } else if ((!editTextArr[relationArrList[noOfThisEt].get(i).get(2)].getText().toString().isEmpty()) &&
@@ -301,7 +283,17 @@ abstract public class BuySellInfoDialog {
                                     int k;
                                     for (k = 0; k == j || editTextArr[relationArrList[noOfThisEt].get(i).get(k)] == thisEditText; k++) {
                                     }
-                                    clearBtnArr[relationArrList[noOfThisEt].get(i).get(j)] = createButton(relationArrList[noOfThisEt].get(i).get(j), relationArrList[noOfThisEt].get(i).get(k), editTextArr, llArr, clearBtnArr);
+                                    Double valShouldBe;int devideBy;
+                                    if(j==0){
+                                        valShouldBe=Double.parseDouble(editTextArr[relationArrList[noOfThisEt].get(i).get(k)].getText().toString()) *
+                                                Double.parseDouble(thisEditText.getText().toString());
+                                    }else {
+                                        if(j==1) devideBy=2;
+                                        else devideBy =1;
+                                        valShouldBe=Double.parseDouble(editTextArr[relationArrList[noOfThisEt].get(i).get(0)].getText().toString()) /
+                                                Double.parseDouble(editTextArr[relationArrList[noOfThisEt].get(i).get(devideBy)].getText().toString());
+                                    }
+                                    clearBtnArr[relationArrList[noOfThisEt].get(i).get(j)] = createButton(relationArrList[noOfThisEt].get(i).get(j), relationArrList[noOfThisEt].get(i).get(k), editTextArr, llArr, clearBtnArr, valShouldBe);
                                     llArr[relationArrList[noOfThisEt].get(i).get(j)].addView(
                                             clearBtnArr[relationArrList[noOfThisEt].get(i).get(j)]
                                     );
@@ -317,16 +309,20 @@ abstract public class BuySellInfoDialog {
                             (!editTextArr[relationArrList[noOfThisEt].get(i).get(2)].getText().toString().isEmpty())) {
 
                         editTextArr[relationArrList[noOfThisEt].get(i).get(0)].setText(//Double.toString(
+                                Double.toString(Double.parseDouble(
                                 decimalFormat.format(Double.parseDouble(editTextArr[relationArrList[noOfThisEt].get(i).get(1)].getText().toString()) *
                                         Double.parseDouble(editTextArr[relationArrList[noOfThisEt].get(i).get(2)].getText().toString()))
+                                ))
                         );
                         callThisFuncOnArrL.add(editTextArr[relationArrList[noOfThisEt].get(i).get(0)]);
                     } else if (editTextArr[relationArrList[noOfThisEt].get(i).get(2)].getText().toString().isEmpty() &&
                             (!editTextArr[relationArrList[noOfThisEt].get(i).get(0)].getText().toString().isEmpty())) {
 
                         editTextArr[relationArrList[noOfThisEt].get(i).get(2)].setText(//Double.toString(
+                                Double.toString(Double.parseDouble(
                                 decimalFormat.format(Double.parseDouble(editTextArr[relationArrList[noOfThisEt].get(i).get(0)].getText().toString()) /
                                         Double.parseDouble(editTextArr[relationArrList[noOfThisEt].get(i).get(1)].getText().toString()))
+                                ))
                         );
                         callThisFuncOnArrL.add(editTextArr[relationArrList[noOfThisEt].get(i).get(2)]);
                     } else if ((!editTextArr[relationArrList[noOfThisEt].get(i).get(2)].getText().toString().isEmpty()) &&
@@ -342,7 +338,17 @@ abstract public class BuySellInfoDialog {
                                     int k;
                                     for (k = 0; k == j || editTextArr[relationArrList[noOfThisEt].get(i).get(k)] == thisEditText; k++) {
                                     }
-                                    clearBtnArr[relationArrList[noOfThisEt].get(i).get(j)] = createButton(relationArrList[noOfThisEt].get(i).get(j), relationArrList[noOfThisEt].get(i).get(k), editTextArr, llArr, clearBtnArr);
+                                    Double valShouldBe;int devideBy;
+                                    if(j==0){
+                                        valShouldBe=Double.parseDouble(editTextArr[relationArrList[noOfThisEt].get(i).get(k)].getText().toString()) *
+                                                Double.parseDouble(thisEditText.getText().toString());
+                                    }else {
+                                        if(j==1) devideBy=2;
+                                        else devideBy =1;
+                                        valShouldBe=Double.parseDouble(editTextArr[relationArrList[noOfThisEt].get(i).get(0)].getText().toString()) /
+                                                Double.parseDouble(editTextArr[relationArrList[noOfThisEt].get(i).get(devideBy)].getText().toString());
+                                    }
+                                    clearBtnArr[relationArrList[noOfThisEt].get(i).get(j)] = createButton(relationArrList[noOfThisEt].get(i).get(j), relationArrList[noOfThisEt].get(i).get(k), editTextArr, llArr, clearBtnArr, valShouldBe);
                                     llArr[relationArrList[noOfThisEt].get(i).get(j)].addView(
                                             clearBtnArr[relationArrList[noOfThisEt].get(i).get(j)]
                                     );
@@ -356,15 +362,19 @@ abstract public class BuySellInfoDialog {
                     if (editTextArr[relationArrList[noOfThisEt].get(i).get(0)].getText().toString().isEmpty() &&
                             (!editTextArr[relationArrList[noOfThisEt].get(i).get(1)].getText().toString().isEmpty())) {
                         editTextArr[relationArrList[noOfThisEt].get(i).get(0)].setText(//Double.toString(
+                                Double.toString(Double.parseDouble(
                                 decimalFormat.format(Double.parseDouble(editTextArr[relationArrList[noOfThisEt].get(i).get(1)].getText().toString()) *
                                         Double.parseDouble(editTextArr[relationArrList[noOfThisEt].get(i).get(2)].getText().toString()))
+                                ))
                         );
                         callThisFuncOnArrL.add(editTextArr[relationArrList[noOfThisEt].get(i).get(0)]);
                     } else if (editTextArr[relationArrList[noOfThisEt].get(i).get(1)].getText().toString().isEmpty() &&
                             (!editTextArr[relationArrList[noOfThisEt].get(i).get(0)].getText().toString().isEmpty())) {
                         editTextArr[relationArrList[noOfThisEt].get(i).get(1)].setText(//Double.toString(
+                                Double.toString(Double.parseDouble(
                                 decimalFormat.format(Double.parseDouble(editTextArr[relationArrList[noOfThisEt].get(i).get(0)].getText().toString()) /
                                         Double.parseDouble(editTextArr[relationArrList[noOfThisEt].get(i).get(2)].getText().toString()))
+                                ))
                         );
                         callThisFuncOnArrL.add(editTextArr[relationArrList[noOfThisEt].get(i).get(1)]);
                     } else if ((!editTextArr[relationArrList[noOfThisEt].get(i).get(0)].getText().toString().isEmpty()) &&
@@ -376,11 +386,20 @@ abstract public class BuySellInfoDialog {
 
                             for (int j = 0; j < relationArrList[noOfThisEt].get(i).size(); j++)
                                 if (editTextArr[relationArrList[noOfThisEt].get(i).get(j)] != thisEditText) {
-                                    //editTextArr[relationArrList[noOfThisEt].get(i).get(j)].setText("");
                                     int k;
                                     for (k = 0; k == j || editTextArr[relationArrList[noOfThisEt].get(i).get(k)] == thisEditText; k++) {
                                     }
-                                    clearBtnArr[relationArrList[noOfThisEt].get(i).get(j)] = createButton(relationArrList[noOfThisEt].get(i).get(j), relationArrList[noOfThisEt].get(i).get(k), editTextArr, llArr, clearBtnArr);
+                                    Double valShouldBe;int devideBy;
+                                    if(j==0){
+                                        valShouldBe=Double.parseDouble(editTextArr[relationArrList[noOfThisEt].get(i).get(k)].getText().toString()) *
+                                                Double.parseDouble(thisEditText.getText().toString());
+                                    }else {
+                                        if(j==1) devideBy=2;
+                                        else devideBy =1;
+                                        valShouldBe=Double.parseDouble(editTextArr[relationArrList[noOfThisEt].get(i).get(0)].getText().toString()) /
+                                                Double.parseDouble(editTextArr[relationArrList[noOfThisEt].get(i).get(devideBy)].getText().toString());
+                                    }
+                                    clearBtnArr[relationArrList[noOfThisEt].get(i).get(j)] = createButton(relationArrList[noOfThisEt].get(i).get(j), relationArrList[noOfThisEt].get(i).get(k), editTextArr, llArr, clearBtnArr, valShouldBe);
                                     llArr[relationArrList[noOfThisEt].get(i).get(j)].addView(
                                             clearBtnArr[relationArrList[noOfThisEt].get(i).get(j)]
                                     );
@@ -414,14 +433,13 @@ abstract public class BuySellInfoDialog {
     }
 
     @SuppressLint("ResourceAsColor")
-    private Button createButton(int noOfThisBtn, int linkedNo, EditText[] etArr, LinearLayout[] linArr, Button[] btnArr) {
+    private Button createButton(int noOfThisBtn, int linkedNo, EditText[] etArr, LinearLayout[] linArr, Button[] btnArr, Double valShouldBe) {
         Button b = new Button(context);
         b.setText("change");
-        //b.setBackgroundColor(R.color.red);
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                etArr[noOfThisBtn].setText("");
+                etArr[noOfThisBtn].setText(valShouldBe.toString());
                 linArr[noOfThisBtn].removeView(btnArr[noOfThisBtn]);
                 linArr[linkedNo].removeView(btnArr[linkedNo]);
                 btnArr[noOfThisBtn] = null;
@@ -437,7 +455,9 @@ abstract public class BuySellInfoDialog {
                     for (int i = 0; i < etArr.length; i++) {
                         etArr[i].setFocusableInTouchMode(true);
                     }
+                    prodInfoDialogInfoAutoAdj(etArr[noOfThisBtn], etArr, linArr, btnArr);
                 }
+
             }
         });
         return b;

@@ -50,6 +50,6 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
-        getSupportFragmentManager().beginTransaction().add(R.id.frameLayout, new billAndPaymentFrag()).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.frameLayout, new BuyOrSellFrag("Supplier")).commit();
     }
 }

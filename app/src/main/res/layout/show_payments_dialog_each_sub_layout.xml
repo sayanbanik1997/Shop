@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/idTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:paddingTop="@dimen/txtPaddingTopToOffsetEt"/>
+    <TextView
+        android:id="@+id/dateOfPaymentTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toStartOf="@+id/amountEt"
+        app:layout_constraintStart_toEndOf="@+id/idTxt"
+        app:layout_constraintTop_toTopOf="parent"
+        android:paddingTop="@dimen/txtPaddingTopToOffsetEt"/>
+    <EditText
+        android:id="@+id/amountEt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        app:layout_constraintEnd_toStartOf="@+id/delImg"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/dateOfPaymentTxt"/>
+
+    <ImageView
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/delete"
+        android:id="@+id/delImg"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="@dimen/txtPaddingTopToOffsetEt"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

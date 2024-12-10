@@ -4,4 +4,5 @@
     <dimen name="dialogPadding">10dp</dimen>
     <dimen name="txtPaddingRightLeft">3dp</dimen>
     <dimen name="txtPadding">3dp</dimen>
+    <dimen name="txtPaddingTopToOffsetEt">15dp</dimen>
 </resources>

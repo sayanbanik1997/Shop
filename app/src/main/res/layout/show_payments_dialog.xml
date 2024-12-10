@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="@dimen/dialogWidth"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/dialogPadding"
+    >
+    <TextView
+        android:id="@+id/idDumyTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="id"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/dateOfPaymentDumyTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="date of payment"
+        app:layout_constraintEnd_toStartOf="@+id/amountDumyTxt"
+        app:layout_constraintStart_toEndOf="@+id/idDumyTxt"
+        app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/amountDumyTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="amount"
+        app:layout_constraintEnd_toStartOf="@+id/delDumyImg"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/dateOfPaymentDumyTxt"
+        android:layout_marginEnd="15dp"
+        />
+
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/delete"
+        android:id="@+id/delDumyImg"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/showPaymentDialogReView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/amountDumyTxt"
+        app:layout_constraintStart_toStartOf="parent"
+        >
+
+    </androidx.recyclerview.widget.RecyclerView>
+    <TextView
+        android:id="@+id/idTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/showPaymentDialogReView"
+        android:paddingTop="@dimen/txtPaddingTopToOffsetEt"/>
+    <TextView
+        android:id="@+id/dateOfPaymentTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toStartOf="@+id/amountEt"
+        app:layout_constraintStart_toEndOf="@+id/idTxt"
+        app:layout_constraintTop_toBottomOf="@+id/showPaymentDialogReView"
+        android:paddingTop="@dimen/txtPaddingTopToOffsetEt"/>
+    <EditText
+        android:id="@+id/amountEt"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        app:layout_constraintEnd_toStartOf="@+id/delImg"
+        app:layout_constraintTop_toBottomOf="@+id/showPaymentDialogReView"
+        app:layout_constraintStart_toEndOf="@id/dateOfPaymentTxt"/>
+
+    <ImageView
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/delete"
+        android:id="@+id/delImg"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/showPaymentDialogReView"
+        android:layout_marginTop="@dimen/txtPaddingTopToOffsetEt"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

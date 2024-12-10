@@ -39,7 +39,9 @@ import java.time.LocalDate;
 
 public class BuyOrSellFrag extends Fragment {
     String subUrl="";
+    BuyOrSellFrag that;
     BuyOrSellFrag(String subUrl){
+        that = this;
         this.subUrl=subUrl;
     }
     static DecimalFormat decimalFormat = new DecimalFormat("#.0000000");
@@ -60,6 +62,7 @@ public class BuyOrSellFrag extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         context=getContext();
         view = inflater.inflate(R.layout.fragment_buy_or_sell, container, false);
+
         supNameTxt = (TextView) view.findViewById(R.id.supNameTxt);
         byingDtTxt = (TextView) view.findViewById(R.id.byingDtTxt);
         TextView soldUnsoldTxt = (TextView) view.findViewById(R.id.soldUnsoldTxt);
@@ -166,7 +169,7 @@ public class BuyOrSellFrag extends Fragment {
         paidTxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                ShowPaymentsDialog showPaymentsDialog=new ShowPaymentsDialog(getContext(), BuyOrSellFrag.this, null);
             }
         });
         paidTxt.addTextChangedListener(new TextWatcher() {
