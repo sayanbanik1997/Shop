@@ -53,18 +53,21 @@ public class billAndPaymentFrag extends Fragment {
                                 ((TextView) holder.arrView.get(4)).setText(paidTxt.toString());
                                 ((TextView) holder.arrView.get(5)).setText(dueTxt.toString());
 
+                                String billIdd=billId;
                                 ((LinearLayout) holder.arrView.get(6)).setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
                                         String []tag={"billId"}, data={((TextView) holder.arrView.get(0)).getText().toString()};
-                                        try {
-                                            if(jsonObject.getString("purOrSell").equals("1")){
-                                                getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, new BuyOrSellFrag("Supplier")).commit();
-                                            }else{
-                                                getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, new BuyOrSellFrag("Customer")).commit();
+                                        if(!billIdd.equals("0")) {
+                                            try {
+                                                if (jsonObject.getString("purOrSell").equals("1")) {
+                                                    getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, new BuyOrSellFrag("Supplier", Integer.parseInt(billIdd))).commit();
+                                                } else {
+                                                    getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, new BuyOrSellFrag("Customer", Integer.parseInt(billIdd))).commit();
+                                                }
+                                            } catch (Exception e) {
+                                                Toast.makeText(getContext(), "json error 1", Toast.LENGTH_SHORT).show();
                                             }
-                                        } catch (Exception e) {
-                                            Toast.makeText(getContext(), "json error 1", Toast.LENGTH_SHORT).show();
                                         }
                                     }
                                 });

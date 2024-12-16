@@ -7,8 +7,10 @@ import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,6 +19,7 @@ import androidx.fragment.app.Fragment;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 abstract public class BuySellInfoDialog {
 
@@ -29,7 +32,10 @@ abstract public class BuySellInfoDialog {
     EditText[] chooseProdDiEtArr;EditText unitEt;
     TextView chooseProdTxt;
     Dialog buyInfoDialogue;
-    BuySellInfoDialog(Context context, View view, Fragment fragment) {
+    ImageView[] clearBtns=new ImageView[6];int[] widthOfEt=new int[clearBtns.length];boolean widthAlreadySet=false;
+    ImageView clearBtnAll;
+
+    BuySellInfoDialog(Context context, Fragment fragment) {
         this.context=context;
         this.view=view;
         this.fragment=fragment;
@@ -46,6 +52,15 @@ abstract public class BuySellInfoDialog {
         llArr[3] = (LinearLayout) buyInfoDialogue.findViewById(R.id.boxPriceLinLayoutProdEntry);
         llArr[4] = (LinearLayout) buyInfoDialogue.findViewById(R.id.itemPerBoxLinLayoutProdEntry);
         llArr[5] = (LinearLayout) buyInfoDialogue.findViewById(R.id.totalAmountDLinLayoutProdEntry);
+
+        clearBtnAll = (ImageView) buyInfoDialogue.findViewById(R.id.clearAllImgBtn);
+        clearBtns[0] = (ImageView) buyInfoDialogue.findViewById(R.id.clearImgBtn0);
+        clearBtns[1] = (ImageView) buyInfoDialogue.findViewById(R.id.clearImgBtn1);
+        clearBtns[2] = (ImageView) buyInfoDialogue.findViewById(R.id.clearImgBtn2);
+        clearBtns[3] = (ImageView) buyInfoDialogue.findViewById(R.id.clearImgBtn3);
+        clearBtns[4] = (ImageView) buyInfoDialogue.findViewById(R.id.clearImgBtn4);
+        clearBtns[5] = (ImageView) buyInfoDialogue.findViewById(R.id.clearImgBtn5);
+
 
         chooseProdTxt = (TextView) buyInfoDialogue.findViewById(R.id.chooseProdTxt);
 
@@ -75,13 +90,48 @@ abstract public class BuySellInfoDialog {
         chooseProdDiEtArr[5] = (EditText) buyInfoDialogue.findViewById(R.id.totalAmountEt);
         unitEt = (EditText) buyInfoDialogue.findViewById(R.id.unitEt);
 
+        //chooseProdDiEtArr[0].setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+
         Button[] clearBtnArr = new Button[chooseProdDiEtArr.length];
 
         for (int i = 0; i < chooseProdDiEtArr.length; i++) {
+            int ii=i;
+            chooseProdDiEtArr[i].addTextChangedListener(new TextWatcher() {
+                @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}@Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    setWidthOfEtArrVal();
+                    int width= 0;
+                    if(!chooseProdDiEtArr[ii].getText().toString().isEmpty()){
+                        width=widthOfEt[ii]-50;
+
+                        clearBtnAll.setVisibility(View.VISIBLE);
+                        clearBtns[ii].setVisibility(View.VISIBLE);
+                    }else{
+                        width=widthOfEt[ii];
+
+                        clearBtns[ii].setVisibility(View.GONE);
+                        boolean allempty=true;
+                        for (int j=0; j<chooseProdDiEtArr.length; j++){
+                            if(!chooseProdDiEtArr[j].getText().toString().isEmpty()){
+                                allempty=false;
+                                break;
+                            }
+                        }
+                        if(allempty) clearBtnAll.setVisibility(View.GONE);
+                    }
+                    ViewGroup.LayoutParams layoutParams=chooseProdDiEtArr[ii].getLayoutParams();
+                    layoutParams.width= width;
+                    chooseProdDiEtArr[ii].setLayoutParams(layoutParams);
+                }
+            });
+
             chooseProdDiEtArr[i].setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 String getStringToCompare;
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
+                    setWidthOfEtArrVal();
                     if (v.hasFocus()) {
                         new Thread() {
                             public void run() {
@@ -111,7 +161,33 @@ abstract public class BuySellInfoDialog {
                     }
                 }
             });
+
+            clearBtns[i].setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    chooseProdDiEtArr[ii].setText("");
+                    ((ImageView)v).setVisibility(View.GONE);
+
+                    ViewGroup.LayoutParams layoutParams=chooseProdDiEtArr[ii].getLayoutParams();
+                    layoutParams.width= widthOfEt[ii];
+                    chooseProdDiEtArr[ii].setLayoutParams(layoutParams);
+
+                }
+            });
         }
+
+        clearBtnAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for(int i=0; i<chooseProdDiEtArr.length; i++){
+                    chooseProdDiEtArr[i].setText("");
+                    ViewGroup.LayoutParams layoutParams=chooseProdDiEtArr[i].getLayoutParams();
+                    layoutParams.width= widthOfEt[i];
+                    chooseProdDiEtArr[i].setLayoutParams(layoutParams);
+                    clearBtns[i].setVisibility(View.GONE);
+                }
+            }
+        });
 
         buyInfoDialogue.findViewById(R.id.submitBtn).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -139,7 +215,34 @@ abstract public class BuySellInfoDialog {
             }
         });
     }
+
+    protected void setData(String prodName, double prodQuan, double boxQuan, double amount, String unit){
+        double prodPrice = amount / prodQuan  ;
+        double boxPrice = amount / boxQuan;
+        double itemPerBox = boxQuan/ prodQuan;
+
+        chooseProdTxt.setText(prodName);
+        chooseProdDiEtArr[0].setText(Double.toString(prodQuan));
+        chooseProdDiEtArr[1].setText(Double.toString(prodPrice));
+        chooseProdDiEtArr[2].setText(Double.toString(boxQuan));
+        chooseProdDiEtArr[3].setText(Double.toString(boxPrice));
+        chooseProdDiEtArr[4].setText(Double.toString(itemPerBox));
+        chooseProdDiEtArr[5].setText(Double.toString(amount));
+        unitEt.setText(unit);
+    }
+    public void setWidthOfEtArrVal(){
+        if(!widthAlreadySet) {
+            widthAlreadySet=true;
+            for (int i = 0; i < chooseProdDiEtArr.length; i++) {
+                int ii = i;
+                if (chooseProdDiEtArr[ii].getText().toString().isEmpty())
+                    widthOfEt[ii] = chooseProdDiEtArr[ii].getWidth();
+            }
+        }
+    }
+
     abstract void subBtnClicked();
+
     protected boolean prodInfoDialogInfoAutoAdj(EditText thisEditText, EditText[] editTextArr, LinearLayout[] llArr, Button[] clearBtnArr) {
         ArrayList<Integer> relation;
         ArrayList<ArrayList<Integer>>[] relationArrList = new ArrayList[6];
@@ -442,6 +545,17 @@ abstract public class BuySellInfoDialog {
                 etArr[noOfThisBtn].setText(valShouldBe.toString());
                 linArr[noOfThisBtn].removeView(btnArr[noOfThisBtn]);
                 linArr[linkedNo].removeView(btnArr[linkedNo]);
+
+                ViewGroup.LayoutParams layoutParams=chooseProdDiEtArr[noOfThisBtn].getLayoutParams();
+                layoutParams.width= widthOfEt[noOfThisBtn]-50;
+                chooseProdDiEtArr[noOfThisBtn].setLayoutParams(layoutParams);
+                clearBtns[noOfThisBtn].setVisibility(View.VISIBLE);
+
+                layoutParams=chooseProdDiEtArr[linkedNo].getLayoutParams();
+                layoutParams.width= widthOfEt[linkedNo]-50;
+                chooseProdDiEtArr[linkedNo].setLayoutParams(layoutParams);
+                clearBtns[linkedNo].setVisibility(View.VISIBLE);
+
                 btnArr[noOfThisBtn] = null;
                 btnArr[linkedNo] = null;
                 boolean changBtnRemained = false;
@@ -460,6 +574,10 @@ abstract public class BuySellInfoDialog {
 
             }
         });
+        ViewGroup.LayoutParams layoutParams=chooseProdDiEtArr[noOfThisBtn].getLayoutParams();
+        layoutParams.width= widthOfEt[noOfThisBtn]-270;
+        chooseProdDiEtArr[noOfThisBtn].setLayoutParams(layoutParams);
+        clearBtns[noOfThisBtn].setVisibility(View.GONE);
         return b;
     }
 }

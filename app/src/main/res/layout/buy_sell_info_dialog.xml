@@ -21,8 +21,10 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:src="@drawable/cross"
+            android:id="@+id/clearAllImgBtn"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
+            android:visibility="invisible"
             />
     </RelativeLayout>
     <LinearLayout
@@ -37,10 +39,17 @@
             android:id="@+id/prodCountDumyTxt"
             />
         <EditText
-            android:layout_width="150dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/prodCountEt"
             android:inputType="numberDecimal"
+            />
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/cross"
+            android:id="@+id/clearImgBtn0"
+            android:visibility="invisible"
             />
     </LinearLayout>
 
@@ -57,10 +66,17 @@
             android:id="@+id/pricePerProdDumyTxt"
             />
         <EditText
-            android:layout_width="150dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/pricePerProdEt"
             android:inputType="numberDecimal"
+            />
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/cross"
+            android:id="@+id/clearImgBtn1"
+            android:visibility="invisible"
             />
     </LinearLayout>
 
@@ -76,10 +92,17 @@
             android:id="@+id/boxQuanDumyTxt"
             />
         <EditText
-            android:layout_width="180dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/boxQuanEt"
             android:inputType="numberDecimal"
+            />
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/cross"
+            android:id="@+id/clearImgBtn2"
+            android:visibility="invisible"
             />
     </LinearLayout>
 
@@ -95,11 +118,18 @@
             android:id="@+id/boxPriceDumyTxt"
             />
     <EditText
-        android:layout_width="180dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/boxPriceEt"
         android:inputType="numberDecimal"
         />
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/cross"
+            android:id="@+id/clearImgBtn3"
+            android:visibility="invisible"
+            />
     </LinearLayout>
 
     <LinearLayout
@@ -115,11 +145,18 @@
             />
 
     <EditText
-        android:layout_width="150dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/itemPerBoxEt"
         android:inputType="numberDecimal"
         />
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/cross"
+            android:id="@+id/clearImgBtn4"
+            android:visibility="invisible"
+            />
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -133,11 +170,18 @@
             android:id="@+id/totalAmountDumyTxt"
             />
     <EditText
-        android:layout_width="160dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/totalAmountEt"
         android:inputType="numberDecimal"
         />
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/cross"
+            android:id="@+id/clearImgBtn5"
+            android:visibility="invisible"
+            />
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -150,7 +194,7 @@
             android:id="@+id/unitDumyTxt"
             />
         <EditText
-            android:layout_width="200dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/unitEt"
             />
