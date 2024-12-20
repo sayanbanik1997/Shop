@@ -5,6 +5,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Build;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -19,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DateFormat;
@@ -28,11 +31,13 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public abstract class ShowPaymentsDialog {
+    Context context;
     Dialog dialog;
     ArrayList<String[]> arrayListOfPaymentsArrView = new ArrayList<>();
     TextView dateOfPaymentTxt;
     EditText amountEt;
     ShowPaymentsDialog(Context context, JSONArray payments, String paidEtStr){
+        this.context=context;
         dialog= new Dialog(context);
         dialog.setContentView(R.layout.show_payments_dialog);
         dialog.show();
@@ -56,6 +61,29 @@ public abstract class ShowPaymentsDialog {
                         arrayListOfPaymentsArrView.get(position)[1]= eachPaymentJObj.getString("dateOfPayment");
                         ((EditText)holder.arrView.get(2)).setText(eachPaymentJObj.getString("amount"));
                         arrayListOfPaymentsArrView.get(position)[2]= eachPaymentJObj.getString("amount");
+                        ((EditText)holder.arrView.get(2)).
+                                addTextChangedListener(new TextWatcher() {
+                                    @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {} @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+                                    @Override
+                                    public void afterTextChanged(Editable s) {
+                                        try {
+                                            arrayListOfPaymentsArrView.get(position)[2]=Double.toString(Double.parseDouble(((EditText)holder.arrView.get(2)).getText().toString()));
+                                        } catch (Exception e) {
+                                            arrayListOfPaymentsArrView.get(position)[2]="0";
+                                            Toast.makeText(context, "enetered", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+//                                setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//                            @Override
+//                            public void onFocusChange(View v, boolean hasFocus) {
+//                                if(!hasFocus){
+//                                    arrayListOfPaymentsArrView.get(position)[2]=((EditText)v).getText().toString();
+////                                    Toast.makeText(context, ((EditText)v).getText().toString(), Toast.LENGTH_SHORT).show();
+////                                    Toast.makeText(context, arrayListOfPaymentsArrView.get(position)[2], Toast.LENGTH_SHORT).show();
+//                                }
+//                            }
+//                        });
                     } catch (Exception e) {
                         Toast.makeText(context, "json error", Toast.LENGTH_SHORT).show();
                     }
@@ -74,6 +102,7 @@ public abstract class ShowPaymentsDialog {
                     };
                 }
             });
+            amountEt.setText(Double.toString(getAmountForEt(payments, Double.parseDouble(paidEtStr))));
         }else{
             amountEt.setText(paidEtStr);
         }
@@ -120,6 +149,18 @@ public abstract class ShowPaymentsDialog {
                 onCancled();
             }
         });
+    }
+
+    protected double getAmountForEt(JSONArray payments, Double totalPaid){
+        for (int i=0; i<payments.length(); i++){
+            try {
+                JSONObject eachPaymentJObj = payments.getJSONObject(i);
+                totalPaid -= Double.parseDouble(eachPaymentJObj.getString("amount"));
+            } catch (JSONException e) {
+                Toast.makeText(context, "Json error", Toast.LENGTH_SHORT).show();
+            }
+        }
+        return totalPaid;
     }
     abstract void submitBtnClicked();
     abstract void onCancled();
