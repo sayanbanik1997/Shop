@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 06, 2024 at 07:04 PM
+-- Generation Time: Dec 21, 2024 at 07:23 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -30,15 +30,17 @@ SET time_zone = "+00:00";
 CREATE TABLE `customerr_tbl` (
   `id` int(11) NOT NULL,
   `name` varchar(100) DEFAULT NULL,
-  `datetime` datetime DEFAULT NULL
+  `datetime` datetime DEFAULT NULL,
+  `updated` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `customerr_tbl`
 --
 
-INSERT INTO `customerr_tbl` (`id`, `name`, `datetime`) VALUES
-(1, 'cus1', '2024-12-05 16:18:35');
+INSERT INTO `customerr_tbl` (`id`, `name`, `datetime`, `updated`) VALUES
+(1, 'cus1', '2024-12-05 16:18:35', NULL),
+(2, 'cus2', '2024-12-07 22:23:27', NULL);
 
 -- --------------------------------------------------------
 
@@ -53,17 +55,16 @@ CREATE TABLE `payment_tbl` (
   `dateOfPayment` date DEFAULT NULL,
   `cusId` int(11) DEFAULT NULL,
   `supId` int(11) DEFAULT NULL,
-  `amount` double DEFAULT NULL
+  `amount` double DEFAULT NULL,
+  `updated` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `payment_tbl`
 --
 
-INSERT INTO `payment_tbl` (`id`, `billId`, `datetime`, `dateOfPayment`, `cusId`, `supId`, `amount`) VALUES
-(4, 13, '2024-12-05 16:15:13', '2024-12-05', NULL, 10, NULL),
-(5, 14, '2024-12-05 16:19:47', '2024-12-05', 1, NULL, NULL),
-(6, 15, '2024-12-05 17:48:22', '2024-12-05', NULL, 10, NULL);
+INSERT INTO `payment_tbl` (`id`, `billId`, `datetime`, `dateOfPayment`, `cusId`, `supId`, `amount`, `updated`) VALUES
+(20, 26, '2024-12-18 23:20:50', '2024-12-18', NULL, 10, 50, NULL);
 
 -- --------------------------------------------------------
 
@@ -78,17 +79,18 @@ CREATE TABLE `prod_entry_tbl` (
   `dateTimeOfEntry` datetime DEFAULT NULL,
   `purOrSell` int(11) DEFAULT NULL,
   `soldUnsold` int(11) DEFAULT NULL,
-  `due` double DEFAULT NULL
+  `haveToPay` double DEFAULT NULL,
+  `updatedTo` int(11) DEFAULT NULL,
+  `updatedFrom` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `prod_entry_tbl`
 --
 
-INSERT INTO `prod_entry_tbl` (`id`, `cusId`, `dateOfPurchase`, `dateTimeOfEntry`, `purOrSell`, `soldUnsold`, `due`) VALUES
-(13, 10, '2024-12-05', '2024-12-05 16:15:13', 1, 1, 3106),
-(14, 1, '2024-12-05', '2024-12-05 16:19:47', 2, 1, 35255),
-(15, 10, '2024-12-05', '2024-12-05 17:48:22', 1, 1, 83249);
+INSERT INTO `prod_entry_tbl` (`id`, `cusId`, `dateOfPurchase`, `dateTimeOfEntry`, `purOrSell`, `soldUnsold`, `haveToPay`, `updatedTo`, `updatedFrom`) VALUES
+(26, 10, '2024-12-18', '2024-12-18 23:20:50', 1, 1, 59, 27, NULL),
+(27, 11, '2024-12-18', '2024-12-18 23:26:00', 1, 1, 59, NULL, 26);
 
 -- --------------------------------------------------------
 
@@ -103,27 +105,19 @@ CREATE TABLE `prod_list_tbl` (
   `boxQuan` double DEFAULT NULL,
   `prodQuan` double DEFAULT NULL,
   `totalAmount` double DEFAULT NULL,
-  `unit` varchar(10) DEFAULT NULL
+  `unit` varchar(10) DEFAULT NULL,
+  `updated` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `prod_list_tbl`
 --
 
-INSERT INTO `prod_list_tbl` (`id`, `prodEntryTblId`, `prodId`, `boxQuan`, `prodQuan`, `totalAmount`, `unit`) VALUES
-(21, 13, 5, 4, 39, 2106, 'p'),
-(22, 13, 4, 2, 100, 2000, 'p'),
-(23, 14, 7, 5, 665, 37240, 'p'),
-(24, 14, 6, 5, 100, 2000, 'p'),
-(25, 15, 8, 5, 300, 600, 'p'),
-(26, 15, 14, 89, 66, 528, 'h'),
-(27, 15, 15, 8, 69, 6072, 'n'),
-(28, 15, 13, 49, 64, 3712, 'u'),
-(29, 15, 12, 6, 64, 4096, 'i'),
-(30, 15, 9, 4, 649, 41536, 'p'),
-(31, 15, 4, 6, 200, 4000, 'p'),
-(32, 15, 10, 46, 949, 4745, 'l'),
-(33, 15, 11, 76, 949, 929071, 'is');
+INSERT INTO `prod_list_tbl` (`id`, `prodEntryTblId`, `prodId`, `boxQuan`, `prodQuan`, `totalAmount`, `unit`, `updated`) VALUES
+(49, 26, 4, 7, 5, 35, '', NULL),
+(50, 26, 8, 3, 4, 24, '', NULL),
+(51, 1, 4, 7, 5, 35, '', NULL),
+(52, 1, 8, 3, 4, 24, '', NULL);
 
 -- --------------------------------------------------------
 
@@ -134,27 +128,29 @@ INSERT INTO `prod_list_tbl` (`id`, `prodEntryTblId`, `prodId`, `boxQuan`, `prodQ
 CREATE TABLE `prod_tbl` (
   `id` int(11) NOT NULL,
   `name` varchar(100) DEFAULT NULL,
-  `datetime` datetime DEFAULT NULL
+  `datetime` datetime DEFAULT NULL,
+  `updated` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `prod_tbl`
 --
 
-INSERT INTO `prod_tbl` (`id`, `name`, `datetime`) VALUES
-(4, 'prod', '2024-12-03 18:41:39'),
-(5, 'prod1', '2024-12-03 18:42:14'),
-(6, 'prod2', '2024-12-05 11:34:47'),
-(7, 'prod3', '2024-12-05 11:35:01'),
-(8, 'p1', '2024-12-05 17:45:25'),
-(9, 'p2', '2024-12-05 17:45:40'),
-(10, 'p3', '2024-12-05 17:45:57'),
-(11, 'p4', '2024-12-05 17:46:20'),
-(12, 'p5', '2024-12-05 17:46:34'),
-(13, 'p6', '2024-12-05 17:46:53'),
-(14, 'p7', '2024-12-05 17:47:12'),
-(15, 'multi\nline', '2024-12-05 17:47:33'),
-(16, 'p8', '2024-12-05 17:48:44');
+INSERT INTO `prod_tbl` (`id`, `name`, `datetime`, `updated`) VALUES
+(4, 'prod', '2024-12-03 18:41:39', NULL),
+(5, 'prod1', '2024-12-03 18:42:14', NULL),
+(6, 'prod2', '2024-12-05 11:34:47', NULL),
+(7, 'prod3', '2024-12-05 11:35:01', NULL),
+(8, 'p1', '2024-12-05 17:45:25', NULL),
+(9, 'p2', '2024-12-05 17:45:40', NULL),
+(10, 'p3', '2024-12-05 17:45:57', NULL),
+(11, 'p4', '2024-12-05 17:46:20', NULL),
+(12, 'p5', '2024-12-05 17:46:34', NULL),
+(13, 'p6', '2024-12-05 17:46:53', NULL),
+(14, 'p7', '2024-12-05 17:47:12', NULL),
+(15, 'multi\nline', '2024-12-05 17:47:33', NULL),
+(16, 'p8', '2024-12-05 17:48:44', NULL),
+(17, 'p9', '2024-12-09 14:39:03', NULL);
 
 -- --------------------------------------------------------
 
@@ -165,16 +161,18 @@ INSERT INTO `prod_tbl` (`id`, `name`, `datetime`) VALUES
 CREATE TABLE `supplier_tbl` (
   `id` int(11) NOT NULL,
   `name` varchar(100) DEFAULT NULL,
-  `datetime` datetime DEFAULT NULL
+  `datetime` datetime DEFAULT NULL,
+  `updated` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `supplier_tbl`
 --
 
-INSERT INTO `supplier_tbl` (`id`, `name`, `datetime`) VALUES
-(10, 'sup', '2024-12-03 18:41:25'),
-(11, 'bapi da', '2024-12-05 16:01:26');
+INSERT INTO `supplier_tbl` (`id`, `name`, `datetime`, `updated`) VALUES
+(10, 'sup', '2024-12-03 18:41:25', NULL),
+(11, 'bapi da', '2024-12-05 16:01:26', NULL),
+(12, 'jontropat', '2024-12-07 22:25:56', NULL);
 
 --
 -- Indexes for dumped tables
@@ -224,37 +222,37 @@ ALTER TABLE `supplier_tbl`
 -- AUTO_INCREMENT for table `customerr_tbl`
 --
 ALTER TABLE `customerr_tbl`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `payment_tbl`
 --
 ALTER TABLE `payment_tbl`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `prod_entry_tbl`
 --
 ALTER TABLE `prod_entry_tbl`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT for table `prod_list_tbl`
 --
 ALTER TABLE `prod_list_tbl`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
 
 --
 -- AUTO_INCREMENT for table `prod_tbl`
 --
 ALTER TABLE `prod_tbl`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `supplier_tbl`
 --
 ALTER TABLE `supplier_tbl`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

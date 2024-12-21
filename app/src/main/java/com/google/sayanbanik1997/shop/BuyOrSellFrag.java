@@ -174,16 +174,17 @@ public class BuyOrSellFrag extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                //if(billId==0) {
-                    try {
+                try {
+                    if(billId==0) {
                         paidTxt.setText(Double.toString(Double.parseDouble(haveToPayTxt.getText().toString())));
-                        dueTxt.setText(
-                                Double.toString(Double.parseDouble(haveToPayTxt.getText().toString()) - Double.parseDouble(paidTxt.getText().toString()))
-                        );
-                    } catch (Exception e) {
-                        dueTxt.setText("");
                     }
-                //}
+                    dueTxt.setText(
+                            Double.toString(Double.parseDouble(haveToPayTxt.getText().toString()) - Double.parseDouble(paidTxt.getText().toString()))
+                    );
+                } catch (Exception e) {
+                    paidTxt.setText("0");
+                    dueTxt.setText("0");
+                }
             }
         });
         paidTxt.setOnClickListener(new View.OnClickListener() {
@@ -191,7 +192,7 @@ public class BuyOrSellFrag extends Fragment {
             public void onClick(View v) {
                 if(showPaymentsDialog!=null){
                     showPaymentsDialog.dialog.show();
-                    showPaymentsDialog.amountEt.setText(Double.toString(showPaymentsDialog.getAmountForEt(payments ,Double.parseDouble(((TextView)v).getText().toString()))));
+                    showPaymentsDialog.amountEt.setText(Double.toString(showPaymentsDialog.getAmountForEt(Double.parseDouble(((TextView)v).getText().toString()))));
                 }else {
                     ShowPaymentsDialog showPaymentsDialog = new ShowPaymentsDialog(getContext(), payments, ((TextView) v).getText().toString()) {
                         @Override
@@ -212,7 +213,9 @@ public class BuyOrSellFrag extends Fragment {
                         @Override
                         void onCancled() {
                             BuyOrSellFrag.this.showPaymentsDialog=null;
-                            //setDataToPaidTxt();
+                            if(billId!=0){
+                                setDataToPaidTxt();
+                            }
                         }
                     };
                     //showPaymentsDialog.amountEt.setText(((TextView)v).getText().toString());
@@ -388,7 +391,7 @@ public class BuyOrSellFrag extends Fragment {
                 eachPaymentJsonObj = new JSONObject(payments.getString(i));
                 totalPaid+=eachPaymentJsonObj.getDouble("amount");
             } catch (JSONException e) {
-                throw new RuntimeException(e);
+                Toast.makeText(context, "error 242898654", Toast.LENGTH_SHORT).show();
             }
         }
         paidTxt.setText(Double.toString(totalPaid));

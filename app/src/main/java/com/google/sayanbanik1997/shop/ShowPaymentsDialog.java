@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Build;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -33,9 +34,11 @@ import java.util.Date;
 public abstract class ShowPaymentsDialog {
     Context context;
     Dialog dialog;
-    ArrayList<String[]> arrayListOfPaymentsArrView = new ArrayList<>();
+    ArrayList<String[]> arrayListOfPaymentsArrView = new ArrayList<>(),
+            arrayListOfPaymentsArrViewPermanent = new ArrayList<>();
     TextView dateOfPaymentTxt;
     EditText amountEt;
+    RecyclerView showPaymentDialogReView;
     ShowPaymentsDialog(Context context, JSONArray payments, String paidEtStr){
         this.context=context;
         dialog= new Dialog(context);
@@ -47,7 +50,7 @@ public abstract class ShowPaymentsDialog {
         ImageView delImg=(ImageView) dialog.findViewById(R.id.delImg);
 
         if(payments != null){
-            RecyclerView showPaymentDialogReView = (RecyclerView ) dialog.findViewById(R.id.showPaymentDialogReView);
+            showPaymentDialogReView = (RecyclerView ) dialog.findViewById(R.id.showPaymentDialogReView);
             showPaymentDialogReView.setLayoutManager(new LinearLayoutManager(context));
             showPaymentDialogReView.setAdapter(new RecyAdapter(R.layout.show_payments_dialog_each_sub_layout, payments.length()) {
                 @Override
@@ -55,35 +58,11 @@ public abstract class ShowPaymentsDialog {
                     try{
                         arrayListOfPaymentsArrView.add(new String[3]);
                         JSONObject eachPaymentJObj = payments.getJSONObject(position);
-                        ((TextView)holder.arrView.get(0)).setText(eachPaymentJObj.getString("id"));
                         arrayListOfPaymentsArrView.get(position)[0]= eachPaymentJObj.getString("id");
-                        ((TextView)holder.arrView.get(1)).setText(eachPaymentJObj.getString("dateOfPayment"));
                         arrayListOfPaymentsArrView.get(position)[1]= eachPaymentJObj.getString("dateOfPayment");
-                        ((EditText)holder.arrView.get(2)).setText(eachPaymentJObj.getString("amount"));
                         arrayListOfPaymentsArrView.get(position)[2]= eachPaymentJObj.getString("amount");
-                        ((EditText)holder.arrView.get(2)).
-                                addTextChangedListener(new TextWatcher() {
-                                    @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {} @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
-                                    @Override
-                                    public void afterTextChanged(Editable s) {
-                                        try {
-                                            arrayListOfPaymentsArrView.get(position)[2]=Double.toString(Double.parseDouble(((EditText)holder.arrView.get(2)).getText().toString()));
-                                        } catch (Exception e) {
-                                            arrayListOfPaymentsArrView.get(position)[2]="0";
-                                            Toast.makeText(context, "enetered", Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                });
-//                                setOnFocusChangeListener(new View.OnFocusChangeListener() {
-//                            @Override
-//                            public void onFocusChange(View v, boolean hasFocus) {
-//                                if(!hasFocus){
-//                                    arrayListOfPaymentsArrView.get(position)[2]=((EditText)v).getText().toString();
-////                                    Toast.makeText(context, ((EditText)v).getText().toString(), Toast.LENGTH_SHORT).show();
-////                                    Toast.makeText(context, arrayListOfPaymentsArrView.get(position)[2], Toast.LENGTH_SHORT).show();
-//                                }
-//                            }
-//                        });
+                        bindData(arrayListOfPaymentsArrView.get(position), holder, position);
+                        arrayListOfPaymentsArrViewPermanent=arrayListOfPaymentsArrView;
                     } catch (Exception e) {
                         Toast.makeText(context, "json error", Toast.LENGTH_SHORT).show();
                     }
@@ -94,15 +73,24 @@ public abstract class ShowPaymentsDialog {
                     return new Vh(view) {
                         @Override
                         void initiateInsideViewHolder(View itemView) {
-                            arrView.add(itemView.findViewById(R.id.idTxt));
-                            arrView.add(itemView.findViewById(R.id.dateOfPaymentTxt));
-                            arrView.add(itemView.findViewById(R.id.amountEt));
-                            arrView.add(itemView.findViewById(R.id.delImg));
+                            initiateViewholder(arrView, itemView);
                         }
                     };
                 }
             });
-            amountEt.setText(Double.toString(getAmountForEt(payments, Double.parseDouble(paidEtStr))));
+            Thread t = new Thread() {
+                public void run() {
+                    Looper.prepare();
+                    try {
+                        this.sleep(100);
+                        amountEt.setText(Double.toString(getAmountForEt( Double.parseDouble(paidEtStr))));
+                    } catch (Exception ex) {
+                        Toast.makeText(context, "error thread", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            };
+            t.start();
+
         }else{
             amountEt.setText(paidEtStr);
         }
@@ -151,14 +139,63 @@ public abstract class ShowPaymentsDialog {
         });
     }
 
-    protected double getAmountForEt(JSONArray payments, Double totalPaid){
-        for (int i=0; i<payments.length(); i++){
-            try {
-                JSONObject eachPaymentJObj = payments.getJSONObject(i);
-                totalPaid -= Double.parseDouble(eachPaymentJObj.getString("amount"));
-            } catch (JSONException e) {
-                Toast.makeText(context, "Json error", Toast.LENGTH_SHORT).show();
+    protected  void bindData(String[] data, Vh holder, int position){
+        ((TextView)holder.arrView.get(0)).setText(data[0]);
+        ((TextView)holder.arrView.get(1)).setText(data[1]);
+        ((EditText)holder.arrView.get(2)).setText(data[2]);
+        ((EditText)holder.arrView.get(2)).
+                addTextChangedListener(new TextWatcher() {
+                    @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {} @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        try {
+                            arrayListOfPaymentsArrView.get(position)[2]=Double.toString(Double.parseDouble(((EditText)holder.arrView.get(2)).getText().toString()));
+                        } catch (Exception e) {
+                            arrayListOfPaymentsArrView.get(position)[2]="0";
+                            //Toast.makeText(context, "enetered", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+        ((ImageView)holder.arrView.get(3)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                arrayListOfPaymentsArrView.remove(position);//arrayListOfPaymentsArrView.get(position)[1]="";arrayListOfPaymentsArrView.get(position)[2]="";
+                showPaymentDialogReView.setAdapter(new RecyAdapter(R.layout.show_payments_dialog_each_sub_layout, arrayListOfPaymentsArrView.size()) {
+                    @Override
+                    void bind(Vh holder, int position) {
+                        bindData(arrayListOfPaymentsArrView.get(position), holder, position);
+                    }
+
+                    @Override
+                    Vh onCreate(View view) {
+                        return new Vh(view) {
+                            @Override
+                            void initiateInsideViewHolder(View itemView) {
+                                initiateViewholder(arrView, itemView);
+                            }
+                        };
+                    }
+                });
             }
+        });
+    }
+
+    protected  void initiateViewholder(ArrayList<View> arrView, View itemView){
+        arrView.add(itemView.findViewById(R.id.idTxt));
+        arrView.add(itemView.findViewById(R.id.dateOfPaymentTxt));
+        arrView.add(itemView.findViewById(R.id.amountEt));
+        arrView.add(itemView.findViewById(R.id.delImg));
+    }
+    protected double getAmountForEt( Double totalPaid){
+        for (int i=0; i<arrayListOfPaymentsArrView.size(); i++){
+            totalPaid -= Double.parseDouble(arrayListOfPaymentsArrView.get(i)[2]);
+            //Toast.makeText(context, Double.toString(totalPaid), Toast.LENGTH_SHORT).show();
+//            try {
+//                JSONObject eachPaymentJObj = payments.getJSONObject(i);
+//                totalPaid -= Double.parseDouble(eachPaymentJObj.getString("amount"));
+//            } catch (JSONException e) {
+//                Toast.makeText(context, "Json error", Toast.LENGTH_SHORT).show();
+//            }
         }
         return totalPaid;
     }
