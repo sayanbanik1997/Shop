@@ -31,6 +31,7 @@ import org.json.JSONObject;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,7 +42,7 @@ import java.time.LocalDate;
 public class BuyOrSellFrag extends Fragment {
     String subUrl="";
     int billId;
-    JSONArray payments;
+    JSONArray payments, paymentsToSend;
     BuyOrSellFrag(String subUrl, int billId){
         this.subUrl=subUrl;
         this.billId=billId;
@@ -70,6 +71,7 @@ public class BuyOrSellFrag extends Fragment {
         context=getContext();
         try {
             payments = new JSONArray("[]");
+            //paymentsToSend= payments;
         } catch (JSONException e) {
             Toast.makeText(context, "error", Toast.LENGTH_SHORT).show();
         }
@@ -194,9 +196,11 @@ public class BuyOrSellFrag extends Fragment {
                     showPaymentsDialog.dialog.show();
                     showPaymentsDialog.amountEt.setText(Double.toString(showPaymentsDialog.getAmountForEt(Double.parseDouble(((TextView)v).getText().toString()))));
                 }else {
+
                     ShowPaymentsDialog showPaymentsDialog = new ShowPaymentsDialog(getContext(), payments, ((TextView) v).getText().toString()) {
                         @Override
-                        void submitBtnClicked() {
+                        void submitBtnClicked(ArrayList<String[]> arrayListOfPaymentsArrView,
+                                String dateOfPayment, String amount) {
                             double totalPaid = 0;
                             for (int i = 0; i < this.arrayListOfPaymentsArrView.size(); i++) {
                                 totalPaid += Double.parseDouble(this.arrayListOfPaymentsArrView.get(i)[2]);
@@ -208,6 +212,28 @@ public class BuyOrSellFrag extends Fragment {
                                 //Toast.makeText(getContext(), "error while parsing double", Toast.LENGTH_SHORT).show();
                             }
                             paidTxt.setText(Double.toString(totalPaid));
+                            paymentsToSend = new JSONArray();
+                            for (int i=0;i <arrayListOfPaymentsArrView.size(); i++){
+                                JSONObject eachPaymentJsonObj= new JSONObject();
+                                try {
+                                    eachPaymentJsonObj.put("id", arrayListOfPaymentsArrView.get(i)[0]);
+                                    eachPaymentJsonObj.put("dateOfPayment", arrayListOfPaymentsArrView.get(i)[1]);
+                                    eachPaymentJsonObj.put("amount", arrayListOfPaymentsArrView.get(i)[2]);
+                                } catch (JSONException e) {
+                                    Toast.makeText(context, "eroro36748er5", Toast.LENGTH_SHORT).show();
+                                }
+                                paymentsToSend.put(eachPaymentJsonObj);
+                            }
+                            JSONObject eachPaymentJsonObj= new JSONObject();
+                            try {
+                                eachPaymentJsonObj.put("id", "");
+                                eachPaymentJsonObj.put("dateOfPayment", dateOfPayment);
+                                eachPaymentJsonObj.put("amount", amount);
+                                //Toast.makeText(context, amount, Toast.LENGTH_SHORT).show();
+                            } catch (JSONException e) {
+                                Toast.makeText(context, "eroro367485", Toast.LENGTH_SHORT).show();
+                            }
+                            paymentsToSend.put(eachPaymentJsonObj);
                             BuyOrSellFrag.this.showPaymentsDialog=this;
                         }
                         @Override
@@ -268,30 +294,27 @@ public class BuyOrSellFrag extends Fragment {
                 if(soldUnsoldTxt.getText().toString().equals("Sold") || (soldUnsoldTxt.getText().toString().equals("Bought"))) soldUnsold=1;
                 int purOrSell=2;
                 if(subUrl.equals("Supplier")) purOrSell=1;
-                String[] tags = {"name", "dateOfPurchase", "purOrSell", "soldUnsold", "paid", "haveToPay", "billId", "payments"}, data = {
-                    supNameTxt.getText().toString(), byingDtTxt.getText().toString(), Integer.toString(purOrSell),
-                    Integer.toString(soldUnsold), paid,
-                    ((TextView) view.findViewById(R.id.haveToPayEt)).getText().toString(), Integer.toString(billId),
-                    payments.toString()
-                };
+                String[] tags = {"name", "dateOfPurchase", "purOrSell", "soldUnsold", "paid", "haveToPay", "billId", "payments"},
+                        data = {
+                            supNameTxt.getText().toString(), byingDtTxt.getText().toString(), Integer.toString(purOrSell),
+                            Integer.toString(soldUnsold), paid,
+                            ((EditText) view.findViewById(R.id.haveToPayEt)).getText().toString(), Integer.toString(billId),
+                                paymentsToSend.toString()
+                        };
                 new VolleyTakeData(getContext(), baseUrl + "insertProdEntry.php", tags, data, new AfterTakingData() {
                     @Override
                     public void doAfterTakingData(String response) {
-                        Toast.makeText(getContext(), response, Toast.LENGTH_SHORT).show();
+                       //Toast.makeText(getContext(), response, Toast.LENGTH_SHORT).show();
                         Log.d("kkkk", response);
-                        if (Integer.parseInt(response) >= 0) {
+                        if (Integer.parseInt(response) > 0) {
                             JSONArray jsonArray = new JSONArray();
 
                             for (Map.Entry me : vgLlHm.entrySet()) {
                                 View eachListItem = (View) me.getKey();
                                 JSONObject jsonObject = new JSONObject();
-                                int responsee=Integer.parseInt(response);
-                                if(responsee==0) responsee=billId;
                                 try {
-                                    jsonObject.put("prodEntryTblId", responsee);
-                                    if (responsee==0){
-                                        jsonObject.put("id", 1);
-                                    }
+                                    jsonObject.put("prodEntryTblId", response);
+                                    jsonObject.put("id", ((TextView) eachListItem.findViewById(R.id.idTxt)).getText());
                                     jsonObject.put("prodName", ((TextView) eachListItem.findViewById(R.id.prodNameTxt)).getText());
                                     jsonObject.put("prodQuan", ((TextView) eachListItem.findViewById(R.id.prodCountTxt)).getText());
                                     jsonObject.put("boxQuan", ((TextView) eachListItem.findViewById(R.id.boxCountTxt)).getText());
@@ -302,12 +325,14 @@ public class BuyOrSellFrag extends Fragment {
                                     Toast.makeText(getContext(), "error putting json", Toast.LENGTH_SHORT).show();
                                 }
                             }
-                            String[] tags = {"data"};
-                            String[] data = {jsonArray.toString()};
+                            String[] tags = { "billId", "data" };
+                            String[] data = { Integer.toString(billId) ,jsonArray.toString() };
                             new VolleyTakeData(getContext(), baseUrl + "insertProdList.php", tags, data, new AfterTakingData() {
                                 @SuppressLint("ResourceType")
                                 @Override
                                 public void doAfterTakingData(String response) {
+                                    //Toast.makeText(context, response, Toast.LENGTH_SHORT).show();
+                                    //Log.d("kkkk", response);
                                     if (Integer.parseInt(response) > 0) {
                                         Toast.makeText(getContext(), "Successfully inserted", Toast.LENGTH_SHORT).show();
                                         getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, new BuyOrSellFrag("Supplier", 0)).commit();
@@ -330,7 +355,7 @@ public class BuyOrSellFrag extends Fragment {
             new VolleyTakeData(getContext(), baseUrl + "getBills.php", tag, data, new AfterTakingData() {
                 @Override
                 public void doAfterTakingData(String response) {
-                    Log.d("kkkk", response);
+                    //Log.d("kkkk", response);
                     try {
                         JSONArray billJsonArr=new JSONArray(response);
                         JSONObject billJsonObj=new JSONObject(String.valueOf(billJsonArr.getJSONObject(0)));
@@ -355,6 +380,7 @@ public class BuyOrSellFrag extends Fragment {
                         JSONArray prodListDtlsJsonArr = new JSONArray(billJsonObj.getString("prodListDtls"));
                         for(int i=0; i<prodListDtlsJsonArr.length(); i++) {
                             JSONObject prodListDtlsJsonObj = new JSONObject(String.valueOf(prodListDtlsJsonArr.getJSONObject(i)));
+                            //int id=Integer.parseInt(prodListDtlsJsonObj.getString("plId"));
                             int prodId=Integer.parseInt(prodListDtlsJsonObj.getString("prodId"));
                             String prodName = prodListDtlsJsonObj.getString("prodName");
                             double boxQuan = Double.parseDouble(prodListDtlsJsonObj.getString("boxQuan"));
@@ -369,18 +395,45 @@ public class BuyOrSellFrag extends Fragment {
                                     addBuySellListEach(this, vgLlHm);
                                 }
                             };
-                            buySellInfoDialog.setData(prodName, prodQuan,boxQuan, amount, unit);
+                            buySellInfoDialog.setData(plid, prodName, prodQuan,boxQuan, amount, unit);
                             addBuySellListEach(buySellInfoDialog, vgLlHm);
                         }
+                        haveToPayTxt.setText(billJsonObj.getString("haveToPay"));
                         payments=new JSONArray(billJsonObj.getString("paymentDtls"));
+//                        for(int i=0; i<payments.length(); i++){
+//                            String amount = "";
+//                            try{
+//                                amount  =  payments.getJSONObject(i).getString("amount");
+//                            } catch (Exception e) {
+//                                Toast.makeText(context, "eror998676", Toast.LENGTH_SHORT).show();
+//                            }
+//                            Toast.makeText(context, amount, Toast.LENGTH_SHORT).show();
+//                        }
+                        paymentsToSend=new JSONArray(payments.toString());
+
+                        int day=0 ,month=0, year=0;
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            LocalDate currentDate = LocalDate.parse(dateFormat.format(date));
+                            day = currentDate.getDayOfMonth();
+                            month = currentDate.getMonthValue();
+                            year = currentDate.getYear();
+                        }
+
+                        JSONObject eachPaymentJsonObj= new JSONObject();
+                        eachPaymentJsonObj.put("id", "");
+                        eachPaymentJsonObj.put("dateOfPayment", year + "-" + month + "-" + day);
+                        eachPaymentJsonObj.put("amount", "0");
+                        paymentsToSend.put(eachPaymentJsonObj);
+
                         setDataToPaidTxt();
                     } catch (Exception e) {
                         Toast.makeText(getContext(), "JSON error", Toast.LENGTH_SHORT).show();
                     }
                 }
             });
+        }else {
+            paymentsToSend = payments;
         }
-
         return view;
     }
     private void setDataToPaidTxt(){
@@ -428,6 +481,7 @@ public class BuyOrSellFrag extends Fragment {
         }
 
         //buyListEach.setBackgroundColor(R.color.white);
+        TextView idTxt = (TextView) buyListEach.findViewById(R.id.idTxt);
         TextView prodNameTxt = (TextView) buyListEach.findViewById(R.id.prodNameTxt);
         TextView prodCountTxt = (TextView) buyListEach.findViewById(R.id.prodCountTxt);
         TextView prodAmountTxt = (TextView) buyListEach.findViewById(R.id.prodAmountTxt);
@@ -450,7 +504,7 @@ public class BuyOrSellFrag extends Fragment {
 //        } catch (JSONException e) {
 //            Toast.makeText(context, "json error", Toast.LENGTH_SHORT).show();
 //        }
-
+        idTxt.setText(buySellInfoDialog.idTxt.getText());
         prodNameTxt.setText(buySellInfoDialog.chooseProdTxt.getText());
         prodCountTxt.setText(buySellInfoDialog.chooseProdDiEtArr[0].getText());
         prodAmountTxt.setText(buySellInfoDialog.chooseProdDiEtArr[1].getText());

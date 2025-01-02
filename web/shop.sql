@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 21, 2024 at 07:23 PM
+-- Generation Time: Jan 02, 2025 at 03:34 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -56,15 +56,18 @@ CREATE TABLE `payment_tbl` (
   `cusId` int(11) DEFAULT NULL,
   `supId` int(11) DEFAULT NULL,
   `amount` double DEFAULT NULL,
-  `updated` int(11) DEFAULT NULL
+  `updatedTo` int(11) DEFAULT NULL,
+  `updatedFrom` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `payment_tbl`
 --
 
-INSERT INTO `payment_tbl` (`id`, `billId`, `datetime`, `dateOfPayment`, `cusId`, `supId`, `amount`, `updated`) VALUES
-(20, 26, '2024-12-18 23:20:50', '2024-12-18', NULL, 10, 50, NULL);
+INSERT INTO `payment_tbl` (`id`, `billId`, `datetime`, `dateOfPayment`, `cusId`, `supId`, `amount`, `updatedTo`, `updatedFrom`) VALUES
+(44, 44, '2024-12-30 17:57:52', '2024-12-30', 1, NULL, 36, 46, NULL),
+(46, 44, '2024-12-30 18:51:32', '2024-12-30', 1, NULL, 3, NULL, 44),
+(47, 44, '2024-12-31 18:38:41', '2024-12-31', 1, NULL, 4, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -89,8 +92,9 @@ CREATE TABLE `prod_entry_tbl` (
 --
 
 INSERT INTO `prod_entry_tbl` (`id`, `cusId`, `dateOfPurchase`, `dateTimeOfEntry`, `purOrSell`, `soldUnsold`, `haveToPay`, `updatedTo`, `updatedFrom`) VALUES
-(26, 10, '2024-12-18', '2024-12-18 23:20:50', 1, 1, 59, 27, NULL),
-(27, 11, '2024-12-18', '2024-12-18 23:26:00', 1, 1, 59, NULL, 26);
+(44, 1, '2024-12-30', '2024-12-30 17:57:52', 2, 1, 36, 45, NULL),
+(45, 1, '2024-12-30', '2024-12-30 18:13:31', 2, 1, 39, 46, 44),
+(46, 1, '2024-12-30', '2024-12-30 18:21:11', 2, 1, 50, NULL, 45);
 
 -- --------------------------------------------------------
 
@@ -106,18 +110,16 @@ CREATE TABLE `prod_list_tbl` (
   `prodQuan` double DEFAULT NULL,
   `totalAmount` double DEFAULT NULL,
   `unit` varchar(10) DEFAULT NULL,
-  `updated` int(11) DEFAULT NULL
+  `updatedTo` int(11) DEFAULT NULL,
+  `updatedFrom` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `prod_list_tbl`
 --
 
-INSERT INTO `prod_list_tbl` (`id`, `prodEntryTblId`, `prodId`, `boxQuan`, `prodQuan`, `totalAmount`, `unit`, `updated`) VALUES
-(49, 26, 4, 7, 5, 35, '', NULL),
-(50, 26, 8, 3, 4, 24, '', NULL),
-(51, 1, 4, 7, 5, 35, '', NULL),
-(52, 1, 8, 3, 4, 24, '', NULL);
+INSERT INTO `prod_list_tbl` (`id`, `prodEntryTblId`, `prodId`, `boxQuan`, `prodQuan`, `totalAmount`, `unit`, `updatedTo`, `updatedFrom`) VALUES
+(61, 44, 14, 9, 9, 81, '', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -228,19 +230,19 @@ ALTER TABLE `customerr_tbl`
 -- AUTO_INCREMENT for table `payment_tbl`
 --
 ALTER TABLE `payment_tbl`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
 
 --
 -- AUTO_INCREMENT for table `prod_entry_tbl`
 --
 ALTER TABLE `prod_entry_tbl`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
 
 --
 -- AUTO_INCREMENT for table `prod_list_tbl`
 --
 ALTER TABLE `prod_list_tbl`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
 
 --
 -- AUTO_INCREMENT for table `prod_tbl`

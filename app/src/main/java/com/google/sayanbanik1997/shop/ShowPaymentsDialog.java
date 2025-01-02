@@ -61,8 +61,13 @@ public abstract class ShowPaymentsDialog {
                         arrayListOfPaymentsArrView.get(position)[0]= eachPaymentJObj.getString("id");
                         arrayListOfPaymentsArrView.get(position)[1]= eachPaymentJObj.getString("dateOfPayment");
                         arrayListOfPaymentsArrView.get(position)[2]= eachPaymentJObj.getString("amount");
+                        //Toast.makeText(context, eachPaymentJObj.getString("amount"), Toast.LENGTH_SHORT).show();
                         bindData(arrayListOfPaymentsArrView.get(position), holder, position);
-                        arrayListOfPaymentsArrViewPermanent=arrayListOfPaymentsArrView;
+
+                        arrayListOfPaymentsArrViewPermanent.add(new String[3]);
+                        arrayListOfPaymentsArrViewPermanent.get(position)[0]= eachPaymentJObj.getString("id");
+                        arrayListOfPaymentsArrViewPermanent.get(position)[1]= eachPaymentJObj.getString("dateOfPayment");
+                        arrayListOfPaymentsArrViewPermanent.get(position)[2]= eachPaymentJObj.getString("amount");
                     } catch (Exception e) {
                         Toast.makeText(context, "json error", Toast.LENGTH_SHORT).show();
                     }
@@ -121,13 +126,16 @@ public abstract class ShowPaymentsDialog {
         delImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                amountEt.setText("");
+                amountEt.setText("0");
             }
         });
         dialog.findViewById(R.id.submitBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                submitBtnClicked();
+                submitBtnClicked(arrayListOfPaymentsArrView,
+                        dateOfPaymentTxt.getText().toString(),
+                        amountEt.getText().toString()
+                        );
                 dialog.dismiss();
             }
         });
@@ -199,6 +207,6 @@ public abstract class ShowPaymentsDialog {
         }
         return totalPaid;
     }
-    abstract void submitBtnClicked();
+    abstract void submitBtnClicked(ArrayList<String[]> arrayListOfPaymentsArrView, String dateOfPayment, String amount);
     abstract void onCancled();
 }

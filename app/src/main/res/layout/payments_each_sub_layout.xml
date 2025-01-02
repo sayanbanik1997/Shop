@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:id="@+id/eachBillAndPaymentLl"
+    >
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/billIdDumyTxt"
+            android:text="Bill id"
+            android:paddingRight="@dimen/txtPaddingRightLeft"
+            android:paddingLeft="@dimen/txtPaddingRightLeft"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/billIdTxt"
+            android:paddingRight="@dimen/txtPaddingRightLeft"
+            android:paddingLeft="@dimen/txtPaddingRightLeft"
+            app:layout_constraintStart_toEndOf="@+id/billIdDumyTxt"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/paymentIdDumyTxt"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/paymentIdDumyTxt"
+            android:text="Payment id"
+            android:paddingRight="@dimen/txtPaddingRightLeft"
+            android:paddingLeft="@dimen/txtPaddingRightLeft"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/billIdTxt"
+            app:layout_constraintEnd_toStartOf="@+id/paymentIdTxt"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/paymentIdTxt"
+            android:paddingRight="@dimen/txtPaddingRightLeft"
+            android:paddingLeft="@dimen/txtPaddingRightLeft"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/paymentIdDumyTxt"
+            app:layout_constraintEnd_toStartOf="@+id/cusSupNameTxt"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/cusSupNameTxt"
+            android:paddingRight="@dimen/txtPaddingRightLeft"
+            android:paddingLeft="@dimen/txtPaddingRightLeft"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/AmountHaveToPayToThisBillDumyTxt"
+            android:text="Amount have to pay in this bill "
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/AmountHaveToPayToThisBillTxt"
+            app:layout_constraintStart_toEndOf="@+id/AmountHaveToPayToThisBillDumyTxt"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/paidDumyTxt"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/paidDumyTxt"
+            android:text="Paid amount"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/AmountHaveToPayToThisBillTxt"
+            app:layout_constraintEnd_toStartOf="@+id/paidTxt"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/paidTxt"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/totalHaveToPayToThisCusOrSupDumyTxt"
+                android:text="Amount have to pay to this customer or supplier "
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/totalHaveToPayToThisCusOrSupTxt"
+                android:text=""/></LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/dueDumyTxt"
+                android:text="Due "
+
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/dueeTxt"
+                /></LinearLayout>
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/paymentDateDumyTxt"
+                    android:text="Payment date "
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/paymentDateTxt"
+                    app:layout_constraintStart_toEndOf="@+id/paymentDateDumyTxt"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/entryDateTimeDumyTxt"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/entryDateTimeDumyTxt"
+                    android:text="Entry time "
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/paymentDateTxt"
+                    app:layout_constraintEnd_toStartOf="@+id/entryDateTimeTxt"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/entryDateTimeTxt"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <!--    <androidx.constraintlayout.widget.ConstraintLayout-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content">-->
+    <!--        <TextView-->
+    <!--            android:layout_width="wrap_content"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:id="@+id/amountHaveToPayToThisCusOrSupDumyTxt"-->
+    <!--            android:text="Amount have to pay to this customer "-->
+    <!--            app:layout_constraintStart_toStartOf="parent"-->
+    <!--            app:layout_constraintTop_toTopOf="parent"-->
+    <!--            />-->
+    <!--        <TextView-->
+    <!--            android:layout_width="wrap_content"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:id="@+id/amountHaveToPayToThisCusOrSupTxt"-->
+    <!--            app:layout_constraintStart_toEndOf="@+id/amountHaveToPayToThisCusOrSupDumyTxt"-->
+    <!--            app:layout_constraintTop_toTopOf="parent"-->
+    <!--            app:layout_constraintEnd_toStartOf="@+id/dueDumyTxt"-->
+    <!--            />-->
+    <!--        <TextView-->
+    <!--            android:layout_width="wrap_content"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:id="@+id/dueDumyTxt"-->
+    <!--            android:text="Due after this payment "-->
+    <!--            app:layout_constraintTop_toTopOf="parent"-->
+    <!--            app:layout_constraintStart_toEndOf="@+id/amountHaveToPayToThisCusOrSupTxt"-->
+    <!--            app:layout_constraintEnd_toStartOf="@+id/dueeTxt"-->
+    <!--            />-->
+    <!--        <TextView-->
+    <!--            android:layout_width="wrap_content"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:id="@+id/dueeTxt"-->
+    <!--            app:layout_constraintTop_toTopOf="parent"-->
+    <!--            app:layout_constraintEnd_toEndOf="parent"-->
+    <!--            />-->
+    <!--    </androidx.constraintlayout.widget.ConstraintLayout>-->
+</LinearLayout>

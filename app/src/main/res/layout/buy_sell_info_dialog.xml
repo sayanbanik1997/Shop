@@ -5,6 +5,12 @@
     android:orientation="vertical"
     android:padding="@dimen/dialogPadding"
     >
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/idTxt"
+        android:padding="10dp"
+        />
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

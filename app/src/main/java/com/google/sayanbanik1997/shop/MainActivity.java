@@ -43,13 +43,13 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 if(item.getItemId()==R.id.buyProdNavMenu) getSupportFragmentManager().beginTransaction().add(R.id.frameLayout, new BuyOrSellFrag("Supplier", 0)).commit();
                 if(item.getItemId()==R.id.sellProdNavMenu) getSupportFragmentManager().beginTransaction().add(R.id.frameLayout, new BuyOrSellFrag("Customer", 0)).commit();
-                if(item.getItemId()==R.id.billPaymentNavMenu) getSupportFragmentManager().beginTransaction().add(R.id.frameLayout, new billAndPaymentFrag()).commit();
+                if(item.getItemId()==R.id.billPaymentNavMenu) getSupportFragmentManager().beginTransaction().add(R.id.frameLayout, new paymentsFrag()).commit();
                 if(item.getItemId()==R.id.supplierNavMenu) getSupportFragmentManager().beginTransaction().add(R.id.frameLayout, new supCusFrag("Supplier")).commit();
                 if(item.getItemId()==R.id.customerNavMenu) getSupportFragmentManager().beginTransaction().add(R.id.frameLayout, new supCusFrag("Customer")).commit();
                 drawerLayout.closeDrawer(GravityCompat.START);
                 return false;
             }
         });
-        getSupportFragmentManager().beginTransaction().add(R.id.frameLayout, new billAndPaymentFrag()).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.frameLayout, new paymentsFrag()).commit();
     }
 }

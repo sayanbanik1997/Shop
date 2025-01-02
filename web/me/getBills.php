@@ -1,17 +1,19 @@
 <?php
-    include('connection.php');
+    include('connection.php');include("getActualId.php");
     $qry=" select e.id as billId, e.dateOfPurchase, e.dateTimeOfEntry, e.purOrSell, 
-        e.soldUnsold, e.haveToPay, e.cusId as cusSupId from prod_entry_tbl as e ";
+        e.soldUnsold, e.haveToPay, e.cusId as cusSupId from prod_entry_tbl as e where ";
         // right join payment_tbl as p on e.id = p.billId";
         //, p.id, p.billId, p.datetime, p.dateOfPayment, p.cusId, p.supId, p.amount 
         
     if(isset($_POST['billId'])){
-        $qry = $qry . " where e.id=". $_POST['billId'];
-    }else{
-        $qry = $qry . " where e.updatedTo is null";
+        $originalBillId = getOriginalId($_POST['billId'], "prod_entry_tbl");
+        $modifiedBillId = getModifiedId($_POST['billId'], "prod_entry_tbl");
+        $qry = $qry . " e.id=". $modifiedBillId ." and ";
     }
+    //else{
+        $qry = $qry . "  e.updatedTo is null";
+    //}
     $qry = $qry . " order by id desc";
-    include("getBillId.php");
 
     $rslt=mysqli_query($conn, $qry);
     $rsltt='[';
@@ -24,7 +26,7 @@
         $myObj->soldUnsold = $row['soldUnsold'];
 
         //$myObj->billId = $row['billId'];
-        $myObj->actualBillId = getActualBillId($row['billId']);
+        $myObj->originalBillId = $originalBillId;
         $myObj->haveToPay=$row['haveToPay'];
 
         $myObj->cusId=null;
@@ -42,8 +44,8 @@
             $qry='select 
             pl.id as plid, pl.prodEntryTblId, prodId, boxQuan, prodQuan, totalAmount,
             unit, p.name as prodName
-            from prod_list_tbl as pl left join prod_tbl as p on pl.prodId = p.id where pl.prodEntryTblId='. $row['billId'] .'
-            and pl.updated is null';
+            from prod_list_tbl as pl left join prod_tbl as p on pl.prodId = p.id where pl.prodEntryTblId='. $originalBillId .'
+            and pl.updatedTo is null';
             $rsltProdList=mysqli_query($conn, $qry);
             $totalAmount=0;
             $prodListRslt='[';
@@ -62,7 +64,7 @@
             $myObj->totalAmount = $totalAmount;
             $myObj->prodListDtls=$prodListRslt;
 
-            $qry='select * from payment_tbl where billId='. $row['billId'] .' and updated is null';
+            $qry='select * from payment_tbl where billId='. $originalBillId .' and updatedTo is null';
             $rsltPayment=mysqli_query($conn, $qry);
             $paymentRslt='[';
             $count1=0;

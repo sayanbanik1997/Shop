@@ -30,7 +30,7 @@ abstract public class BuySellInfoDialog {
     Fragment fragment;
     //LayoutInflater inflater;ViewGroup container;Bundle savedInstanceStat;
     EditText[] chooseProdDiEtArr;EditText unitEt;
-    TextView chooseProdTxt;
+    TextView idTxt, chooseProdTxt;
     Dialog buyInfoDialogue;
     ImageView[] clearBtns=new ImageView[6];int[] widthOfEt=new int[clearBtns.length];boolean widthAlreadySet=false;
     ImageView clearBtnAll;
@@ -61,7 +61,7 @@ abstract public class BuySellInfoDialog {
         clearBtns[4] = (ImageView) buyInfoDialogue.findViewById(R.id.clearImgBtn4);
         clearBtns[5] = (ImageView) buyInfoDialogue.findViewById(R.id.clearImgBtn5);
 
-
+        idTxt = (TextView) buyInfoDialogue.findViewById(R.id.idTxt);
         chooseProdTxt = (TextView) buyInfoDialogue.findViewById(R.id.chooseProdTxt);
 
         chooseProdTxt.setOnClickListener(new View.OnClickListener() {
@@ -216,11 +216,12 @@ abstract public class BuySellInfoDialog {
         });
     }
 
-    protected void setData(String prodName, double prodQuan, double boxQuan, double amount, String unit){
+    protected void setData(int id, String prodName, double prodQuan, double boxQuan, double amount, String unit){
         double prodPrice = amount / prodQuan  ;
         double boxPrice = amount / boxQuan;
         double itemPerBox = boxQuan/ prodQuan;
 
+        idTxt.setText(Integer.toString(id));
         chooseProdTxt.setText(prodName);
         chooseProdDiEtArr[0].setText(Double.toString(prodQuan));
         chooseProdDiEtArr[1].setText(Double.toString(prodPrice));
