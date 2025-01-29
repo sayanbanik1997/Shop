@@ -4,12 +4,23 @@ import static com.google.sayanbanik1997.shop.Info.baseUrl;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.pdf.PdfDocument;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -28,11 +39,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 //im
@@ -43,9 +59,14 @@ public class BuyOrSellFrag extends Fragment {
     String subUrl="";
     int billId;
     JSONArray payments, paymentsToSend;
-    BuyOrSellFrag(String subUrl, int billId){
+    DataToSent dataToSent;
+    Boolean showBuySellInMemClickedBool=false;
+    MainActivity mainActivity;
+    BuyOrSellFrag(String subUrl, int billId, DataToSent dataToSent, MainActivity mainActivity){
         this.subUrl=subUrl;
         this.billId=billId;
+        this.dataToSent=dataToSent;
+        this.mainActivity=mainActivity;
     }
     static DecimalFormat decimalFormat = new DecimalFormat("#.0000000");
     static DecimalFormat decimalFormatToComp = new DecimalFormat("#.00");
@@ -59,7 +80,7 @@ public class BuyOrSellFrag extends Fragment {
 
     View view;
     TextView supNameTxt, byingDtTxt;
-    Button addProdIntoListBtn;
+    Button addProdIntoListBtn, savePdfBtn;
     static Context context;
 
     public TextView totalAmounttTxt ,paidTxt, dueTxt;
@@ -335,7 +356,7 @@ public class BuyOrSellFrag extends Fragment {
                                     //Log.d("kkkk", response);
                                     if (Integer.parseInt(response) > 0) {
                                         Toast.makeText(getContext(), "Successfully inserted", Toast.LENGTH_SHORT).show();
-                                        getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, new BuyOrSellFrag("Supplier", 0)).commit();
+                                        getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, new BuyOrSellFrag("Supplier", 0, new DataToSent(), mainActivity)).commit();
                                     }else{
                                         Toast.makeText(getContext(), "Error parsing 2nd response", Toast.LENGTH_SHORT).show();
                                     }
@@ -348,6 +369,24 @@ public class BuyOrSellFrag extends Fragment {
                 });
             }
         });
+
+        ((Button) view.findViewById(R.id.otherBuySellsBtn)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeAndAddBuySellFragInMem();
+                showBuySellInMemClickedBool=true;
+                getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, new showBuySellInMemFrag(dataToSent)).commit();
+            }
+        });
+
+        ((Button)view.findViewById(R.id.savePdfBtn)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, new PdfFrag(BuyOrSellFrag.this)).commit();
+                //createAndSavePdf(view);
+            }
+        });
+
         if(billId!=0){
             TextView billIdTxt = (TextView) view.findViewById(R.id.billIdTxt);
             billIdTxt.setText(Integer.toString(billId));
@@ -435,6 +474,137 @@ public class BuyOrSellFrag extends Fragment {
             paymentsToSend = payments;
         }
         return view;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(showBuySellInMemClickedBool) {
+            showBuySellInMemClickedBool=false;
+        }else {
+            removeAndAddBuySellFragInMem();
+        }
+        //Toast.makeText(context, "destroyed", Toast.LENGTH_SHORT).show();
+    }
+
+    private void createAndSavePdf(View view) {
+        int pageWidth =0
+                , pageHeight =0;
+        Canvas canvas=null;
+        PdfDocument pdfDocument=null;
+        PdfDocument.Page page=null;
+        try {
+            // Create a PdfDocument
+            pdfDocument = new PdfDocument();
+            pageWidth = view.getWidth(); //1500
+            pageHeight = view.getHeight(); // 2750;
+            // Define the page size
+            PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, 1).create();
+
+            // Start a page
+            page = pdfDocument.startPage(pageInfo);
+            canvas = page.getCanvas();
+
+            // Draw something on the page
+//        Paint paint = new Paint();
+//        paint.setTextSize(16);
+        } catch (Exception e) {
+            Toast.makeText(getContext(), Integer.toString(pageHeight) + Integer.toString(pageWidth), Toast.LENGTH_SHORT).show();
+        }
+        try {
+            Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
+
+            Canvas canvass = new Canvas(bitmap);
+            view.draw(canvass);
+            Bitmap scaledBitmap = scaleBitmapToFit(bitmap, pageWidth, pageHeight);
+            canvas.drawBitmap(bitmap, 0, 0, null);
+            //canvas.drawText("Hello, this is a sample PDF!", 10, 25, paint);
+
+            // Finish the page
+            pdfDocument.finishPage(page);
+        }catch (Exception e){
+            Toast.makeText(getContext() , "error 593278", Toast.LENGTH_SHORT).show();
+        }
+
+        // Save the PDF
+        try {
+            File pdfFile;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                // Scoped Storage for Android 10+
+                ContentValues values = new ContentValues();
+                values.put(MediaStore.Files.FileColumns.DISPLAY_NAME, "a.pdf");
+                values.put(MediaStore.Files.FileColumns.MIME_TYPE, "application/pdf");
+                values.put(MediaStore.Files.FileColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS);
+
+                Uri uri = mainActivity.getContentResolver().insert(MediaStore.Files.getContentUri("external"), values);
+                if (uri != null) {
+                    try (OutputStream outputStream = mainActivity.getContentResolver().openOutputStream(uri)) {
+                        pdfDocument.writeTo(outputStream);
+                    }
+                }
+                pdfFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "a.pdf");
+            } else {
+                // Legacy storage
+                pdfFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "a.pdf");
+                pdfDocument.writeTo(new FileOutputStream(pdfFile));
+            }
+
+            Toast.makeText(getContext(), "PDF saved to Downloads", Toast.LENGTH_SHORT).show();
+
+            // Open the PDF
+            //    openPdf(this, pdfFile);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(getContext(), "Error saving PDF: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }catch (Exception e){
+            Toast.makeText(getContext(), "error205250", Toast.LENGTH_SHORT).show();
+        } finally{
+            pdfDocument.close();
+        }
+    }
+    private Bitmap scaleBitmapToFit(Bitmap bitmap, int width, int height) {
+        // Calculate the scaling factor
+        float aspectRatio = (float) bitmap.getWidth() / bitmap.getHeight();
+        int scaledWidth = width;
+        int scaledHeight = (int) (width / aspectRatio);
+
+        if (scaledHeight > height) {
+            // Adjust width and height to fit within the page
+            scaledHeight = height;
+            scaledWidth = (int) (height * aspectRatio);
+        }
+
+        // Scale the bitmap
+        return Bitmap.createScaledBitmap(bitmap, scaledWidth, scaledHeight, true);
+    }
+    private void removeAndAddBuySellFragInMem(){
+        Iterator iterator = dataToSent.dataToSentBuySellFragArrayList.iterator();
+        //Toast.makeText(context, "entered in method", Toast.LENGTH_SHORT).show();
+        int count =0;
+        while (iterator.hasNext()){
+            //Toast.makeText(context, "iterator has value", Toast.LENGTH_SHORT).show();
+            if(((DataToSentBuySellFrag)iterator.next()).buyOrSellFrag==BuyOrSellFrag.this){
+                //Toast.makeText(context, "BuysellFrag deleted ", Toast.LENGTH_SHORT).show();
+                dataToSent.dataToSentBuySellFragArrayList.remove(
+                        dataToSent.dataToSentBuySellFragArrayList.get(count)
+                        //BuyOrSellFrag.this
+                );
+                break;
+            }
+            count++;
+            //Log.d("kkkk", iterator.next().toString());
+        }
+        dataToSent.dataToSentBuySellFragArrayList.addFirst(new DataToSentBuySellFrag() {
+            @Override
+            void createConstructor() {
+                // take screenshot
+                bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
+                Canvas canvas = new Canvas(bitmap);
+                view.draw(canvas);
+                buyOrSellFrag = BuyOrSellFrag.this;
+            }
+        });
     }
     private void setDataToPaidTxt(){
         Double totalPaid=0d;
@@ -530,5 +700,29 @@ public class BuyOrSellFrag extends Fragment {
             }
         });
     }
+    private void openPdf(Context context, File file) {
+        Uri uri = Uri.fromFile(file);
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(uri, "application/pdf");
+        intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 
+        try {
+            context.startActivity(intent);
+        } catch (Exception e) {
+            Toast.makeText(context, "No PDF viewer found", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//
+//        if (requestCode == PERMISSION_REQUEST_CODE) {
+//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                createAndSavePdf(view);
+//            } else {
+//                Toast.makeText(getContext(), "Permission denied", Toast.LENGTH_SHORT).show();
+//            }
+//        }
+//    }
 }

@@ -20,6 +20,12 @@ import org.json.JSONObject;
 
 
 public class paymentsFrag extends Fragment {
+    DataToSent dataToSent;
+    MainActivity mainActivity;
+    paymentsFrag(DataToSent dataToSent, MainActivity mainActivity){
+        this.dataToSent=dataToSent;
+        this.mainActivity=mainActivity;
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_payments, container, false);
@@ -28,7 +34,7 @@ public class paymentsFrag extends Fragment {
         new VolleyTakeData(getContext(), Info.baseUrl + "getPayments.php", tag, tag, new AfterTakingData() {
             @Override
             public void doAfterTakingData(String response){
-                Log.d("kkkk", response);
+                //Log.d("kkkk", response);
                 try {
                     JSONArray jsonArray = new JSONArray(response);
                     RecyAdapter recyAdapter  = new RecyAdapter( R.layout.payments_each_sub_layout, jsonArray.length()){
@@ -73,9 +79,9 @@ public class paymentsFrag extends Fragment {
                                         if(!billIdd.equals("0")) {
                                             try {
                                                 if (jsonObject.getString("purOrSell").equals("1")) {
-                                                    getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, new BuyOrSellFrag("Supplier", Integer.parseInt(billIdd))).commit();
+                                                    getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, new BuyOrSellFrag("Supplier", Integer.parseInt(billIdd), dataToSent, mainActivity)).commit();
                                                 } else {
-                                                    getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, new BuyOrSellFrag("Customer", Integer.parseInt(billIdd))).commit();
+                                                    getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, new BuyOrSellFrag("Customer", Integer.parseInt(billIdd), dataToSent, mainActivity)).commit();
                                                 }
                                             } catch (Exception e) {
                                                 Toast.makeText(getContext(), "json error 1", Toast.LENGTH_SHORT).show();

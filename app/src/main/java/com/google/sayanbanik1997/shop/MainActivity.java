@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
     NavigationView navView;
     DrawerLayout drawerLayout;
     ActionBarDrawerToggle actionBarDrawerToggle;
+    DataToSent dataToSent= new DataToSent();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,15 +42,15 @@ public class MainActivity extends AppCompatActivity {
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                if(item.getItemId()==R.id.buyProdNavMenu) getSupportFragmentManager().beginTransaction().add(R.id.frameLayout, new BuyOrSellFrag("Supplier", 0)).commit();
-                if(item.getItemId()==R.id.sellProdNavMenu) getSupportFragmentManager().beginTransaction().add(R.id.frameLayout, new BuyOrSellFrag("Customer", 0)).commit();
-                if(item.getItemId()==R.id.billPaymentNavMenu) getSupportFragmentManager().beginTransaction().add(R.id.frameLayout, new paymentsFrag()).commit();
-                if(item.getItemId()==R.id.supplierNavMenu) getSupportFragmentManager().beginTransaction().add(R.id.frameLayout, new supCusFrag("Supplier")).commit();
-                if(item.getItemId()==R.id.customerNavMenu) getSupportFragmentManager().beginTransaction().add(R.id.frameLayout, new supCusFrag("Customer")).commit();
+                if(item.getItemId()==R.id.buyProdNavMenu) getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, new BuyOrSellFrag("Supplier", 0, dataToSent, MainActivity.this)).commit();
+                if(item.getItemId()==R.id.sellProdNavMenu) getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, new BuyOrSellFrag("Customer", 0, dataToSent, MainActivity.this)).commit();
+                if(item.getItemId()==R.id.billPaymentNavMenu) getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, new paymentsFrag(dataToSent, MainActivity.this)).commit();
+                if(item.getItemId()==R.id.supplierNavMenu) getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, new supCusFrag("Supplier")).commit();
+                if(item.getItemId()==R.id.customerNavMenu) getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, new supCusFrag("Customer")).commit();
                 drawerLayout.closeDrawer(GravityCompat.START);
                 return false;
             }
         });
-        getSupportFragmentManager().beginTransaction().add(R.id.frameLayout, new paymentsFrag()).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.frameLayout, new paymentsFrag(dataToSent, MainActivity.this)).commit();
     }
 }
