@@ -9,6 +9,8 @@ import android.os.Build;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Environment;
 import android.os.Looper;
@@ -19,19 +21,26 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
 
 public class PdfFrag extends Fragment {
     BuyOrSellFrag buyOrSellFrag;
+    RecyclerView pdfEntryRecyView;
     PdfFrag(BuyOrSellFrag buyOrSellFrag){
         this.buyOrSellFrag=buyOrSellFrag;
     }
 
+    //TextView dateTxt;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -47,6 +56,41 @@ public class PdfFrag extends Fragment {
                 }
             }
         }.start();
+        ((TextView)view.findViewById(R.id.dateTxt)).setText(buyOrSellFrag.byingDtTxt.getText().toString());
+        ((TextView)view.findViewById(R.id.billIdTxt)).setText(Integer.toString(buyOrSellFrag.billId));
+
+        RecyAdapter recyAdapter  = new RecyAdapter( R.layout.each_entry_of_pdf, buyOrSellFrag.vgLlHm.size()){
+            @Override
+            void bind(Vh holder, int position) {
+                for (Map.Entry me : buyOrSellFrag.vgLlHm.entrySet()) {
+                    View eachListItem = (View) me.getKey();
+
+                    ((TextView) holder.arrView.get(0)).setText(((TextView) eachListItem.findViewById(R.id.prodNameTxt)).getText());
+                    ((TextView) holder.arrView.get(1)).setText(((TextView) eachListItem.findViewById(R.id.prodCountTxt)).getText());
+                    ((TextView) holder.arrView.get(2)).setText(((TextView) eachListItem.findViewById(R.id.unitTxt)).getText());
+                    ((TextView) holder.arrView.get(3)).setText(((TextView) eachListItem.findViewById(R.id.totalAmountTxt)).getText());
+
+                }
+            }
+            @Override
+            Vh onCreate(View view) {
+                return new Vh(view) {
+                    @Override
+                    void initiateInsideViewHolder(View itemView) {
+                        arrView.add(itemView.findViewById(R.id.prodNameTxt));
+                        arrView.add(itemView.findViewById(R.id.quantityTxt));
+                        arrView.add(itemView.findViewById(R.id.unitTxt));
+                        arrView.add(itemView.findViewById(R.id.totalTxt));
+                    }
+                };
+            }
+        };
+        pdfEntryRecyView = (RecyclerView)view.findViewById(R.id.pdfEntryRecyView);
+        pdfEntryRecyView.setLayoutManager(new LinearLayoutManager(getContext()));
+        pdfEntryRecyView.setAdapter(recyAdapter);
+
+
+        //createAndSavePdf(view);
 //        ((Button)view.findViewById(R.id.savePdfBtn)).setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {

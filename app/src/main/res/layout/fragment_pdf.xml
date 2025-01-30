@@ -23,25 +23,36 @@
                 android:text="Bill Id : "
                 android:id="@+id/billIdDumyTxt"
                 android:layout_alignParentLeft="true"
+                android:paddingTop="20dp"
                 />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/billIdTxt"
                 android:layout_toRightOf="@+id/billIdDumyTxt"
+                android:paddingTop="20dp"
                 />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Bill Id : "
-                android:id="@+id/DateDumyTxt"
-                android:layout_toLeftOf="@+id/dateTxt"
+                android:text="SHOP NAME"
+                android:textSize="30sp"
+                android:layout_centerHorizontal="true"
                 />
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Date : "-->
+<!--                android:id="@+id/DateDumyTxt"-->
+<!--                android:layout_toLeftOf="@+id/dateTxt"-->
+<!--                android:paddingTop="20dp"-->
+<!--                />-->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/dateTxt"
                 android:layout_alignParentRight="true"
+                android:paddingTop="20dp"
                 />
         </RelativeLayout>
         <androidx.recyclerview.widget.RecyclerView
@@ -68,16 +79,5 @@
                 android:layout_alignParentRight="true"
                 />
         </RelativeLayout>
-<!--        <Button-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="savePdf"-->
-<!--            android:id="@+id/savePdfBtn"-->
-<!--            />-->
-<!--        <TextView-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="Total : "-->
-<!--            />-->
     </LinearLayout>
 </FrameLayout>

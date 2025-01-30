@@ -86,6 +86,7 @@ public class BuyOrSellFrag extends Fragment {
     public TextView totalAmounttTxt ,paidTxt, dueTxt;
     EditText haveToPayTxt;
     ShowPaymentsDialog showPaymentsDialog=null;
+    HashMap<View, BuySellInfoDialog> vgLlHm;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -156,7 +157,7 @@ public class BuyOrSellFrag extends Fragment {
             });
         }
 
-        HashMap<View, BuySellInfoDialog> vgLlHm=new HashMap<>();
+        vgLlHm=new HashMap<>();
         addProdIntoListBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -326,7 +327,7 @@ public class BuyOrSellFrag extends Fragment {
                     @Override
                     public void doAfterTakingData(String response) {
                        //Toast.makeText(getContext(), response, Toast.LENGTH_SHORT).show();
-                        Log.d("kkkk", response);
+                        //Log.d("kkkk", response);
                         if (Integer.parseInt(response) > 0) {
                             JSONArray jsonArray = new JSONArray();
 
