@@ -34,8 +34,6 @@ public abstract class RecyAdapter extends RecyclerView.Adapter<Vh> {
     }
     abstract void bind(Vh holder, int position);
     abstract Vh onCreate(View view);
-
-
 }
 abstract class Vh extends RecyclerView.ViewHolder{
     ArrayList<View> arrView = new ArrayList<>();

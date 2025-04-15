@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,9 +21,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
-public class supCusFrag extends Fragment {
+public class SupCusFrag extends Fragment {
     String subUrl;
-    supCusFrag(String subUrl){
+    SupCusFrag(String subUrl){
         this.subUrl=subUrl;
     }
     @Override
@@ -47,7 +46,7 @@ public class supCusFrag extends Fragment {
     }
     public void setData(RecyclerView supCusReView, String[] data){
         String [] tag={"name"};
-        VolleyTakeData volleyTakeDat=new VolleyTakeData(getContext(), Info.baseUrl + "get" + subUrl + ".php", tag, data, new AfterTakingData() {
+        VolleyTakeData volleyTakeData=new VolleyTakeData(getContext(), Info.baseUrl + "get" + subUrl + ".php", tag, data, new AfterTakingData() {
             @Override
             public void doAfterTakingData(String response) {
                 try {

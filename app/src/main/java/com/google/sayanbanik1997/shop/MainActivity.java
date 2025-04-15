@@ -45,12 +45,12 @@ public class MainActivity extends AppCompatActivity {
                 if(item.getItemId()==R.id.buyProdNavMenu) getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, new BuyOrSellFrag("Supplier", 0, dataToSent, MainActivity.this)).commit();
                 if(item.getItemId()==R.id.sellProdNavMenu) getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, new BuyOrSellFrag("Customer", 0, dataToSent, MainActivity.this)).commit();
                 if(item.getItemId()==R.id.billPaymentNavMenu) getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, new paymentsFrag(dataToSent, MainActivity.this)).commit();
-                if(item.getItemId()==R.id.supplierNavMenu) getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, new supCusFrag("Supplier")).commit();
-                if(item.getItemId()==R.id.customerNavMenu) getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, new supCusFrag("Customer")).commit();
+                if(item.getItemId()==R.id.supplierNavMenu) getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, new SupCusFrag("Supplier")).commit();
+                if(item.getItemId()==R.id.customerNavMenu) getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, new SupCusFrag("Customer")).commit();
                 drawerLayout.closeDrawer(GravityCompat.START);
                 return false;
             }
         });
-        getSupportFragmentManager().beginTransaction().add(R.id.frameLayout, new paymentsFrag(dataToSent, MainActivity.this)).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.frameLayout, new BuyOrSellFrag("Supplier", 0, dataToSent, MainActivity.this)).commit();
     }
 }

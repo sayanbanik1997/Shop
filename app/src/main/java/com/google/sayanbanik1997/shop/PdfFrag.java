@@ -36,6 +36,7 @@ import java.util.Map;
 public class PdfFrag extends Fragment {
     BuyOrSellFrag buyOrSellFrag;
     RecyclerView pdfEntryRecyView;
+    View[] eachListItemArr;
     PdfFrag(BuyOrSellFrag buyOrSellFrag){
         this.buyOrSellFrag=buyOrSellFrag;
     }
@@ -59,18 +60,19 @@ public class PdfFrag extends Fragment {
         ((TextView)view.findViewById(R.id.dateTxt)).setText(buyOrSellFrag.byingDtTxt.getText().toString());
         ((TextView)view.findViewById(R.id.billIdTxt)).setText(Integer.toString(buyOrSellFrag.billId));
 
+        eachListItemArr = new View[buyOrSellFrag.vgLlHm.size()];
+        int count=0;
+        for (Map.Entry me : buyOrSellFrag.vgLlHm.entrySet()) {
+            eachListItemArr[count] = (View) me.getKey();
+            count++;
+        }
         RecyAdapter recyAdapter  = new RecyAdapter( R.layout.each_entry_of_pdf, buyOrSellFrag.vgLlHm.size()){
             @Override
             void bind(Vh holder, int position) {
-                for (Map.Entry me : buyOrSellFrag.vgLlHm.entrySet()) {
-                    View eachListItem = (View) me.getKey();
-
-                    ((TextView) holder.arrView.get(0)).setText(((TextView) eachListItem.findViewById(R.id.prodNameTxt)).getText());
-                    ((TextView) holder.arrView.get(1)).setText(((TextView) eachListItem.findViewById(R.id.prodCountTxt)).getText());
-                    ((TextView) holder.arrView.get(2)).setText(((TextView) eachListItem.findViewById(R.id.unitTxt)).getText());
-                    ((TextView) holder.arrView.get(3)).setText(((TextView) eachListItem.findViewById(R.id.totalAmountTxt)).getText());
-
-                }
+                    ((TextView) holder.arrView.get(0)).setText(((TextView) eachListItemArr[position].findViewById(R.id.prodNameTxt)).getText());
+                    ((TextView) holder.arrView.get(1)).setText(((TextView) eachListItemArr[position].findViewById(R.id.prodCountTxt)).getText());
+                    ((TextView) holder.arrView.get(2)).setText(((TextView) eachListItemArr[position].findViewById(R.id.unitTxt)).getText());
+                    ((TextView) holder.arrView.get(3)).setText(((TextView) eachListItemArr[position].findViewById(R.id.totalAmountTxt)).getText());
             }
             @Override
             Vh onCreate(View view) {

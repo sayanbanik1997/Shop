@@ -1,5 +1,7 @@
 package com.google.sayanbanik1997.shop;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -12,13 +14,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
-public class showBuySellInMemFrag extends Fragment {
+public class ShowBuySellInMemFrag extends Fragment {
     RecyclerView showBuySellInMemRecyView;
     DataToSent dataToSent;
-    showBuySellInMemFrag(DataToSent dataToSent){
+    ShowBuySellInMemFrag(DataToSent dataToSent){
         this.dataToSent=dataToSent;
     }
     @Override
@@ -41,7 +42,7 @@ public class showBuySellInMemFrag extends Fragment {
                     @Override
                     public void onClick(View v) {
                         //Toast.makeText(getContext(), Integer.toString(position), Toast.LENGTH_SHORT).show();
-                        Log.d("kkkk", Integer.toString(position));
+                        //Log.d("kkkk", Integer.toString(position));
                         getParentFragmentManager().beginTransaction().replace(R.id.frameLayout,
                                 dataToSent.dataToSentBuySellFragArrayList.get(position).buyOrSellFrag).commit();
                     }
@@ -52,11 +53,19 @@ public class showBuySellInMemFrag extends Fragment {
                 ((ImageView) holder.arrView.get(2)).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        //Toast.makeText(getContext(), "deleted", Toast.LENGTH_SHORT).show();
-                        dataToSent.dataToSentBuySellFragArrayList.remove(
-                                dataToSent.dataToSentBuySellFragArrayList.get(position)
-                        );
-                        addBuySellInRecyAdapter();
+                        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(getContext());
+                        alertBuilder.setMessage("Do you want to delete?");
+                        alertBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dataToSent.dataToSentBuySellFragArrayList.remove(
+                                        dataToSent.dataToSentBuySellFragArrayList.get(position)
+                                );
+                                addBuySellInRecyAdapter();
+                            }
+                        });
+                        alertBuilder.create();
+                        alertBuilder.show();
                     }
                 });
             }

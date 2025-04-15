@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,7 +33,9 @@ abstract public class BuySellInfoDialog {
     EditText[] chooseProdDiEtArr;EditText unitEt;
     TextView idTxt, chooseProdTxt;
     Dialog buyInfoDialogue;
-    ImageView[] clearBtns=new ImageView[6];int[] widthOfEt=new int[clearBtns.length];boolean widthAlreadySet=false;
+    ImageView[] clearBtns=new ImageView[6];
+    int[] widthOfEt=new int[clearBtns.length];
+    boolean widthAlreadySet=false;
     ImageView clearBtnAll;
 
     BuySellInfoDialog(Context context, Fragment fragment) {
@@ -45,13 +48,13 @@ abstract public class BuySellInfoDialog {
         buyInfoDialogue.setContentView(R.layout.buy_sell_info_dialog);
         buyInfoDialogue.show();
 
-        LinearLayout[] llArr = new LinearLayout[6];
-        llArr[0] = (LinearLayout) buyInfoDialogue.findViewById(R.id.prodCountLinLayoutProdEntry);
-        llArr[1] = (LinearLayout) buyInfoDialogue.findViewById(R.id.pricePerProdLinLayoutProdEntry);
-        llArr[2] = (LinearLayout) buyInfoDialogue.findViewById(R.id.boxQuanLayoutProdEntry);
-        llArr[3] = (LinearLayout) buyInfoDialogue.findViewById(R.id.boxPriceLinLayoutProdEntry);
-        llArr[4] = (LinearLayout) buyInfoDialogue.findViewById(R.id.itemPerBoxLinLayoutProdEntry);
-        llArr[5] = (LinearLayout) buyInfoDialogue.findViewById(R.id.totalAmountDLinLayoutProdEntry);
+        RelativeLayout[] llArr = new RelativeLayout[6];
+        llArr[0] = (RelativeLayout) buyInfoDialogue.findViewById(R.id.prodCountLinLayoutProdEntry);
+        llArr[1] = (RelativeLayout) buyInfoDialogue.findViewById(R.id.pricePerProdLinLayoutProdEntry);
+        llArr[2] = (RelativeLayout) buyInfoDialogue.findViewById(R.id.boxQuanLayoutProdEntry);
+        llArr[3] = (RelativeLayout) buyInfoDialogue.findViewById(R.id.boxPriceLinLayoutProdEntry);
+        llArr[4] = (RelativeLayout) buyInfoDialogue.findViewById(R.id.itemPerBoxLinLayoutProdEntry);
+        llArr[5] = (RelativeLayout) buyInfoDialogue.findViewById(R.id.totalAmountDLinLayoutProdEntry);
 
         clearBtnAll = (ImageView) buyInfoDialogue.findViewById(R.id.clearAllImgBtn);
         clearBtns[0] = (ImageView) buyInfoDialogue.findViewById(R.id.clearImgBtn0);
@@ -101,7 +104,7 @@ abstract public class BuySellInfoDialog {
 
                 @Override
                 public void afterTextChanged(Editable s) {
-                    setWidthOfEtArrVal();
+ //                   setWidthOfEtArrVal();
                     int width= 0;
                     if(!chooseProdDiEtArr[ii].getText().toString().isEmpty()){
                         width=widthOfEt[ii]-50;
@@ -121,9 +124,9 @@ abstract public class BuySellInfoDialog {
                         }
                         if(allempty) clearBtnAll.setVisibility(View.GONE);
                     }
-                    ViewGroup.LayoutParams layoutParams=chooseProdDiEtArr[ii].getLayoutParams();
-                    layoutParams.width= width;
-                    chooseProdDiEtArr[ii].setLayoutParams(layoutParams);
+//                    ViewGroup.LayoutParams layoutParams=chooseProdDiEtArr[ii].getLayoutParams();
+//                    layoutParams.width= width;
+//                    chooseProdDiEtArr[ii].setLayoutParams(layoutParams);
                 }
             });
 
@@ -131,7 +134,7 @@ abstract public class BuySellInfoDialog {
                 String getStringToCompare;
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
-                    setWidthOfEtArrVal();
+ //                   setWidthOfEtArrVal();
                     if (v.hasFocus()) {
                         new Thread() {
                             public void run() {
@@ -144,15 +147,21 @@ abstract public class BuySellInfoDialog {
                             }
                         }.start();
                     } else {
-                        if (!((EditText) v).isFocusableInTouchMode()) {
-                            ((EditText) v).setText(getStringToCompare);
-                            return;
-                        }
+//                        if (!((EditText) v).isFocusableInTouchMode()) {
+//                            ((EditText) v).setText(getStringToCompare);
+//                            return;
+//                        }
                         if (!((EditText) v).getText().toString().isEmpty()) {
                             if (getStringToCompare.isEmpty()) {
+                                if(((EditText) v).getText().toString().equals(".")){
+                                    ((EditText) v).setText("0");
+                                }
                                 prodInfoDialogInfoAutoAdj((EditText) v, chooseProdDiEtArr, llArr, clearBtnArr);
                             } else {
                                 if (!BuyOrSellFrag.compDeci(Double.parseDouble(getStringToCompare), Double.parseDouble(((EditText) v).getText().toString()))) {
+                                    if(((EditText) v).getText().toString().equals(".")){
+                                        ((EditText) v).setText("0");
+                                    }
                                     prodInfoDialogInfoAutoAdj((EditText) v, chooseProdDiEtArr, llArr, clearBtnArr);
                                 }
                             }
@@ -168,9 +177,9 @@ abstract public class BuySellInfoDialog {
                     chooseProdDiEtArr[ii].setText("");
                     ((ImageView)v).setVisibility(View.GONE);
 
-                    ViewGroup.LayoutParams layoutParams=chooseProdDiEtArr[ii].getLayoutParams();
-                    layoutParams.width= widthOfEt[ii];
-                    chooseProdDiEtArr[ii].setLayoutParams(layoutParams);
+//                    ViewGroup.LayoutParams layoutParams=chooseProdDiEtArr[ii].getLayoutParams();
+//                    layoutParams.width= widthOfEt[ii];
+//                    chooseProdDiEtArr[ii].setLayoutParams(layoutParams);
 
                 }
             });
@@ -219,7 +228,7 @@ abstract public class BuySellInfoDialog {
     protected void setData(int id, String prodName, double prodQuan, double boxQuan, double amount, String unit){
         double prodPrice = amount / prodQuan  ;
         double boxPrice = amount / boxQuan;
-        double itemPerBox = boxQuan/ prodQuan;
+        double itemPerBox =  prodQuan/ boxQuan;
 
         idTxt.setText(Integer.toString(id));
         chooseProdTxt.setText(prodName);
@@ -236,15 +245,17 @@ abstract public class BuySellInfoDialog {
             widthAlreadySet=true;
             for (int i = 0; i < chooseProdDiEtArr.length; i++) {
                 int ii = i;
-                if (chooseProdDiEtArr[ii].getText().toString().isEmpty())
+                if (chooseProdDiEtArr[ii].getText().toString().isEmpty()) {
                     widthOfEt[ii] = chooseProdDiEtArr[ii].getWidth();
+                    //Toast.makeText(context, Integer.toString(chooseProdDiEtArr[ii].getWidth()), Toast.LENGTH_SHORT).show();
+                }
             }
         }
     }
 
     abstract void subBtnClicked();
 
-    protected boolean prodInfoDialogInfoAutoAdj(EditText thisEditText, EditText[] editTextArr, LinearLayout[] llArr, Button[] clearBtnArr) {
+    protected boolean prodInfoDialogInfoAutoAdj(EditText thisEditText, EditText[] editTextArr, RelativeLayout[] llArr, Button[] clearBtnArr) {
         ArrayList<Integer> relation;
         ArrayList<ArrayList<Integer>>[] relationArrList = new ArrayList[6];
         for (int i = 0; i < relationArrList.length; i++) {
@@ -537,7 +548,7 @@ abstract public class BuySellInfoDialog {
     }
 
     @SuppressLint("ResourceAsColor")
-    private Button createButton(int noOfThisBtn, int linkedNo, EditText[] etArr, LinearLayout[] linArr, Button[] btnArr, Double valShouldBe) {
+    private Button createButton(int noOfThisBtn, int linkedNo, EditText[] etArr, RelativeLayout[] linArr, Button[] btnArr, Double valShouldBe) {
         Button b = new Button(context);
         b.setText("change");
         b.setOnClickListener(new View.OnClickListener() {

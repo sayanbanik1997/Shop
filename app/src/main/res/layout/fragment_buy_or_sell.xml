@@ -14,7 +14,6 @@
 
         >
 
-<!--        app:layout_constraintBottom_toTopOf="@+id/amountPaidDueCl"-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -110,7 +109,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/totalAmounttTxt"
-                android:text="amount"
                 android:paddingTop="13dp"
                 />
             </LinearLayout>
@@ -158,6 +156,29 @@
                     android:id="@+id/paidTxt"
                     android:text="0"
                     android:inputType="numberDecimal"
+                    />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:id="@+id/dueTillTodayLl"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/paidLl"
+                app:layout_constraintStart_toEndOf="@+id/dueLl"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/dueTillTodayDumyTxt"
+                    android:text="Due till now: "
+                    android:paddingTop="13dp"
+                    />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/dueTillTodayTxt"
+                    android:paddingTop="13dp"
                     />
             </LinearLayout>
             <LinearLayout

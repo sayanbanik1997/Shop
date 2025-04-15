@@ -31,11 +31,13 @@ public class paymentsFrag extends Fragment {
         View view = inflater.inflate(R.layout.fragment_payments, container, false);
         RecyclerView recyclerView=(RecyclerView) view.findViewById(R.id.billPaymentReView);
         String[] tag={};
+
         new VolleyTakeData(getContext(), Info.baseUrl + "getPayments.php", tag, tag, new AfterTakingData() {
             @Override
             public void doAfterTakingData(String response){
                 //Log.d("kkkk", response);
                 try {
+                    //Toast.makeText(mainActivity, response, Toast.LENGTH_SHORT).show();
                     JSONArray jsonArray = new JSONArray(response);
                     RecyAdapter recyAdapter  = new RecyAdapter( R.layout.payments_each_sub_layout, jsonArray.length()){
                         @Override

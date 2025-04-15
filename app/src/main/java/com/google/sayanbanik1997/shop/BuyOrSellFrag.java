@@ -7,16 +7,14 @@ import android.app.DatePickerDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.os.Environment;
@@ -62,11 +60,17 @@ public class BuyOrSellFrag extends Fragment {
     DataToSent dataToSent;
     Boolean showBuySellInMemClickedBool=false;
     MainActivity mainActivity;
+    int purOrSell=0;
     BuyOrSellFrag(String subUrl, int billId, DataToSent dataToSent, MainActivity mainActivity){
         this.subUrl=subUrl;
         this.billId=billId;
         this.dataToSent=dataToSent;
         this.mainActivity=mainActivity;
+        if(subUrl.equals("Customer")){
+            purOrSell=2;
+        }else if(subUrl.equals("Supplier")){
+            purOrSell=1;
+        }
     }
     static DecimalFormat decimalFormat = new DecimalFormat("#.0000000");
     static DecimalFormat decimalFormatToComp = new DecimalFormat("#.00");
@@ -84,12 +88,16 @@ public class BuyOrSellFrag extends Fragment {
     static Context context;
 
     public TextView totalAmounttTxt ,paidTxt, dueTxt;
-    EditText haveToPayTxt;
+    EditText haveToPayEt;
     ShowPaymentsDialog showPaymentsDialog=null;
     HashMap<View, BuySellInfoDialog> vgLlHm;
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        if(view==null)view = inflater.inflate(R.layout.fragment_buy_or_sell, container, false);
+        else return view;
+
         context=getContext();
         try {
             payments = new JSONArray("[]");
@@ -97,7 +105,6 @@ public class BuyOrSellFrag extends Fragment {
         } catch (JSONException e) {
             Toast.makeText(context, "error", Toast.LENGTH_SHORT).show();
         }
-        view = inflater.inflate(R.layout.fragment_buy_or_sell, container, false);
 
         supNameTxt = (TextView) view.findViewById(R.id.supNameTxt);
         byingDtTxt = (TextView) view.findViewById(R.id.byingDtTxt);
@@ -122,6 +129,81 @@ public class BuyOrSellFrag extends Fragment {
                         supNameTxt.setText(((EditText) dialog.findViewById(R.id.supNameEt)).getText().toString());
                     }
                 };
+            }
+        });
+        supNameTxt.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }@Override public void onTextChanged(CharSequence s, int start, int before, int count) { }
+            @Override
+            public void afterTextChanged(Editable s) {
+                String tableName = "customerr_tbl";
+                if(purOrSell==1){
+                    tableName = "supplier_tbl";
+                }
+                //Toast.makeText(mainActivity, supNameTxt.getText().toString(), Toast.LENGTH_SHORT).show();
+                String[] tags = {"tableName", "whereClause"}, data = {tableName, "where name='" + supNameTxt.getText().toString() +"'"};
+                new VolleyTakeData(getContext(), baseUrl + "getDirectQryRslt.php", tags, data, new AfterTakingData() {
+                    @Override
+                    public void doAfterTakingData(String response) {
+                        String cusId="0";
+                        try {
+                            cusId = new JSONArray(response).getJSONObject(0).getString("id");
+                        } catch (Exception e) {
+                            Toast.makeText(mainActivity, "error46378", Toast.LENGTH_SHORT).show();
+                        }
+
+//                        String[] tags = {"qry", "tableId"},
+//                                data = {"select * from prod_entry_tbl where purOrSell = "+ Integer.toString(purOrSell) +
+//                                                " and cusId="+ cusId +" and id != "+billId, "3"};
+                        String[] tags = {"tableName", "whereClause"},
+                                data = {"prod_entry_tbl", "where purOrSell = "+ Integer.toString(purOrSell) +
+                                        " and cusId="+ cusId +" and id != "+billId};
+                        final double[] totalHaveToPayExcludingThisBill = {0};
+                        String finalCusId = cusId;
+                        new VolleyTakeData(getContext(), baseUrl + "getDirectQryRslt.php", tags, data, new AfterTakingData() {
+                            @Override
+                            public void doAfterTakingData(String response) {
+                                try {
+                                    JSONArray billsJsonArr = new JSONArray(response);
+                                    for (int i=0; i< billsJsonArr.length(); i++) {
+                                        JSONObject billsJsonObj = billsJsonArr.getJSONObject(i);
+                                        totalHaveToPayExcludingThisBill[0] += Double.parseDouble(billsJsonObj.getString("haveToPay"));
+                                    }
+                                } catch (Exception e) {
+                                    Toast.makeText(mainActivity, "error 107652098", Toast.LENGTH_SHORT).show();
+                                }
+                                final double[] totalPaymentsExcludingThisBill={0};
+                                String qry="";
+                                if(purOrSell==1){
+                                    qry=
+                                            //"select * from payment_tbl " +
+                                            "where supId="+ finalCusId;
+                                }else if(purOrSell==2){
+                                    qry=
+                                            //"select * from payment_tbl " +
+                                                    "where cusId="+ finalCusId;
+                                }
+                                qry += " and billId != "+ billId;
+                                //String[] tags = {"qry", "tableId"}, data = {qry, "2"};
+                                String[] tags = {"tableName", "whereClause"}, data = {"payment_tbl", qry};
+                                new VolleyTakeData(getContext(), baseUrl + "getDirectQryRslt.php", tags, data, new AfterTakingData() {
+                                    @Override
+                                    public void doAfterTakingData(String response) {
+                                        try {
+                                            JSONArray billsJsonArr = new JSONArray(response);
+                                            for (int i=0; i< billsJsonArr.length(); i++) {
+                                                JSONObject billsJsonObj = billsJsonArr.getJSONObject(i);
+                                                totalPaymentsExcludingThisBill[0] += Double.parseDouble(billsJsonObj.getString("amount"));
+                                            }
+                                        } catch (Exception e) {
+                                            Toast.makeText(mainActivity, "error85701", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+
             }
         });
 
@@ -165,12 +247,7 @@ public class BuyOrSellFrag extends Fragment {
                     @Override
                     void subBtnClicked() {
                         addBuySellListEach( this, vgLlHm);
-                        new BuySellInfoDialog(getContext(), BuyOrSellFrag.this){
-                            @Override
-                            void subBtnClicked() {
-                                addBuySellListEach(this, vgLlHm);
-                            }
-                        };
+                        onClick(v);
                     }
                 };
             }
@@ -178,32 +255,32 @@ public class BuyOrSellFrag extends Fragment {
         totalAmounttTxt = (TextView)view.findViewById(R.id.totalAmounttTxt);
         paidTxt=(TextView) view.findViewById(R.id.paidTxt);
         dueTxt=(TextView) view.findViewById(R.id.dueTxt);
-        haveToPayTxt=(EditText) view.findViewById(R.id.haveToPayEt);
+        haveToPayEt=(EditText) view.findViewById(R.id.haveToPayEt);
         totalAmounttTxt.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {  }@Override public void onTextChanged(CharSequence s, int start, int before, int count) {  }
 
             @Override
             public void afterTextChanged(Editable s) {
                 try {
-                    haveToPayTxt.setText(
+                    haveToPayEt.setText(
                         Double.toString(Double.parseDouble(totalAmounttTxt.getText().toString()))
                     );
                 }catch (Exception e){
-                    haveToPayTxt.setText("");
+                    haveToPayEt.setText("");
                 }
             }
         });
-        haveToPayTxt.addTextChangedListener(new TextWatcher() {
+        haveToPayEt.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}@Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
             @Override
             public void afterTextChanged(Editable s) {
                 try {
                     if(billId==0) {
-                        paidTxt.setText(Double.toString(Double.parseDouble(haveToPayTxt.getText().toString())));
+                        paidTxt.setText(Double.toString(Double.parseDouble(haveToPayEt.getText().toString())));
                     }
                     dueTxt.setText(
-                            Double.toString(Double.parseDouble(haveToPayTxt.getText().toString()) - Double.parseDouble(paidTxt.getText().toString()))
+                            Double.toString(Double.parseDouble(haveToPayEt.getText().toString()) - Double.parseDouble(paidTxt.getText().toString()))
                     );
                 } catch (Exception e) {
                     paidTxt.setText("0");
@@ -276,7 +353,7 @@ public class BuyOrSellFrag extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {
                 try {dueTxt.setText(
-                        Double.toString(Double.parseDouble(haveToPayTxt.getText().toString()) - Double.parseDouble(paidTxt.getText().toString()))
+                        Double.toString(Double.parseDouble(haveToPayEt.getText().toString()) - Double.parseDouble(paidTxt.getText().toString()))
                 );
                 }catch (Exception e){
                     dueTxt.setText("");
@@ -286,10 +363,10 @@ public class BuyOrSellFrag extends Fragment {
         dueTxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(Double.parseDouble(dueTxt.getText().toString())== Double.parseDouble(haveToPayTxt.getText().toString())-
+                if(Double.parseDouble(dueTxt.getText().toString())== Double.parseDouble(haveToPayEt.getText().toString())-
                         Double.parseDouble(paidTxt.getText().toString())){
                     dueTxt.setText("0");
-                    haveToPayTxt.setText(paidTxt.getText().toString());
+                    haveToPayEt.setText(paidTxt.getText().toString());
                 }
             }
         });
@@ -338,8 +415,8 @@ public class BuyOrSellFrag extends Fragment {
                                     jsonObject.put("prodEntryTblId", response);
                                     jsonObject.put("id", ((TextView) eachListItem.findViewById(R.id.idTxt)).getText());
                                     jsonObject.put("prodName", ((TextView) eachListItem.findViewById(R.id.prodNameTxt)).getText());
-                                    jsonObject.put("prodQuan", ((TextView) eachListItem.findViewById(R.id.prodCountTxt)).getText());
-                                    jsonObject.put("boxQuan", ((TextView) eachListItem.findViewById(R.id.boxCountTxt)).getText());
+                                    jsonObject.put("prodQuantity", ((TextView) eachListItem.findViewById(R.id.prodCountTxt)).getText());
+                                    jsonObject.put("boxQuantity", ((TextView) eachListItem.findViewById(R.id.boxCountTxt)).getText());
                                     jsonObject.put("totalAmount", ((TextView) eachListItem.findViewById(R.id.totalAmountTxt)).getText());
                                     jsonObject.put("unit", ((TextView) eachListItem.findViewById(R.id.unitTxt)).getText());
                                     jsonArray.put(jsonObject);
@@ -376,7 +453,7 @@ public class BuyOrSellFrag extends Fragment {
             public void onClick(View v) {
                 removeAndAddBuySellFragInMem();
                 showBuySellInMemClickedBool=true;
-                getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, new showBuySellInMemFrag(dataToSent)).commit();
+                getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, new ShowBuySellInMemFrag(dataToSent)).commit();
             }
         });
 
@@ -388,7 +465,18 @@ public class BuyOrSellFrag extends Fragment {
             }
         });
 
-        if(billId!=0){
+//        String buyerOrSellerNameBuyFragString;
+//        if(purOrSell==1){
+//            buyerOrSellerNameBuyFragString = getResources().getString(R.string.sellerNameBuyFrag);
+//        }else{
+//            buyerOrSellerNameBuyFragString = getResources().getString(R.string.buyerNameBuyFrag);
+//        }
+//                Toast.makeText(mainActivity, supNameTxt.getText().toString(), Toast.LENGTH_SHORT).show();
+//        Toast.makeText(mainActivity,buyerOrSellerNameBuyFragString, Toast.LENGTH_SHORT).show();
+        if(billId!=0
+                //&& supNameTxt.getText().toString().equals(buyerOrSellerNameBuyFragString)
+            ){
+            Toast.makeText(mainActivity, "entered", Toast.LENGTH_SHORT).show();
             TextView billIdTxt = (TextView) view.findViewById(R.id.billIdTxt);
             billIdTxt.setText(Integer.toString(billId));
             String[] tag={"billId"}, data={Integer.toString(billId)};
@@ -423,8 +511,8 @@ public class BuyOrSellFrag extends Fragment {
                             //int id=Integer.parseInt(prodListDtlsJsonObj.getString("plId"));
                             int prodId=Integer.parseInt(prodListDtlsJsonObj.getString("prodId"));
                             String prodName = prodListDtlsJsonObj.getString("prodName");
-                            double boxQuan = Double.parseDouble(prodListDtlsJsonObj.getString("boxQuan"));
-                            double prodQuan = Double.parseDouble(prodListDtlsJsonObj.getString("prodQuan"));
+                            double boxQuantity = Double.parseDouble(prodListDtlsJsonObj.getString("boxQuantity"));
+                            double prodQuantity = Double.parseDouble(prodListDtlsJsonObj.getString("prodQuantity"));
                             double amount = Double.parseDouble(prodListDtlsJsonObj.getString("totalAmount"));
                             String unit = prodListDtlsJsonObj.getString("unit");
                             int plid= Integer.parseInt(prodListDtlsJsonObj.getString("plid"));
@@ -435,10 +523,10 @@ public class BuyOrSellFrag extends Fragment {
                                     addBuySellListEach(this, vgLlHm);
                                 }
                             };
-                            buySellInfoDialog.setData(plid, prodName, prodQuan,boxQuan, amount, unit);
+                            buySellInfoDialog.setData(plid, prodName, prodQuantity,boxQuantity, amount, unit);
                             addBuySellListEach(buySellInfoDialog, vgLlHm);
                         }
-                        haveToPayTxt.setText(billJsonObj.getString("haveToPay"));
+                        haveToPayEt.setText(billJsonObj.getString("haveToPay"));
                         payments=new JSONArray(billJsonObj.getString("paymentDtls"));
 //                        for(int i=0; i<payments.length(); i++){
 //                            String amount = "";
@@ -639,16 +727,16 @@ public class BuyOrSellFrag extends Fragment {
             buyFragLlforDealInfoInsert.addView(buyListEach);
             vgLlHm.put(buyListEach, buySellInfoDialog);
         }else{
-            if(vgLlHm.containsValue(buySellInfoDialog)) {
+            //if(vgLlHm.containsValue(buySellInfoDialog)) {
                 for (View key : vgLlHm.keySet()) {
                     if (vgLlHm.get(key) == buySellInfoDialog) {
                         buyListEach = key;
                         break;
                     }
                 }
-            }else{
-                Toast.makeText(context, "buyInfoDialog not found in vgLlHm", Toast.LENGTH_SHORT).show();
-            }
+//            }else{
+//                Toast.makeText(context, "buyInfoDialog not found in vgLlHm", Toast.LENGTH_SHORT).show();
+//            }
         }
 
         //buyListEach.setBackgroundColor(R.color.white);
@@ -662,19 +750,6 @@ public class BuyOrSellFrag extends Fragment {
         TextView totalAmountTxt = (TextView) buyListEach.findViewById(R.id.totalAmountTxt);
         TextView unitTxt = (TextView) buyListEach.findViewById(R.id.unitTxt);
 
-//        JSONObject buySellListEachDtlsJsonObj = new JSONObject();
-//        try {
-//            buySellListEachDtlsJsonObj.put("prodName", buySellInfoDialog.chooseProdTxt.getText().toString());
-//            buySellListEachDtlsJsonObj.put("prodCount", buySellInfoDialog.chooseProdDiEtArr[0].getText().toString());
-//            buySellListEachDtlsJsonObj.put("prodPrice", buySellInfoDialog.chooseProdDiEtArr[1].getText().toString());
-//            buySellListEachDtlsJsonObj.put("boxCount", buySellInfoDialog.chooseProdDiEtArr[2].getText().toString());
-//            buySellListEachDtlsJsonObj.put("boxPrice", buySellInfoDialog.chooseProdDiEtArr[3].getText().toString());
-//            buySellListEachDtlsJsonObj.put("itemPerBox", buySellInfoDialog.chooseProdDiEtArr[4].getText().toString());
-//            buySellListEachDtlsJsonObj.put("TotalAmount", buySellInfoDialog.chooseProdDiEtArr[5].getText().toString());
-//            buySellListEachDtlsJsonObj.put("unit", buySellInfoDialog.unitEt.getText().toString());
-//        } catch (JSONException e) {
-//            Toast.makeText(context, "json error", Toast.LENGTH_SHORT).show();
-//        }
         idTxt.setText(buySellInfoDialog.idTxt.getText());
         prodNameTxt.setText(buySellInfoDialog.chooseProdTxt.getText());
         prodCountTxt.setText(buySellInfoDialog.chooseProdDiEtArr[0].getText());
@@ -685,6 +760,12 @@ public class BuyOrSellFrag extends Fragment {
         totalAmountTxt.setText(buySellInfoDialog.chooseProdDiEtArr[5].getText());
         unitTxt.setText(buySellInfoDialog.unitEt.getText());
 
+        buyListEach.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                vgLlHm.get(v).buyInfoDialogue.show();
+            }
+        });
 
         Double totalAmount= 0d;
         for (View key : vgLlHm.keySet()) {
@@ -693,13 +774,6 @@ public class BuyOrSellFrag extends Fragment {
         ((TextView) view.findViewById(R.id.totalAmounttTxt)).setText(Double.toString(totalAmount));
 
         buySellInfoDialog.buyInfoDialogue.dismiss();
-
-        buyListEach.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                vgLlHm.get(v).buyInfoDialogue.show();
-            }
-        });
     }
     private void openPdf(Context context, File file) {
         Uri uri = Uri.fromFile(file);

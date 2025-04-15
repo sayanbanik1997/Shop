@@ -33,10 +33,9 @@
             android:visibility="invisible"
             />
     </RelativeLayout>
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:id="@+id/prodCountLinLayoutProdEntry">
         <TextView
             android:layout_width="wrap_content"
@@ -55,14 +54,13 @@
             android:layout_height="20dp"
             android:src="@drawable/cross"
             android:id="@+id/clearImgBtn0"
-            android:visibility="invisible"
+            android:layout_alignParentRight="true"
             />
-    </LinearLayout>
+    </RelativeLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:id="@+id/pricePerProdLinLayoutProdEntry"
         >
         <TextView
@@ -84,9 +82,9 @@
             android:id="@+id/clearImgBtn1"
             android:visibility="invisible"
             />
-    </LinearLayout>
+    </RelativeLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -110,9 +108,9 @@
             android:id="@+id/clearImgBtn2"
             android:visibility="invisible"
             />
-    </LinearLayout>
+    </RelativeLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -136,9 +134,9 @@
             android:id="@+id/clearImgBtn3"
             android:visibility="invisible"
             />
-    </LinearLayout>
+    </RelativeLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -163,8 +161,8 @@
             android:id="@+id/clearImgBtn4"
             android:visibility="invisible"
             />
-    </LinearLayout>
-    <LinearLayout
+    </RelativeLayout>
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -188,8 +186,8 @@
             android:id="@+id/clearImgBtn5"
             android:visibility="invisible"
             />
-    </LinearLayout>
-    <LinearLayout
+    </RelativeLayout>
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -204,7 +202,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/unitEt"
             />
-    </LinearLayout>
+    </RelativeLayout>
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
